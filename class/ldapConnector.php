@@ -3,6 +3,11 @@
 require('../interfaces/ldapInterface.php');
 
 /**
+ * TODO: FRAGESTELLUNG, WAS PASSIERT BEI SET? WAS, WENN ATTRIBUTE ENTFERNT WERDEN? WAS, WENN HINZUGEFÜGT? WAS, WENN NUR GEÄNDERT?
+ */
+
+
+/**
  * Description of ldapConnector
  *
  * @author KWM
@@ -96,6 +101,7 @@ class ldapConnector implements ldapInterface {
 		return false;
 	}
 
+	//TODO: Annahme und Verarbeitung Array
 	public function addUserToGroup($user, $group) {
 		if(ldap_mod_add($this->res, $this->groupDN($group), array(
 			'member' => $this->userDN($user)
@@ -142,15 +148,23 @@ class ldapConnector implements ldapInterface {
 		
 	}
 
+	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 	public function getGroupAttribute($group, $attribute) {
 		
 	}
 
+	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 	public function getUserAllPermissions($user) {
 		
 	}
 
+	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 	public function getUserAttribute($user, $attribute) {
+		
+	}
+	
+	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
+	public function getPermissionAttribute($permission, $attribute) {
 		
 	}
 
@@ -166,6 +180,7 @@ class ldapConnector implements ldapInterface {
 		
 	}
 
+	//TODO: Array bei Value
 	public function setGroupAttribute($group, $attribute, $value) {
 		
 	}
@@ -173,16 +188,20 @@ class ldapConnector implements ldapInterface {
 	public function setUserAttribute($user, $attribute, $value) {
 		
 	}
+	
+	public function setPermissionAttribute($permissions, $attribute, $value) {
+		
+	}
 
-	private userDN($user) {
+	private function userDN($user) {
 		return 'cn='.$user.','.LDAP_USER_BASE;
 	}
 
-	private groupDN($group) {
+	private function groupDN($group) {
 		return 'cn='.$group.','.LDAP_GROUP_BASE;
 	}
 
-	private permissionDN($permission) {
+	private function permissionDN($permission) {
 		return 'cn='.$permission.','.LDAP_PERMISSION_BASE;
 	}
 

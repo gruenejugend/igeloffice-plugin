@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * TODO: LDAP Anbindung
+ * TODO: Berechtigungszuordnung
+ * TODO: Gruppenzuordnung
+ */
+
+/**
  * Description of io_user
  *
  * @author KWM
@@ -21,6 +27,7 @@ class io_user {
 	 ***********************************************************/
 	public static function register_form() {
 		wp_enqueue_script('jqueryIO');
+		wp_nonce_field('io_users', 'io_users_nonce');
 		
 		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? trim($_POST['user_art']) : ''));
 		switch($userArtInput) {
@@ -209,8 +216,12 @@ class io_user {
 <?php
 	}
 	
+	/*
+	 * TODO: KEINE ÄNDERUNGEN AN LANDESVERBAND UND ORT
+	 */
 	public static function new_user_form($user) {
 		wp_enqueue_script('jqueryIO');
+		wp_nonce_field('io_users', 'io_users_nonce');
 		
 		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? trim($_POST['user_art']) : ''));
 		switch($userArtInput) {
@@ -293,6 +304,43 @@ class io_user {
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
 				<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="form-field form-required">
+		<th scope="row"><label for="groups">Gruppenmitgliedschaften</label></th>
+		<td>
+			<select name="groups" id="groups" size="10" multiple>
+	<?php
+
+		$values = io_groups::getValues();
+		foreach($values AS $key_1 => $value_1) {
+			?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
+		<?php
+			if(is_array($value_1)) {
+				foreach($value_1 AS $key_2 => $value_2) {
+					?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
+					<?php
+
+						foreach($value_2 AS $key_3 => $value_3) {
+							?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
+						}
+
+					?>					</optgroup>
+					<?php
+				}
+			} else {
+				foreach($value_1 AS $key_2 => $value_2) {
+					?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
+				}
+			}
+		?>
+					</optgroup>
+		<?php 
+
+		}
+
+	?>
 			</select>
 		</td>
 	</tr>
@@ -411,6 +459,12 @@ class io_user {
 	
 	public static function user_register($user_id) {
 		if(!empty($_POST['user_art'])) {
+			if( !isset($_POST['io_users_nonce']) || 
+				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
+			
 			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
 			update_user_meta($user_id, "user_aktiv", 1);
 			if($_POST['user_art'] == "user") {
@@ -507,9 +561,9 @@ class io_user {
 	public static function user_profile($user) {
 		$user_id = $user->ID;
 		
-		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true) {
+		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 			update_user_meta($user_id, "user_aktiv", 0);
-			igeloffice_user_ldap_add();
+			user_ldap_add($user_id);
 		}
 ?>
 
@@ -531,10 +585,13 @@ class io_user {
 <?php
 	}
 	
+	/*
+	 * TODO: SPEICHERUNG GRUPPENMITGLIEDSCHAFT
+	 */
 	public static function user_profile_save($user_id) {
-		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0) {
+		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 			update_user_meta($user_id, "user_aktiv", 0);
-			igeloffice_user_ldap_add();
+			user_ldap_add($user_id);
 		}
 	}
 	
@@ -547,7 +604,17 @@ class io_user {
 		return $user;
 	}
 	
-	public static function user_ldap_add() {
+	public static function user_ldap_add($user_id) {
+		$ldapConn = new ldapConnector();
+		$ldapConn->addUser(get_post_meta($user_id, 'first_user', true), get_post_meta($post_id, 'last_user', true));
+		$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_art", get_post_meta($post_id, 'user_art', true));
 		
+		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe' || get_user_meta($user_id, 'user_art', true) == 'Landesverband') {
+			$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_land", get_post_meta($post_id, 'land', true));
+		}
+		
+		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe') {
+			$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_ort", get_post_meta($post_id, 'ort', true));
+		}
 	}
 }

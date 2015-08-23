@@ -11,7 +11,9 @@
 
 	ini_set('display_errors', '1');
 	require('functions/register.php');
+	require('class/io_postlist.php');
 	require('class/io_user.php');
+	require('class/io_groups.php');
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
 	
@@ -30,6 +32,7 @@
 	
 	add_action('show_user_profile',					array('io_user', 'user_profile'));
 	add_action('edit_user_profile',					array('io_user', 'user_profile'));
+	add_action('profile_update',					array('io_user', 'user_profile_save'));
 	add_filter('authenticate',						array('io_user', 'authentifizierung'), 30, 3);
 
 ?>
