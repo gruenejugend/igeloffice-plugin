@@ -598,6 +598,10 @@ class io_user {
 	}
 	
 	public static function authentifizierung($user, $user_name, $password) {
+		if(!($user instanceof WP_User)) {
+			return $user;
+		}
+
 		$user_id = $user->ID;
 		
 		if(get_user_meta($user_id, "user_aktiv", true) == 1) {
