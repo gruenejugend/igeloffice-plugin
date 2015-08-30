@@ -20,8 +20,6 @@ class ldapConnector implements ldapInterface {
 	private $res;
 
 	private static $instance;
-	private static $LDAP_HOST = '10.10.10.11';
-	private static $LDAP_PORT = 389;
 
 	public static function get($bind = true) {
 		if(self::$instance instanceof ldapConnector) {
@@ -35,7 +33,7 @@ class ldapConnector implements ldapInterface {
 	}
 			
 	private function __construct() {
-		$this->res = ldap_connect(self::$LDAP_HOST, self::$LDAP_PORT);
+		$this->res = ldap_connect(LDAP_HOST, LDAP_PORT);
 	}
 	
 	public function bind($user = null, $pass = null) {
