@@ -614,7 +614,7 @@ class io_user {
 			unset($key, $password);
 			update_user_meta($user_id, '_ldap_pass', $hash);
 		}
-		else {
+		elseif($user_name != null) {
 			return new WP_Error('ldap_login_failed', 'Deine Zugangsdaten sind nicht korrekt.');
 		}
 

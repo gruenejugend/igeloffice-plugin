@@ -10,15 +10,20 @@
 */
 
 	ini_set('display_errors', '1');
-	require('functions/register.php');
+	require('interfaces/ldapInterface.php');
+	require('class/ldapConnector.php');
+	require('class/io_form.php');
 	require('class/io_postlist.php');
-	require('class/io_user.php');
 	require('class/io_groups.php');
+	require('class/io_permission.php');
+	require('class/io_request.php');
+	require('class/io_user.php');
+	require('functions/register.php');
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
 	
 	//Registrierung und Login
-	add_action('init',											'io_register');
+	add_action('init',											'io_init');
 	
 	add_action('register_form',									array('io_user', 'register_form'));
 	add_action('user_new_form',									array('io_user', 'new_user_form'));

@@ -2,8 +2,6 @@
 
 use \Defuse\Crypto\Crypto;
 
-require('../interfaces/ldapInterface.php');
-
 /**
  * TODO: FRAGESTELLUNG, WAS PASSIERT BEI SET? WAS, WENN ATTRIBUTE ENTFERNT WERDEN? WAS, WENN HINZUGEFÜGT? WAS, WENN NUR GEÄNDERT?
  */
@@ -19,8 +17,11 @@ class ldapConnector implements ldapInterface {
 	private $user;
 	private $permissions;
 	private $groups;
+	private $res;
 
 	private static $instance;
+	private static $LDAP_HOST = '10.10.10.11';
+	private static $LDAP_PORT = 389;
 
 	public static function get($bind = true) {
 		if(self::$instance instanceof ldapConnector) {
@@ -30,11 +31,11 @@ class ldapConnector implements ldapInterface {
 		if($bind) {
 			self::$instance->bind($user, $pass);
 		}
-		return self::$instace;
+		return self::$instance;
 	}
 			
 	private function __construct() {
-		$ldapConn = ldap_connect(LDAP_HOST, LDAP_PORT);
+		$this->res = ldap_connect(self::$LDAP_HOST, self::$LDAP_PORT);
 	}
 	
 	public function bind($user = null, $pass = null) {

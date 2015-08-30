@@ -5,7 +5,7 @@
  *
  * @author KayWilhelm
  */
-class io_permission {
+class io_permission extends io_postlist {
 	private $name;
 	private $system;
 	private $kategorie;
