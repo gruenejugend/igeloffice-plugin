@@ -1,5 +1,7 @@
 <?php
 
+use \Defuse\Crypto\Crypto;
+
 require('../interfaces/ldapInterface.php');
 
 /**
@@ -17,13 +19,43 @@ class ldapConnector implements ldapInterface {
 	private $user;
 	private $permissions;
 	private $groups;
+
+	private static $instance;
+
+	public static function get($bind = true) {
+		if(self::$instance instanceof ldapConnector) {
+			return self::$instance;
+		}
+		self::$instance = new ldapConnector();
+		if($bind) {
+			self::$instance->bind($user, $pass);
+		}
+		return self::$instace;
+	}
 			
-	public function ldapConnector() {
+	private function __construct() {
 		$ldapConn = ldap_connect(LDAP_HOST, LDAP_PORT);
-		
-		//TODO: LDAP Bind
 	}
 	
+	public function bind($user = null, $pass = null) {
+		if(is_null($user) && is_null($pass)) { //get ldap-password from db & cookie
+			if(!is_user_logged_in()) {
+				return false;
+			}
+			$userinfo = get_currentuserinfo();
+			$user = $userinfo->user_login;
+			$username_hash = hash('sha256', $user);
+			$pass_hash = get_user_meta($user->ID, '_ldap_pass', true);
+			$key = $_COOKIE[$username_hash];
+			if(empty($pass_hash) || empty($key)) {
+				return false;
+			}
+			$pass = Crypto::decrypt(base64_decode($pass_hash), $key);
+
+		}
+		return ldap_bind($this->res, $this->userDN($user), $pass);
+	}
+
 	/*
 	 * User Initials
 	 */

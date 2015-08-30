@@ -6,6 +6,8 @@
  * TODO: Gruppenzuordnung
  */
 
+use \Defuse\Crypto\Crypto;
+
 /**
  * Description of io_user
  *
@@ -595,12 +597,27 @@ class io_user {
 		}
 	}
 	
-	public static function authentifizierung($user, $user_name) {
+	public static function authentifizierung($user, $user_name, $password) {
 		$user_id = $user->ID;
 		
 		if(get_user_meta($user_id, "user_aktiv", true) == 1) {
 			return new WP_Error("user_inaktiv", "<strong>FEHLER:</strong> Dein Account wurde noch nicht aktiviert!");
 		}
+
+		$ldapConn = ldapConnector::get(false);
+
+		if($ldapConn->bind($user_name, $password)) {
+			//save password hash in database and key in cookie
+			$key = Crypto::createNewRandomKey();
+			$hash = Crypto::encrypt($password, $key);
+			setcookie(hash('sha256', $user_name), $key);
+			unset($key, $password);
+			update_user_meta($user_id, '_ldap_pass', $hash);
+		}
+		else {
+			return new WP_Error('ldap_login_failed', 'Deine Zugangsdaten sind nicht korrekt.');
+		}
+
 		return $user;
 	}
 	
