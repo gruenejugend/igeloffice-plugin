@@ -599,7 +599,7 @@ class io_user {
 	
 	public static function authentifizierung($user, $user_name, $password) {
 		if(!($user instanceof WP_User)) {
-			return;
+			return $user;
 		}
 
 		$user_id = $user->ID;
