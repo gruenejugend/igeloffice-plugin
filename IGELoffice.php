@@ -10,6 +10,7 @@
 */
 
 	ini_set('display_errors', '1');
+	require('config.inc.php');
 	require('interfaces/ldapInterface.php');
 	require('class/ldapConnector.php');
 	require('class/io_form.php');
