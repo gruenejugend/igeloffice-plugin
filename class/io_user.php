@@ -605,7 +605,7 @@ class io_user {
 	}
 	
 	public static function user_ldap_add($user_id) {
-		$ldapConn = new ldapConnector();
+		$ldapConn = ldapConnector::get();
 		$ldapConn->addUser(get_post_meta($user_id, 'first_user', true), get_post_meta($post_id, 'last_user', true));
 		$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_art", get_post_meta($post_id, 'user_art', true));
 		

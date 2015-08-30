@@ -16,7 +16,7 @@ class io_permission {
 		$id = $post->ID;
 		$this->name				= get_tht_title($id);
 		
-		$ldapConn = new ldapConnector();
+		$ldapConn = ldapConnector::get();
 		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
 			$this->system			= $ldapConn->getPermissionAttribute(get_the_title($id), "permission_system");
@@ -128,7 +128,7 @@ class io_permission {
 				return;
 			}
 		
-			$ldapConn = new ldapConnector();
+			$ldapConn = ldapConnector::get();
 			if(get_post_meta($post_id, self::$PREFIX . '_active', true) == null) {
 				$ldapConn->addPermission(get_the_title($post_id));
 				update_post_meta($post_id, self::$PREFIX . '_active', true);
@@ -155,7 +155,7 @@ class io_permission {
 			foreach($_POST[self::$PREFIX . '_berechtigteID'] AS $berechtigte) {
 				//TODO: USER ADD PERMISSION, ABER WIE?
 				//FESTSTELLUNG: NEUE BERECHTIGUNG? ODER ZU LÖSCHENDE BERECHTIGUNGEN?
-				$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . '_berechtigte', get_userdata($berechtigte)->display_name);
+				$ldapConn->addUserPermission(get_the_title($post_id), get_userdata($berechtigte)->display_name);
 			}
 		}
 	}
@@ -163,7 +163,7 @@ class io_permission {
 	public static function delete($post_id) {
 		if(get_post_type($post_id) == self::$POST_TYPE) {
 			//TODO: VALIDIERUNG? SIND NOCH MENSCHEN MITGLIED? SIND NOCH BERECHTIGUNGEN ZUGEORDNET?
-			$ldapConn = new ldapConnector();
+			$ldapConn = ldapConnector::get();
 			$ldapConn->delPermission(get_the_title($post_id));
 		}
 	}

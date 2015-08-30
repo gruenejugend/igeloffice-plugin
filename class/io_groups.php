@@ -5,6 +5,7 @@
  * - Mitgliedschaftsbeantragung übers Frontend (und Zulassung)
  * - Gruppenverwaltung übers Frontend (Mitglieder hinzufügen, entfernen, Leiter*innen verändern, Verteiler ändern, Listen hinzufügen)
  * - Listenerstellung, bei Eintrag
+ * - Gruppe Mitglied einer anderen Gruppe werden
  */
 
 /**
@@ -28,7 +29,7 @@ class io_groups extends io_postlist {
 		$id = $post->ID;
 		$this->name				= get_the_title($id);
 		
-		$ldapConn = new ldapConnector();
+		$ldapConn = ldapConnector::get();
 		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
 			$this->oberkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_oberkategorie');
@@ -202,7 +203,7 @@ class io_groups extends io_postlist {
 				return;
 			}
 			
-			$ldapConn = new ldapConnector();
+			$ldapConn = ldapConnector::get();
 			if(get_post_meta($post_id, self::$PREFIX . '_active', true) == null) {
 				$ldapConn->addGroup(get_the_title($post_id));
 				update_post_meta($post_id, self::$PREFIX . '_active', true);
@@ -273,7 +274,7 @@ class io_groups extends io_postlist {
 			
 			//TODO: PRÜFUNG NAME RICHTIG?
 			foreach($_POST[self::$PREFIX . '_mitgliedschaftenID'] AS $mitglied) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_mitgliedschaften', get_userdata($mitglied)->display_name);
+				$ldapConn->addUserToGroup(get_the_title($post_id), get_userdata($mitglied)->display_name);
 			}
 		}
 	}
@@ -305,7 +306,7 @@ class io_groups extends io_postlist {
 	public static function delete($post_id) {
 		if(get_post_type($post_id) == self::$POST_TYPE) {
 			//TODO: VALIDIERUNG? SIND NOCH MENSCHEN MITGLIED? SIND NOCH BERECHTIGUNGEN ZUGEORDNET?
-			$ldapConn = new ldapConnector();
+			$ldapConn = ldapConnector::get();
 			$ldapConn->delGroup(get_the_title($post_id));
 		}
 	}
