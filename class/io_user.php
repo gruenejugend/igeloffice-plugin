@@ -624,14 +624,14 @@ class io_user {
 	public static function user_ldap_add($user_id) {
 		$ldapConn = ldapConnector::get();
 		$ldapConn->addUser(get_post_meta($user_id, 'first_user', true), get_post_meta($post_id, 'last_user', true));
-		$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_art", get_post_meta($post_id, 'user_art', true));
+		$ldapConn->setUserAttribute(get_userdata($user_id)->user_login, "user_art", get_post_meta($post_id, 'user_art', true));
 		
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe' || get_user_meta($user_id, 'user_art', true) == 'Landesverband') {
-			$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_land", get_post_meta($post_id, 'land', true));
+			$ldapConn->setUserAttribute(get_userdata($user_id)->user_login, "user_land", get_post_meta($post_id, 'land', true));
 		}
 		
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe') {
-			$ldapConn->setUserAttribute(get_userdata($user_id)->display_name, "user_ort", get_post_meta($post_id, 'ort', true));
+			$ldapConn->setUserAttribute(get_userdata($user_id)->user_login, "user_ort", get_post_meta($post_id, 'ort', true));
 		}
 	}
 }

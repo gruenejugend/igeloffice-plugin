@@ -155,7 +155,7 @@ class io_permission extends io_postlist {
 			foreach($_POST[self::$PREFIX . '_berechtigteID'] AS $berechtigte) {
 				//TODO: USER ADD PERMISSION, ABER WIE?
 				//FESTSTELLUNG: NEUE BERECHTIGUNG? ODER ZU LÖSCHENDE BERECHTIGUNGEN?
-				$ldapConn->addUserPermission(get_the_title($post_id), get_userdata($berechtigte)->display_name);
+				$ldapConn->addUserPermission(get_the_title($post_id), get_userdata($berechtigte)->user_login);
 			}
 		}
 	}
