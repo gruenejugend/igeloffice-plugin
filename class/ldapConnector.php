@@ -33,6 +33,7 @@ class ldapConnector implements ldapInterface {
 	}
 			
 	private function __construct() {
+		ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 		$this->res = ldap_connect(LDAP_HOST, LDAP_PORT);
 	}
 	
