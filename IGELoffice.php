@@ -50,7 +50,6 @@
 	add_filter('request',										array('io_groups', 'postlist_orderby'));
 	add_action('restrict_manage_posts',							array('io_groups', 'postlist_filtering'));
 	add_filter('parse_query',									array('io_groups', 'postlist_filtering_sort'));
-	add_filter('post_row_actions',								array('io_groups', 'postlist_options'), 10, 2);
 	add_action('save_post',										array('io_groups', 'save'));
 	add_action('delete_post',									array('io_groups', 'delete'));
 	
@@ -61,7 +60,6 @@
 	add_filter('request',										array('io_permission', 'postlist_orderby'));
 	add_action('restrict_manage_posts',							array('io_permission', 'postlist_filtering'));
 	add_filter('parse_query',									array('io_permission', 'postlist_filtering_sort'));
-	add_filter('post_row_actions',								array('io_permission', 'postlist_options'), 10, 2);
 	add_action('save_post',										array('io_permission', 'save'));
 	add_action('delete_post',									array('io_permission', 'delete'));
 
