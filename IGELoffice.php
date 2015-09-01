@@ -43,7 +43,7 @@
 	add_action('profile_update',								array('io_user', 'user_profile_save'));
 	add_filter('authenticate',									array('io_user', 'authentifizierung'), 30, 3);
 	
-	add_action('add_meta_boxes',								array('io_groups', 'metabox'));
+	/*add_action('add_meta_boxes',								array('io_groups', 'metabox'));
 	add_filter('manage_io_groups_posts_columns',				array('io_groups', 'postlists'));
 	add_filter('manage_io_groups_posts_custom_column',			array('io_groups', 'postlist_column'), 10, 2);
 	add_filter('manage_edit-io_groups_sortable_columns',		array('io_groups', 'postlist_sorting'));
@@ -51,9 +51,9 @@
 	add_action('restrict_manage_posts',							array('io_groups', 'postlist_filtering'));
 	add_filter('parse_query',									array('io_groups', 'postlist_filtering_sort'));
 	add_action('save_post',										array('io_groups', 'save'));
-	add_action('delete_post',									array('io_groups', 'delete'));
+	add_action('delete_post',									array('io_groups', 'delete'));*/
 	
-	/*add_action('add_meta_boxes',								array('io_permission', 'metabox'));
+	add_action('add_meta_boxes',								array('io_permission', 'metabox'));
 	add_filter('manage_io_permission_posts_columns',			array('io_permission', 'postlists'));
 	add_filter('manage_io_permission_posts_custom_column',		array('io_permission', 'postlist_column'), 10, 2);
 	add_filter('manage_edit-io_permission_sortable_columns',	array('io_permission', 'postlist_sorting'));
