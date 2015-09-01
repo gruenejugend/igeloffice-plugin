@@ -98,6 +98,7 @@ class io_postlist {
 			
 			return $vars;
 		}
+		return $vars;
 	}
 	
 	/**
