@@ -1,7 +1,4 @@
 <?php
-
-use \Defuse\Crypto\Crypto;
-
 /**
  * TODO: FRAGESTELLUNG, WAS PASSIERT BEI SET? WAS, WENN ATTRIBUTE ENTFERNT WERDEN? WAS, WENN HINZUGEFÜGT? WAS, WENN NUR GEÄNDERT?
  */
@@ -91,7 +88,7 @@ class ldapConnector implements ldapInterface {
 	
 	
 	public function addGroup($group) {
-		if(ldap_add($this->res, 'cn='.$group.','.LDAP_GROUP_BASE, array(
+		if(ldap_add($this->res, $this->groupDN($group), array(
 			'cn' => $group,
 			'objectClass' => 'groupOfNames'
 		))) {

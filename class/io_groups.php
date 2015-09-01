@@ -282,7 +282,7 @@ class io_groups extends io_postlist {
 	public static function errorMessageVerteiler() {
 		?>
 		
-	<div class="error"
+	<div class="error">
 		<p>Fehler: Die eingebe Verteiler-Adresse ist ungültig.</p>
 	</div>	
 		 
@@ -294,7 +294,7 @@ class io_groups extends io_postlist {
 	public static function errorMessageListen() {
 		?>
 		
-	<div class="error"
+	<div class="error">
 		<p>Fehler: Eine der eingegebenen Listen war ungültig.</p>
 	</div>	
 		 
@@ -347,6 +347,8 @@ class io_groups extends io_postlist {
 				$return[$oberkategorie->oberkategorie] = get_option("io_grp_ok_" . $oberkategorie->oberkategorie);
 			}
 		}
+
+		return $return;
 	}
 	
 	public static function getUnterkategorie() {
@@ -363,6 +365,8 @@ class io_groups extends io_postlist {
 				$return[$unterkategorie->oberkategorie][$unterkategorie->unterkategorie] = get_option("io_grp_uk_" . $unterkategorie->oberkategorie);
 			}
 		}
+
+		return $return;
 	}
 	
 	/*****************************************************

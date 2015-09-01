@@ -6,8 +6,6 @@
  * TODO: Gruppenzuordnung
  */
 
-use \Defuse\Crypto\Crypto;
-
 /**
  * Description of io_user
  *
