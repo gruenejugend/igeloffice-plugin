@@ -563,7 +563,7 @@ class io_user {
 		
 		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 			update_user_meta($user_id, "user_aktiv", 0);
-			user_ldap_add($user_id);
+			self::user_ldap_add($user_id);
 		}
 ?>
 
@@ -591,7 +591,7 @@ class io_user {
 	public static function user_profile_save($user_id) {
 		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 			update_user_meta($user_id, "user_aktiv", 0);
-			user_ldap_add($user_id);
+			self::user_ldap_add($user_id);
 		}
 	}
 	
