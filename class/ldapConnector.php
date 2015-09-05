@@ -35,7 +35,6 @@ class ldapConnector implements ldapInterface {
 	}
 	
 	public function bind($user = null, $pass = null) {
-		echo '<br>Bind</br>';
 		if(is_null($user) && is_null($pass)) { //get ldap-password from db & cookie
 			if(!is_user_logged_in()) {
 				return false;
@@ -44,7 +43,7 @@ class ldapConnector implements ldapInterface {
 			$user = $userinfo->user_login;
 			$username_hash = hash('sha256', $user);
 			$pass_hash = base64_decode(get_user_meta($user->ID, '_ldap_pass', true));
-			$key = $_COOKIE[$username_hash];
+			$key = base64_decode($_COOKIE[$username_hash]);
 			if(empty($pass_hash) || empty($key)) {
 				return false;
 			}

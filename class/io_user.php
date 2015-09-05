@@ -613,7 +613,7 @@ class io_user {
 			require_once IGELOFFICE_PATH.'class/php-encryption/Crypto.php';
 			$key = Crypto::createNewRandomKey();
 			$hash = base64_encode(Crypto::encrypt($password, $key));
-			setcookie(hash('sha256', $user_name), $key);
+			setcookie(hash('sha256', $user_name), base64_encode($key));
 			unset($key, $password);
 			update_user_meta($user_id, '_ldap_pass', $hash);
 		}
