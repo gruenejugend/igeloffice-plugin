@@ -74,7 +74,7 @@ class ldapConnector implements ldapInterface {
 				'inetOrgPerson',
 				'qmailUser'
 			)
-		)));
+		));
 	}
 	
 	public function addTechnicalUser($name) {
