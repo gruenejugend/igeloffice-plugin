@@ -626,7 +626,10 @@ class io_user {
 	
 	public static function user_ldap_add($user_id) {
 		$ldapConn = ldapConnector::get();
-		$ldapConn->addUser(get_user_meta($user_id, 'first_name', true), get_user_meta($user_id, 'last_name', true));
+		$user = get_userdata($user_id);
+		if(is_wp_error($ldapConn->addUser($user->first_name, $user->last_name, $user->user_email))) {
+			return false;
+		}
 		$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_art", get_user_meta($user_id, 'user_art', true));
 		
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe' || get_user_meta($user_id, 'user_art', true) == 'Landesverband') {

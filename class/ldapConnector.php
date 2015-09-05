@@ -58,11 +58,9 @@ class ldapConnector implements ldapInterface {
 	/*
 	 * User Initials
 	 */
-	public function addUser($firstname, $surname) {
-		$mail = get_userdata(get_current_user_id());
-		$mail = $mail->user_email;
-		if(empty($mail)) {
-			return false;
+	public function addUser($firstname, $surname, $mail) {
+		if(empty($firstname) || empty($surname) || empty($mail)) {
+			return new WP_Error('ldap_add_user_nodata', 'Der User benötigt einen Vornamen, Nachnamen und eine gültige E-Mail-Adresse.');
 		}
 		return ldap_add($this->res, $this->userDN($firstname.' '.$surname), array(
 			'cn' => $firstname.' '.$surname,
