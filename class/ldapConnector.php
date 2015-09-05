@@ -59,19 +59,22 @@ class ldapConnector implements ldapInterface {
 	 * User Initials
 	 */
 	public function addUser($firstname, $surname) {
-		if(ldap_add($this->res, $this->userDN($firstname.' '.$surname), array(
+		$mail = get_userdata(get_current_user_id());
+		$mail->user_email;
+		if(empty($mail)) {
+			return false;
+		}
+		return ldap_add($this->res, $this->userDN($firstname.' '.$surname), array(
 			'cn' => $firstname.' '.$surname,
 			'sn' => $surname,
+			'mail' => $mail,
 			'objectClass' => array(
 				'top',
 				'person',
 				'inetOrgPerson',
 				'qmailUser'
 			)
-		))) {
-			return true;
-		}
-		return false;
+		)));
 	}
 	
 	public function addTechnicalUser($name) {
