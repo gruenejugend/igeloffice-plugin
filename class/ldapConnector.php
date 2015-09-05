@@ -39,10 +39,11 @@ class ldapConnector implements ldapInterface {
 			if(!is_user_logged_in()) {
 				return false;
 			}
-			$userinfo = get_userdata(get_current_user_id());
+			$user_id = get_current_user_id();
+			$userinfo = get_userdata($user_id);
 			$user = $userinfo->user_login;
 			$username_hash = hash('sha256', $user);
-			$pass_hash = base64_decode(get_user_meta($userinfo->ID, '_ldap_pass', true));
+			$pass_hash = base64_decode(get_user_meta($user_id, '_ldap_pass', true));
 			$key = base64_decode($_COOKIE[$username_hash]);
 			if(empty($pass_hash) || empty($key)) {
 				return false;
