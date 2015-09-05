@@ -612,7 +612,7 @@ class io_user {
 			//save password hash in database and key in cookie
 			require_once IGELOFFICE_PATH.'class/php-encryption/Crypto.php';
 			$key = Crypto::createNewRandomKey();
-			$hash = Crypto::encrypt($password, $key);
+			$hash = base64_encode(Crypto::encrypt($password, $key));
 			setcookie(hash('sha256', $user_name), $key);
 			unset($key, $password);
 			update_user_meta($user_id, '_ldap_pass', $hash);
