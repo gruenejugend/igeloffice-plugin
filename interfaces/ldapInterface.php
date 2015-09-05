@@ -9,7 +9,7 @@ interface ldapInterface {
 	 * User Initials
 	 */
 	//Füge User hinzu
-	function addUser($firstname, $surname);
+	function addUser($firstname, $surname, $mail);
 	//Füge technischen User hinzu
 	function addTechnicalUser($name);
 	//Lösche User
