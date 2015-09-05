@@ -60,7 +60,7 @@ class ldapConnector implements ldapInterface {
 	 */
 	public function addUser($firstname, $surname) {
 		$mail = get_userdata(get_current_user_id());
-		$mail->user_email;
+		$mail = $mail->user_email;
 		if(empty($mail)) {
 			return false;
 		}
