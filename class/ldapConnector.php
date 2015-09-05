@@ -63,6 +63,8 @@ class ldapConnector implements ldapInterface {
 			'cn' => $firstname.' '.$surname,
 			'sn' => $surname,
 			'objectClass' => array(
+				'top',
+				'person',
 				'inetOrgPerson',
 				'qmailUser'
 			)
