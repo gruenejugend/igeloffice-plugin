@@ -29,6 +29,7 @@
 	add_action('register_form',									array('io_user', 'register_form'));
 	add_action('user_new_form',									array('io_user', 'new_user_form'));
     add_filter('registration_errors',							array('io_user', 'register_error'), 10, 3);
+	add_filter('wp_login_errors',								array('io_user', 'user_register_msg'), 10, 2);
     add_action('user_register',									array('io_user', 'user_register'));
 	
 	add_filter('manage_users_columns',							array('io_user', 'user_column'));
@@ -41,7 +42,7 @@
 	add_action('show_user_profile',								array('io_user', 'user_profile'));
 	add_action('edit_user_profile',								array('io_user', 'user_profile'));
 	add_action('profile_update',								array('io_user', 'user_profile_save'));
-	add_filter('authenticate',									array('io_user', 'authentifizierung'), 30, 3);
+	add_filter('authenticate',									array('io_user', 'authentifizierung'), 10, 3);
 	
 	add_action('add_meta_boxes',								array('io_groups', 'metabox'));
 	add_filter('manage_io_groups_posts_columns',				array('io_groups', 'postlists'));
@@ -62,5 +63,11 @@
 	add_filter('parse_query',									array('io_permission', 'postlist_filtering_sort'));
 	add_action('save_post',										array('io_permission', 'save'));
 	add_action('delete_post',									array('io_permission', 'delete'));
+	
+	if (!function_exists('wp_new_user_notification')) {
+		function wp_new_user_notification($user_id, $notify = '') {
+			return;
+		}
+	}
 
 ?>

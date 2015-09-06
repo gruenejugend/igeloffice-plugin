@@ -477,6 +477,19 @@ class io_user {
 		}
 	}
 	
+	function user_register_msg($errors, $redirect_to) {
+		if(isset( $errors->errors['registered'])) {
+			$needle = __('Registrierung vollständig. Bitte schau in dein E-Mail-Postfach.');
+			foreach( $errors->errors['registered'] as $index => $msg ) {
+				if( $msg === $needle ) {
+					$errors->errors['registered'][$index] = 'Registrierung vollständig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
+				}
+			}
+		}
+
+		return $errors;
+	}
+	
 	/***********************************************************
 	 ***********************  User List  ***********************
 	 ***********************************************************/
@@ -565,6 +578,9 @@ class io_user {
 			update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
+		
+		wp_enqueue_script('jqueryIO');
+		wp_nonce_field('io_users', 'io_users_nonce');
 ?>
 
 <table class="form-table">
@@ -582,6 +598,17 @@ class io_user {
 	</tr>
 </table>
 
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function() { 
+		$("#first_name").prop('readonly', 'true');
+		$("#last_name").prop('readonly', 'true');
+		$(".user-nickname-wrap").hide();
+		$(".user-display-name-wrap").hide();
+		$(".user-url-wrap").hide();
+		$(".user-description-wrap").hide();
+	});
+</script>
+
 <?php
 	}
 	
@@ -590,12 +617,22 @@ class io_user {
 	 */
 	public static function user_profile_save($user_id) {
 		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0) {
+			if( !isset($_POST['io_users_nonce']) || 
+				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
+			
 			update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
 	}
 	
 	public static function authentifizierung($user, $user_name, $password) {
+		if($user_name == '' || $password == '') {
+			return;
+		}
+		
 		if(!($user instanceof WP_User)) {
 			return $user;
 		}
@@ -620,6 +657,8 @@ class io_user {
 		elseif($user_name != null) {
 			return new WP_Error('ldap_login_failed', 'Deine Zugangsdaten sind nicht korrekt.');
 		}
+		
+		remove_action('authenticate', 'wp_authenticate_username_password', 20);
 
 		return $user;
 	}

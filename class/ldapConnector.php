@@ -213,6 +213,10 @@ class ldapConnector implements ldapInterface {
 	public function isQualified($user, $permission) {
 		
 	}
+	
+	public function isLDAPUser($user) {
+		
+	}
 
 	//TODO: Array bei Value
 	public function setGroupAttribute($group, $attribute, $value) {
