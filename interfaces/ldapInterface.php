@@ -44,8 +44,8 @@ interface ldapInterface {
 	function addGroup($group);
 	//Lösche eine Gruppe
 	function delGroup($group);
-	//Füge Gruppe einen User hinzu
-	function addUserToGroup($user, $group);
+	//Ersetze alle Gruppenmitglieder
+	function addUsersToGroup($user, $group);
 	//Lösche User aus einer Gruppe
 	function delUserToGroup($user, $group);
 	//Füge Gruppe einer Gruppe hinzu
