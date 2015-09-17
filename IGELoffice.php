@@ -64,6 +64,15 @@
 	add_action('save_post',										array('io_permission', 'save'));
 	add_action('delete_post',									array('io_permission', 'delete'));
 	
+	add_action('add_meta_boxes',								array('io_request', 'metabox'));
+	add_filter('manage_io_request_posts_columns',				array('io_request', 'postlists'));
+	add_filter('manage_io_request_posts_custom_column',			array('io_request', 'postlist_column'), 10, 2);
+	add_filter('manage_edit-io_request_sortable_columns',		array('io_request', 'postlist_sorting'));
+	add_filter('request',										array('io_request', 'postlist_orderby'));
+	add_action('restrict_manage_posts',							array('io_request', 'postlist_filtering'));
+	add_filter('parse_query',									array('io_request', 'postlist_filtering_sort'));
+	add_action('admin_menu',									array('io_request', 'menu'));
+	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {
 			return;

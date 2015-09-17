@@ -664,6 +664,10 @@ class io_user {
 	}
 	
 	public static function user_ldap_add($user_id) {
+		/*
+		 * TODO: Passwort erstelle und versenden
+		 */
+		
 		$ldapConn = ldapConnector::get();
 		$user = get_userdata($user_id);
 		if(is_wp_error($ldapConn->addUser($user->first_name, $user->last_name, $user->user_email))) {

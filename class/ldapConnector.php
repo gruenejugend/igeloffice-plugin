@@ -1,6 +1,7 @@
 <?php
 /**
  * TODO: FRAGESTELLUNG, WAS PASSIERT BEI SET? WAS, WENN ATTRIBUTE ENTFERNT WERDEN? WAS, WENN HINZUGEFÜGT? WAS, WENN NUR GEÄNDERT?
+ * TODO: Permissions werden nicht in LDAP erstellt
  */
 
 
@@ -281,6 +282,11 @@ class ldapConnector {
 	 */
 	private function getGroupAttribute($group, $attribute) {
 		return $this->getAttribute($this->groupDN($group), 'objectClass=groupOfNames', $attribute);
+	}
+	
+	//TODO!
+	private function getGroupPermissions($group) {
+		
 	}
 
 	/**

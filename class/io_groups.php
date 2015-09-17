@@ -23,6 +23,9 @@ class io_groups extends io_postlist {
 	private $listen;
 	private $mitgliedschaften;
 	private $mitgliedschaftenID;
+	private $berechtigungen;
+	private $berechtigungenID;
+	
 	private $ldapConn;
 	
 	public function __construct($post) {
@@ -38,6 +41,7 @@ class io_groups extends io_postlist {
 			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_verteiler');
 			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_listen');
 			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_mitgliedschaft');
+			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
 			$this->leiter_innenID = array();
 			foreach($this->leiter_innen AS $leiter_in) {
@@ -46,10 +50,12 @@ class io_groups extends io_postlist {
 					'meta_value'	=> $leiter_in
 				));
 				
-				$user = (isset($users[0]) ? $user[0] : false);
+				$user = (isset($users[0]) ? $users[0] : false);
 				$user_id = ($user ? $user->ID : false);
 				
-				array_push($this->leiter_innenID, $user_id);
+				if ($user_id) {
+					array_push($this->leiter_innenID, $user_id);
+				}
 			}
 			
 			$this->mitgliedschaftenID = array();
@@ -59,10 +65,26 @@ class io_groups extends io_postlist {
 					'meta_value'	=> $mitglied
 				));
 				
-				$user = (isset($users[0]) ? $user[0] : false);
+				$user = (isset($users[0]) ? $users[0] : false);
 				$user_id = ($user ? $user->ID : false);
 				
-				array_push($this->mitgliedschaftenID, $user_id);
+				if ($user_id) {
+					array_push($this->mitgliedschaftenID, $user_id);
+				}
+			}
+			
+			$this->berechtigungenID = array();
+			foreach($this->berechtigungen AS $berechtigung) {
+				$posts = get_posts(array(
+					'post_title'	=> $berechtigung
+				));
+				
+				$post = (isset($posts[0]) ? $posts[0] : false);
+				$post_id = ($post ? $post->ID : false);
+				
+				if ($user_id) {
+					array_push($this->berechtigungenID, $post_id);
+				}
 			}
 		}
 	}
@@ -87,6 +109,8 @@ class io_groups extends io_postlist {
 				return $this->mitgliedschaften;
 			case 'mitgliedschaftenID':
 				return $this->mitgliedschaftenID;
+			case 'berechtigungen':
+				return $this->berechtigungen;
 		};
 	}
 	
@@ -108,31 +132,36 @@ class io_groups extends io_postlist {
 		));
 		
 		wp_nonce_field('io_groups', 'io_groups_nonce');
+			
+		$users = get_users(array(
+			'meta_key'		=> 'user_aktiv',
+			'meta_value'	=> 0
+		));
 		
-		?>		<tr>
-			<td>Leiter*in:</td>
-			<td><?php
-				
-				wp_dropdown_users(array(
-					'orderby'		=> 'display_name',
-					'multi'			=> true,
-					'selected'		=> $io_groups->leiter_innenID,
-					'name'			=> self::$PREFIX . '_leiter_innenID'
-				));
-				
-				?></td>
-		</tr>
-<?php
+		$values = array();
+		foreach($users AS $user) {
+			$values[$user->ID] = $user->first_name . ' ' . $user->last_name;
+		}
+		
+		$form->td_select(array(
+			'beschreibung'	=> 'Leiter*in:',
+			'name'			=> 'leiter_innenID',
+			'values'		=> $values,
+			'multiple'		=> true,
+			'selected'		=> $io_groups->leiter_innenID,
+			'size'			=> 10,
+			'first'			=> true
+		));
 
 		$form->td_text(array(
 			'beschreibung'			=> 'Oberkategorie Text:',
-			'name'					=> self::$PREFIX . '_oberkategorieTXT',
+			'name'					=> 'oberkategorieTXT',
 			'size'					=> 30
 		));
 		
 		$form->td_select(array(
 			'beschreibung'			=> '-- oder --<br>Oberkategorie Auswahl:',
-			'name'					=> self::$PREFIX . '_oberkategorieSEL',
+			'name'					=> 'oberkategorieSEL',
 			'values'				=> self::getOberkategorie(),
 			'selected'				=> $io_groups->oberkategorie,
 			'first'					=> true
@@ -140,13 +169,13 @@ class io_groups extends io_postlist {
 		
 		$form->td_text(array(
 			'beschreibung'			=> 'Unterkategorie Text:',
-			'name'					=> self::$PREFIX . '_unterkategorieTXT',
+			'name'					=> 'unterkategorieTXT',
 			'size'					=> 30
 		));
 
 		$form->td_select(array(
 			'beschreibung'			=> '-- oder --<br>Unterkategorie Auswahl:',
-			'name'					=> self::$PREFIX . '_unterkategorieSEL',
+			'name'					=> 'unterkategorieSEL',
 			'values'				=> self::getUnterkategorie(),
 			'selected'				=> $io_groups->unterkategorie,
 			'optgroup'				=> true,
@@ -155,7 +184,7 @@ class io_groups extends io_postlist {
 		
 		$form->td_text(array(
 			'beschreibung'			=> 'Gruppen Verteiler:',
-			'name'					=> self::$PREFIX . '_verteiler',
+			'name'					=> 'verteiler',
 			'size'					=> 30,
 			'value'					=> $io_groups->verteiler,
 			'checking'				=> 'Mail'
@@ -164,26 +193,32 @@ class io_groups extends io_postlist {
 		$form->td_textarea(array(
 			'anzeige'				=> 'neben',
 			'beschreibung'			=> 'Mailinglisten der Gruppe:',
-			'name'					=> self::$PREFIX . '_listen',
+			'name'					=> 'listen',
 			'cols'					=> 40,
 			'rows'					=> 5,
 			'value'					=> $io_groups->listen
 		));
 		
-		?>		<tr>
-			<td>Mitglieder:</td>
-			<td><?php
-				
-				wp_dropdown_users(array(
-					'orderby'		=> 'display_name',
-					'multi'			=> true,
-					'selected'		=> $io_groups->mitgliedschaftenID,
-					'name'			=> self::$PREFIX . '_mitgliedschaftenID'
-				));
-				
-				?></td>
-		</tr>
-<?php
+		$form->td_select(array(
+			'beschreibung'	=> 'Mitglieder:',
+			'name'			=> 'mitgliedschaftenID',
+			'values'		=> $values,
+			'multiple'		=> true,
+			'selected'		=> $io_groups->mitgliedschaftenID,
+			'size'			=> 10,
+			'first'			=> true
+		));
+		
+		$form->td_select(array(
+			'beschreibung'	=> 'Berechtigungen:',
+			'name'			=> 'berechtigungen',
+			'values'		=> io_permission::getValues(),
+			'opt_group'		=> true,
+			'multiple'		=> true,
+			'selected'		=> $io_groups->mitgliedschaftenID,
+			'size'			=> 10,
+			'first'			=> true
+		));
 		
 		io_form::jsHead();
 		io_form::jsScript();
@@ -245,6 +280,8 @@ class io_groups extends io_postlist {
 			}
 			
 			//TODO: PRÜFUNG NAME RICHTIG?
+			//TODO: PRÜFUNG OB LEITER ENTZOGEN
+			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_leiter_innenID'] AS $leiter_in) {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_leiter_in', get_userdata($leiter_in)->user_login);
 			}
@@ -273,6 +310,8 @@ class io_groups extends io_postlist {
 			}
 			
 			//TODO: PRÜFUNG NAME RICHTIG?
+			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
+			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_mitgliedschaftenID'] AS $mitglied) {
 				$ldapConn->addUserToGroup(get_the_title($post_id), get_userdata($mitglied)->user_login);
 			}
@@ -401,7 +440,7 @@ class io_groups extends io_postlist {
 	 * Register Posttype Groups
 	 */
 	public static function register() {
-		parent::register_pt(self::$POST_TYPE, "Gruppe", "Gruppen", "Gruppen", "gruppen");
+		parent::register_pt(self::$POST_TYPE, "Gruppe", "Gruppen", "io_groups", "gruppen");
 	}
 	
 	/**

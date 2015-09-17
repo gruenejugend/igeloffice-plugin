@@ -14,7 +14,7 @@ class io_permission extends io_postlist {
 	
 	public function __construct($post) {
 		$id = $post->ID;
-		$this->name				= get_tht_title($id);
+		$this->name				= get_the_title($id);
 		
 		$ldapConn = ldapConnector::get();
 		
@@ -72,20 +72,20 @@ class io_permission extends io_postlist {
 		
 		$form->td_text(array(
 			'beschreibung'	=> 'System:',
-			'name'			=> self::$PREFIX . '_system',
+			'name'			=> 'system',
 			'size'			=> 20,
-			'value'			=> $this->system
+			'value'			=> $io_permission->system
 		));
 		
 		$form->td_text(array(
 			'beschreibung'	=> 'Kategorie Text:',
-			'name'			=> self::$PREFIX . '_kategorieTXT',
+			'name'			=> 'kategorieTXT',
 			'size'			=> 20
 		));
 		
 		$form->td_select(array(
 			'beschreibung'			=> '-- oder --<br>Kategorie Auswahl:',
-			'name'					=> self::$PREFIX . '_KategorieSEL',
+			'name'					=> 'KategorieSEL',
 			'values'				=> self::getKategorie(),
 			'selected'				=> $io_permission->Kategorie,
 			'optgroup'				=> true,
@@ -93,22 +93,26 @@ class io_permission extends io_postlist {
 			'first'					=> true
 		));
 		
-		//SELECT
+		$users = get_users(array(
+			'meta_key'		=> 'user_aktiv',
+			'meta_value'	=> 0
+		));
 		
-		?>		<tr>
-			<td>Berechtigte Mitglieder:</td>
-			<td><?php
-				
-				wp_dropdown_users(array(
-					'orderby'		=> 'display_name',
-					'multi'			=> true,
-					'selected'		=> $io_permission->berechtigteID,
-					'name'			=> self::$PREFIX . '_berechtigteID'
-				));
-				
-				?></td>
-		</tr>
-<?php
+		$values = array();
+		foreach($users AS $user) {
+			$values[$user->ID] = $user->first_name . ' ' . $user->last_name;
+		}
+		
+		//SELECT
+		$form->td_select(array(
+			'beschreibung'	=> 'Mitglieder:',
+			'name'			=> 'berechtigteID',
+			'values'		=> $values,
+			'multiple'		=> true,
+			'selected'		=> $io_permission->berechtigteID,
+			'size'			=> 10,
+			'first'			=> true
+		));
 		
 		io_form::jsHead();
 		io_form::jsScript();
@@ -137,7 +141,9 @@ class io_permission extends io_postlist {
 			$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . '_system', sanitize_text_field($_POST[self::$PREFIX . '_system']));
 			
 			function checkKat($name) {
-				add_option('io_per_' . $artK . '_' . utf8_encode($name), $name);
+				if(!get_option('io_per_' . utf8_encode($name), false)) {
+					add_option('io_per_' . utf8_encode($name), $name);
+				}
 			}
 
 			if($_POST[self::$PREFIX . '_KategorieTXT'] == "" && $_POST[self::$PREFIX . '_KategorieSEL'] == 0) {
@@ -145,13 +151,14 @@ class io_permission extends io_postlist {
 				checkKat("Nicht Kategorisiert");
 			} elseif($_POST[self::$PREFIX . '_KategorieTXT'] != "") {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_Kategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT'])));
-				checkKat("Kategorie", sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT']));
+				checkKat(sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT']));
 			} elseif($_POST[self::$PREFIX . '_KategorieTXT'] == "" && $_POST[self::$PREFIX . '_KategorieSEL'] != 0 && get_option('io_per_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL'])), false)) {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_Kategorie', sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL']));
 			} elseif(!get_option('io_per_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL'])), false)) {
 				//FEHLER
 			}
 			
+			//TODO! PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_berechtigteID'] AS $berechtigte) {
 				//TODO: USER ADD PERMISSION, ABER WIE?
 				//FESTSTELLUNG: NEUE BERECHTIGUNG? ODER ZU LÖSCHENDE BERECHTIGUNGEN?
@@ -179,7 +186,9 @@ class io_permission extends io_postlist {
 		
 		$return = array();
 		foreach($posts AS $post) {
-			$return[$post->ID] = $post->post_title;
+			$io_permission = new io_permission($post);
+			
+			$return[$io_permission->kategorie][$post->ID] = $post->post_title;
 		}
 		
 		return $return;
@@ -232,7 +241,7 @@ class io_permission extends io_postlist {
 	 * Register Posttype Permissions
 	 */
 	public static function register() {
-		parent::register_pt(self::$POST_TYPE, "Berechtigung", "Berechtigungen", "Berechtigungen", "berechtigung");
+		parent::register_pt(self::$POST_TYPE, "Berechtigung", "Berechtigungen", "io_permission", "berechtigung");
 	}
 	
 	/**
