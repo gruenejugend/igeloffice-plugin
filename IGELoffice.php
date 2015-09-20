@@ -19,6 +19,7 @@
 	require('class/io_permission.php');
 	require('class/io_request.php');
 	require('class/io_user.php');
+	require('class/permissions/io_mailing.php');
 	require('functions/register.php');
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
@@ -72,6 +73,9 @@
 	add_action('restrict_manage_posts',							array('io_request', 'postlist_filtering'));
 	add_filter('parse_query',									array('io_request', 'postlist_filtering_sort'));
 	add_action('admin_menu',									array('io_request', 'menu'));
+	
+	//Permission Shortcodes
+	add_shortcode('io_mail',									array('io_mailing', 'mask'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {
