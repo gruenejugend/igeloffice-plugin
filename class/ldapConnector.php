@@ -104,6 +104,7 @@ class ldapConnector {
 			'cn' => $firstname.' '.$surname,
 			'sn' => $surname,
 			'mail' => $mail,
+			'mailAlternate' => $mail,
 			'objectClass' => array(
 				'top',
 				'person',
@@ -172,12 +173,7 @@ class ldapConnector {
 	 * @return array            values for this attribute and "count" of values
 	 */
 	private function getUserAttribute($user, $attribute) {
-		return $this->getAttribute($this->userDN($user), '(objectClass=inetOrgPerson)', $attribute);
-	}
-	
-	//TODO: Returncodes, wenn user nicht vorhanden, wenn Mail nicht stimmt, wenn Mail vorhanden aber User stimmt nicht
-	private function getUserExists($user, $mail) {
-		
+		return $this->getAttribute($this->userDN($user), $attribute);
 	}
 
 	/**
@@ -186,19 +182,7 @@ class ldapConnector {
 	 * @return boolean       yes or no
 	 */
 	private function isLDAPUser($user) {	
-		$serach = ldap_search($this->res, LDAP_USER_BASE, '(cn='.$user.')');
-		if($search === false) {
-			return $this->error();
-		}
-		if(ldap_count_entries($this->res, $search)	> 0) {
-			return true;
-		}
-		return false;
-	}
-	
-	//TODO
-	private function isServerDomain($domain) {
-		
+		return $this->DNexists($this->userDN($user));
 	}
 
 	/**
@@ -291,12 +275,12 @@ class ldapConnector {
 	 * @return array            values for attribute and value "count"
 	 */
 	private function getGroupAttribute($group, $attribute) {
-		return $this->getAttribute($this->groupDN($group), 'objectClass=groupOfNames', $attribute);
+		return $this->getAttribute($this->groupDN($group), $attribute);
 	}
 	
 	//TODO
 	private function getAllGroupMembers($group) {
-		
+		return $this->getCNList($this->groupDN($group), 'member');
 	}
 	
 	//TODO
@@ -306,12 +290,12 @@ class ldapConnector {
 	
 	//TODO
 	private function getAllGroupLeaders($group) {
-		
+		return $this->getCNList($this->groupDN($group), 'owner');
 	}
 	
 	//TODO!
 	private function getGroupPermissions($group) {
-		
+		return $this->getMemberOfList($this->groupDN($group), 'permissions');
 	}
 
 	/**
@@ -383,46 +367,52 @@ class ldapConnector {
 		return true;
 	}
 
-
-
-
-
-
 	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
-	public function getUserAllPermissions($user) {
-		
+	private function getUserPermissions($user) {
+		return $this->getMemberOfList($this->userDN($user), 'permissions');
 	}
 	
-	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
-	public function getPermissionAttribute($permission, $attribute) {
-		
+	private function getPermissionAttribute($permission, $attribute) {
+		return $this->getAttribute($this->permissionDN($permission), $attribute);
 	}
 	
-	public function getPermissionedUser($permission) {
-		
+	private function getPermissionedUser($permission) {
+		return $this->getCNList($this->permissionDN($permission), 'member', 'users');
 	}
 
-	public function getUserGroups($user) {
-		
+	private function getUserGroups($user) {
+		return $this->getMemberOfList($this->userDN($user), 'groups');
 	}
 
-	public function getUserPermissions($user) {
-		
+	private function getUserPermissions($user) {
+		return $this->getMemberOfList($this->userDN($user), 'permissions');
 	}
 
-	public function isQualified($user, $permission) {
-		
+	private function isQualified($user, $permission) {
+		$members = $this->getAttribute($this->permissionDN($permission), 'member');
+		$user = $this->userDN($user);
+		foreach($members as $member) {
+			if($member == $user) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 
 
 	//TODO: Array bei Value
-	public function setGroupAttribute($group, $attribute, $value) {
+	private function setGroupAttribute($group, $attribute, $value) {
 		
 	}
 	
-	public function setPermissionAttribute($permissions, $attribute, $value) {
+	private function setPermissionAttribute($permissions, $attribute, $value) {
 		
+	}
+
+	//TODO
+	private function isServerDomain($domain) {
+		return $this->DNexists($this->domainDN($domain));
 	}
 
 
@@ -471,8 +461,12 @@ class ldapConnector {
 		return 'cn='.$permission.','.LDAP_PERMISSION_BASE;
 	}
 
-	private function getAttribute($dn, $filter, $attribute) {
-		$read = ldap_read($this->res, $dn, $filter, array($attribute));
+	private function domainDN($domain) {
+		return 'cn='.$domain.','.LDAP_DOMAIN_BASE;
+	}
+
+	private function getAttribute($dn, $attribute) {
+		$read = ldap_read($this->res, $dn, '(objectclass=*)', array($attribute));
 		if($read === false) {
 			return $this->error();
 		}
@@ -485,6 +479,62 @@ class ldapConnector {
 			return $this->error();
 		}
 		return $data[$attribute];
+	}
+
+	private function getCNList($dn, $attribute, $ou = '*') {
+		$data = $this->getAttribute($dn, $attribute, $ou);
+		return $this->DNtoCN($data);
+	}
+
+	private function DNtoCN($dns, $ou = '*') {
+		if(!is_array($dns)) {
+			$dns = array($dns);
+		}
+		return array_map(function($dn) {
+			$dn = ldap_explode_dn($dn, 1);
+			if($ou == '*' || $dn[1] == $ou) {
+				return $dn[0];
+			}
+		}, $dns);
+	}
+
+	private function getMemberOfList($dn, $ou = '*') {
+		$data = $this->getAttribute($dn, 'memberOf');
+		$return = array();
+		foreach($data as $dat) {
+			$dat = ldap_explode_dn($dat, 1);
+			if($ou == '*' || $dat[1] == $ou) {
+				$return[] = $dat[0];
+			}
+		}
+		return $dat;
+	}
+
+	private function search($base, $filter) {
+		$serach = ldap_search($this->res, $base, $filter);
+		if($search === false) {
+			return $this->error();
+		}
+		if(ldap_count_entries($this->res, $search)	> 0) {
+			return $search;
+		}
+		return false;
+	}
+
+	private function searchCN($base, $cn) {
+		return $this->search($base, '(cn='.$cn.')');
+	}
+
+	private function DNexists($dn) {
+		$read = ldap_read($this->res, $dn, '(objectclass=*)', array());
+		if($read === false) {
+			return $this->error();
+		}
+		$count = ldap_count_entries($read);
+		if($count !== false || $count > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
