@@ -284,6 +284,16 @@ class ldapConnector {
 		return $this->getAttribute($this->groupDN($group), 'objectClass=groupOfNames', $attribute);
 	}
 	
+	//TODO
+	private function getAllGroupMembers($group) {
+		
+	}
+	
+	//TODO
+	private function getAllGroupLeaders($group) {
+		
+	}
+	
 	//TODO!
 	private function getGroupPermissions($group) {
 		

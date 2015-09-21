@@ -23,6 +23,8 @@ class io_groups extends io_postlist {
 	private $listen;
 	private $mitgliedschaften;
 	private $mitgliedschaftenID;
+	private $groups;
+	private $groupsID;
 	private $berechtigungen;
 	private $berechtigungenID;
 	
@@ -41,6 +43,7 @@ class io_groups extends io_postlist {
 			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_verteiler');
 			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_listen');
 			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_mitgliedschaft');
+			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_gruppen');
 			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
 			$this->leiter_innenID = array();
@@ -70,6 +73,21 @@ class io_groups extends io_postlist {
 				
 				if ($user_id) {
 					array_push($this->mitgliedschaftenID, $user_id);
+				}
+			}
+			
+			$this->groupsID = array();
+			foreach ($this->groups AS $gruppe) {
+				$gruppen = get_users(array(
+					'meta_key'		=> 'display_name',
+					'meta_value'	=> $gruppe
+				));
+				
+				$group = (isset($gruppen[0]) ? $gruppen[0] : false);
+				$group_id = ($group ? $group->ID : false);
+				
+				if($group_id) {
+					array_push($this->groupsID, $group_id);
 				}
 			}
 			
@@ -205,8 +223,17 @@ class io_groups extends io_postlist {
 			'values'		=> $values,
 			'multiple'		=> true,
 			'selected'		=> $io_groups->mitgliedschaftenID,
-			'size'			=> 10,
-			'first'			=> true
+			'size'			=> 10
+		));
+		
+		$form->td_select(array(
+			'beschreibung'	=> 'Gruppen, die Mitglied sind:',
+			'name'			=> 'gruppenID',
+			'values'		=> io_groups::getValues(),
+			'opt_group'		=> true,
+			'multiple'		=> true,
+			'selected'		=> $io_groups->gruppenID,
+			'size'			=> 10
 		));
 		
 		$form->td_select(array(
@@ -216,8 +243,7 @@ class io_groups extends io_postlist {
 			'opt_group'		=> true,
 			'multiple'		=> true,
 			'selected'		=> $io_groups->mitgliedschaftenID,
-			'size'			=> 10,
-			'first'			=> true
+			'size'			=> 10
 		));
 		
 		io_form::jsHead();
@@ -313,7 +339,14 @@ class io_groups extends io_postlist {
 			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
 			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_mitgliedschaftenID'] AS $mitglied) {
-				$ldapConn->addUserToGroup(get_the_title($post_id), get_userdata($mitglied)->user_login);
+				$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+			}
+			
+			//TODO: PRÜFUNG NAME RICHTIG?
+			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
+			//TODO: PROBLEMLÖSUNG!
+			foreach($_POST[self::$PREFIX . '_gruppenID'] AS $gruppe) {
+				$ldapConn->addGroupToGroup(get_the_title($gruppe), get_the_title($post_id));
 			}
 		}
 	}

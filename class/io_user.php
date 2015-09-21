@@ -466,6 +466,9 @@ class io_user {
 			}
 			
 			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
+			
+			//TODO: Wenn User bereits im LDAP vorhanden ist, sofort aktivieren
+			//VORSICHT: Prüfung ob selbe Mail-Adresse
 			update_user_meta($user_id, "user_aktiv", 1);
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", trim($_POST['first_name']));
