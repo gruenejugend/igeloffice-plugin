@@ -174,6 +174,11 @@ class ldapConnector {
 	private function getUserAttribute($user, $attribute) {
 		return $this->getAttribute($this->userDN($user), '(objectClass=inetOrgPerson)', $attribute);
 	}
+	
+	//TODO: Returncodes, wenn user nicht vorhanden, wenn Mail nicht stimmt, wenn Mail vorhanden aber User stimmt nicht
+	private function getUserExists($user, $mail) {
+		
+	}
 
 	/**
 	 * checks if a user exists in LDAP
@@ -189,6 +194,11 @@ class ldapConnector {
 			return true;
 		}
 		return false;
+	}
+	
+	//TODO
+	private function isServerDomain($domain) {
+		
 	}
 
 	/**
@@ -290,6 +300,11 @@ class ldapConnector {
 	}
 	
 	//TODO
+	private function getAllGroupGroups($group) {
+		
+	}
+	
+	//TODO
 	private function getAllGroupLeaders($group) {
 		
 	}
@@ -380,6 +395,10 @@ class ldapConnector {
 	
 	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 	public function getPermissionAttribute($permission, $attribute) {
+		
+	}
+	
+	public function getPermissionedUser($permission) {
 		
 	}
 

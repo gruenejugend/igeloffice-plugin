@@ -305,11 +305,10 @@ class io_groups extends io_postlist {
 				//FEHLER
 			}
 			
-			//TODO: PRÜFUNG NAME RICHTIG?
 			//TODO: PRÜFUNG OB LEITER ENTZOGEN
 			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_leiter_innenID'] AS $leiter_in) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_leiter_in', get_userdata($leiter_in)->user_login);
+				$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
 			}
 			
 			//TODO: PRÜFUNG NAME RICHTIG?
@@ -335,14 +334,12 @@ class io_groups extends io_postlist {
 				}
 			}
 			
-			//TODO: PRÜFUNG NAME RICHTIG?
 			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
 			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_mitgliedschaftenID'] AS $mitglied) {
 				$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
 			}
 			
-			//TODO: PRÜFUNG NAME RICHTIG?
 			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
 			//TODO: PROBLEMLÖSUNG!
 			foreach($_POST[self::$PREFIX . '_gruppenID'] AS $gruppe) {

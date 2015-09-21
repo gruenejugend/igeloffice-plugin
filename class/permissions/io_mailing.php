@@ -15,6 +15,7 @@ class io_mailing {
 				//TODO: Mailweiterleitung Attribut
 			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "" ||
 				//TODO: Mailpostfach Attribut
+				//TODO: Prüfung ob Mail als Server Domain da ist, wenn ja: Postfach, wenn nein: kein Postfach
 			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
 			
 			?>
