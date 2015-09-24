@@ -538,6 +538,18 @@ class ldapConnector {
 	}
 
 	/**
+	 * sets a value for an attribute in LDAP
+	 * @param string $dn        LDAP DN
+	 * @param string $attr      Attribute
+	 * @param string|int|array $val       new value. may be an array
+	 * @param string $mod       'add' or 'replace'. if 'replace' you can provide $old_value
+	 * @param string|int $old_value old value if replacing. if empty all values will be replaced
+	 */
+	private function setAttribute($dn, $attr, $val, $mod = 'add', $old_value = null) {
+
+	}
+
+	/**
 	 * LDAP error handling
 	 * @return boolean always false
 	 */

@@ -637,7 +637,10 @@ class io_user {
 		}
 		
 		if(!($user instanceof WP_User)) {
-			return $user;
+			$user = get_user_by('login', $user_name);
+			if(!($user instanceof WP_User)) {
+				return new WP_Error('user_not_extists', 'Du bist anscheinend noch nicht im IGELoffice registriert.');
+			}
 		}
 
 		$user_id = $user->ID;
