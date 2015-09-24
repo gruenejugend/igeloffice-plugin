@@ -384,10 +384,6 @@ class ldapConnector {
 		return $this->getMemberOfList($this->userDN($user), 'groups');
 	}
 
-	private function getUserPermissions($user) {
-		return $this->getMemberOfList($this->userDN($user), 'permissions');
-	}
-
 	private function isQualified($user, $permission) {
 		$members = $this->getAttribute($this->permissionDN($permission), 'member');
 		$user = $this->userDN($user);
@@ -545,8 +541,18 @@ class ldapConnector {
 	 * @param string $mod       'add' or 'replace'. if 'replace' you can provide $old_value
 	 * @param string|int $old_value old value if replacing. if empty all values will be replaced
 	 */
-	private function setAttribute($dn, $attr, $val, $mod = 'add', $old_value = null) {
+	private function setAttribute($dn, $attr, $val, $mode = 'add', $old_value = null) {
+		if($mode == 'add') {
+			if(ldap_mod_add($this->res, $dn, array($attr => $val))) {
+				return true;
+			}
+			return $this->error();
+		}
+		elseif($mode ==  'replace') {
+			//TODO
+		}
 
+		return false;
 	}
 
 	/**
