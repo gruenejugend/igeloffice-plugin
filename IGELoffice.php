@@ -10,17 +10,17 @@
 */
 
 	ini_set('display_errors', '1');
-	require('config.inc.php');
-	require('interfaces/ldapInterface.php');
-	require('class/ldapConnector.php');
-	require('class/io_form.php');
-	require('class/io_postlist.php');
-	require('class/io_groups.php');
-	require('class/io_permission.php');
-	require('class/io_request.php');
-	require('class/io_user.php');
-	require('class/permissions/io_mailing.php');
-	require('functions/register.php');
+	require_once('config.inc.php');
+	require_once('class/ldap.php');
+	require_once('class/ldapConnector.php');
+	require_once('class/io_form.php');
+	require_once('class/io_postlist.php');
+	require_once('class/io_groups.php');
+	require_once('class/io_permission.php');
+	require_once('class/io_request.php');
+	require_once('class/io_user.php');
+	require_once('class/permissions/io_mailing.php');
+	require_once('functions/register.php');
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
 	
