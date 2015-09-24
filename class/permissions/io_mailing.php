@@ -10,8 +10,8 @@ class io_mailing {
 		$ldapConn = ldapConnector::get();
 		
 		//TODOs beachten
-		if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail Weiterleitung") ||
-			$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail Postfach") ||
+		if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
+			$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
 				//TODO: Mailweiterleitung Attribut
 			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "" ||
 				//TODO: Mailpostfach Attribut
@@ -26,13 +26,13 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 <form action="<?php echo($_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]); ?>" method="post">
 			<?php
 			
-			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail Weiterleitung") ||
+			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
 					//TODO: Mailweiterleitung Attribut
 				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
 				self::mailForwarding();
 			}
 			
-			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail Postfach") ||
+			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
 					//TODO: Mailpostfach Attribut
 				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
 				self::mailBox();

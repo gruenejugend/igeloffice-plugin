@@ -466,7 +466,7 @@ class ldapConnector {
 		if($read === false) {
 			return $this->error();
 		}
-		$read = ldap_first_entry($read);
+		$read = ldap_first_entry($this->res, $read);
 		if($read === false) {
 			return $this->error();
 		}
