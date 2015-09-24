@@ -22,7 +22,7 @@ class ldapConnector {
 	 * true if object is bound to LDAP
 	 * @var boolean
 	 */
-	private $bind;
+	private $bind = false;
 
 	/**
 	 * instance of this class
@@ -40,7 +40,7 @@ class ldapConnector {
 			return self::$instance;
 		}
 		self::$instance = new ldapConnector();
-		if($bind) {
+		if($bind && !self::$instance->bind) {
 			self::$instance->bind();
 		}
 		return self::$instance;
@@ -70,7 +70,7 @@ class ldapConnector {
 			$pass = Crypto::decrypt($pass_hash, $key);
 		}
 		$this->bind = ldap_bind($this->res, $this->userDN($user), $pass);
-		return $bind;
+		return $this->bind;
 	}
 
 	/**
