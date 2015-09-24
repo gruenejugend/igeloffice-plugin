@@ -10,13 +10,12 @@ class io_mailing {
 		$ldapConn = ldapConnector::get();
 		
 		//TODOs beachten
-		if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
+		if( $ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
 			$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
 				//TODO: Mailweiterleitung Attribut
-			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "" ||
-				//TODO: Mailpostfach Attribut
-				//TODO: Prüfung ob Mail als Server Domain da ist, wenn ja: Postfach, wenn nein: kein Postfach
-			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
+				//TODO: Was passiert, wenn mehrere Einträge vorhanden sind?
+			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == (wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname . '@gruene-jugend.de') ||
+			strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail"), '@gruene-jugend.de')) {
 			
 			?>
 
@@ -28,17 +27,16 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 			
 			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
 					//TODO: Mailweiterleitung Attribut
-				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
-				self::mailForwarding();
+				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == (wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname . '@gruene-jugend.de')) {
+				self::mailForwarding($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == (wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname . '@gruene-jugend.de') ? " checked" : "");
 			}
 			
 			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
 					//TODO: Mailpostfach Attribut
-				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "") {
-				self::mailBox();
+				strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail"), '@gruene-jugend.de')) {
+				self::mailBox(strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail"), '@gruene-jugend.de') ? " checked" : "");
 			}
 			
-			//TODO: Checked!!!
 			?>
 	<input type="submit" name="io_mail_submit" value="Bestätigen">
 </form>	
@@ -46,7 +44,7 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 		}
 	}
 	
-	private static function mailForwarding() {
+	private static function mailForwarding($checked) {
 		wp_nonce_field('io_mail_forward', 'io_mail_forward_nonce');
 		
 		if(isset($_POST['io_mail_submit'])) {
@@ -61,7 +59,7 @@ Mit einer Weiterleitung werden alle E-Mails an <b><?php echo(wp_get_current_user
 
 Um E-Mails von <?php echo(wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname); ?>@gruene-jugend.de verschicken zu können, benötigst du ein Postfach. Eine Weiterleitung kann parallel zum Postfach existieren.
 
-<input type="checkbox" name="io_mail_forward" value="true"> <b>Ja, ich möchte eine Weiterleitung an meine private Mail-Adresse <?php echo (wp_get_current_user()->user_email); ?></b><br><hr>
+<input type="checkbox" name="io_mail_forward" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte eine Weiterleitung an meine private Mail-Adresse <?php echo (wp_get_current_user()->user_email); ?></b><br><hr>
 
 		<?php
 	}
@@ -75,21 +73,22 @@ Um E-Mails von <?php echo(wp_get_current_user()->user_firstname . '.' . wp_get_c
 		
 		$ldapConn = ldapConnector::get();
 		
-		//TODO: Weiterleitung löschen
 		//TODO: Mailweiterleitung Attribut
-		if($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "" && !isset($_POST['io_mail_forward'])) {
+		//TODO: Was passiert, wenn mehrere Einträge vorhanden sind?
+		if($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == (wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname . '@gruene-jugend.de') && !isset($_POST['io_mail_forward'])) {
 			
+			//TODO: Weiterleitung löschen
 			?><b>Die Weiterleitung wurde gelöscht.</b><?php
 		}
 		
-		//TODO: Weiterleitung einrichten
 		if(isset($_POST['io_mail_forward']) && $_POST['io_mail_forward'] == true) {
 			
+			//TODO: Weiterleitung einrichten
 			?><b>Die Weiterleitung wurde eingerichtet.</b><?php
 		}
 	}
 	
-	private static function mailBox() {
+	private static function mailBox($checked) {
 		wp_nonce_field('io_mail_postfach', 'io_mail_postfach_nonce');
 		
 		if(isset($_POST['io_mail_submit'])) {
@@ -129,8 +128,7 @@ Um E-Mails von <?php echo(wp_get_current_user()->user_firstname . '.' . wp_get_c
 			Benutzer*innen*name: <b><?php echo(wp_get_current_user()->user_firstname . '.' . wp_get_current_user()->user_lastname); ?>@gruene-jugend.de</b><br>
 			Passwort: <b>Dein IGELoffice-Passwort</b><br><br>
 			
-			<?php //TODO: Checked ?>
-			<input type="checkbox" name="io_mail_box" value="true"> <b>Ja, ich möchte meine E-Mail-Adresse als Postfach nutzen <?php echo (wp_get_current_user()->user_email); ?></b><br><br>
+			<input type="checkbox" name="io_mail_box" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte meine E-Mail-Adresse als Postfach nutzen <?php echo (wp_get_current_user()->user_email); ?></b><br><br>
 			
 			<b>Hinweis:</b> Mit dem Ende eines Amtes oder einer ähnlichen Aufgabe, die dich legitimiert ein Postfach zu besitzen, endet auch die Berechtigung deine E-Mail-Adresse auch als Postfach einzurichten. Nach deiner Amtszeit kannst du das Postfach aber weiterhin nutzen, bis du es hier deaktivierst. Nach einer Deaktivierung kann dein Postfach nicht wieder aktiviert werden, solltest du dafür keine Legitimation besitzen.<br><br>
 			
@@ -147,16 +145,15 @@ Um E-Mails von <?php echo(wp_get_current_user()->user_firstname . '.' . wp_get_c
 		
 		$ldapConn = ldapConnector::get();
 		
-		//TODO: Postfach löschen
-		//TODO: Mailpostfach Attribut
-		if($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "") != "" && !isset($_POST['io_mail_box'])) {
+		if(strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail"), '@gruene-jugend.de') && !isset($_POST['io_mail_box'])) {
 			
+			//TODO: Postfach löschen
 			?><b>Dein Postfach wurde gelöscht.</b><?php
 		}
 		
-		//TODO: Postfach einrichten
 		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true) {
 			
+			//TODO: Postfach einrichten
 			?><b>Dein Postfach wurde eingerichtet.</b><?php
 		}
 	}
