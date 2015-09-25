@@ -91,7 +91,7 @@ class ldapConnector extends LDAP {
 			'cn' => $firstname.' '.$surname,
 			'sn' => $surname,
 			'mail' => $mail,
-			'mailAlternate' => $mail,
+			'mailAlternateAddress' => $mail,
 			'objectClass' => array(
 				'top',
 				'person',
