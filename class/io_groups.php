@@ -5,7 +5,6 @@
  * - Mitgliedschaftsbeantragung übers Frontend (und Zulassung)
  * - Gruppenverwaltung übers Frontend (Mitglieder hinzufügen, entfernen, Leiter*innen verändern, Verteiler ändern, Listen hinzufügen)
  * - Listenerstellung, bei Eintrag
- * - Gruppe Mitglied einer anderen Gruppe werden
  */
 
 /**
@@ -69,12 +68,6 @@ class io_groups extends io_postlist {
 					}
 				}
 
-				
-				
-				
-				
-				
-				
 				$this->gruppenID = array();
 				foreach ($this->gruppen AS $gruppe) {
 					$gruppe = get_post(array('post_title' => $gruppe));
@@ -133,7 +126,7 @@ class io_groups extends io_postlist {
 	}
 	
 	public static function updBackendForm($post) {
-		$io_groups = new io_groups($post);
+		$io_groups = new io_groups($post, true);
 		
 		$form = new io_form(array(
 			'form'		=> false,
@@ -231,11 +224,11 @@ class io_groups extends io_postlist {
 		
 		$form->td_select(array(
 			'beschreibung'	=> 'Berechtigungen:',
-			'name'			=> 'berechtigungen',
+			'name'			=> 'berechtigungenID',
 			'values'		=> io_permission::getValues(),
 			'opt_group'		=> true,
 			'multiple'		=> true,
-			'selected'		=> $io_groups->mitgliedschaftenID,
+			'selected'		=> $io_groups->berechtigungenID,
 			'size'			=> 10
 		));
 		
@@ -298,26 +291,23 @@ class io_groups extends io_postlist {
 				//FEHLER
 			}
 			
-			
-			
-			//Schnittmengen zwischen Selected und Bereichtsberechtigte
-			//Selected aber nicht Berechtigt: Neu berechtigen
-			//Berechtigt aber nicht Selected: Berechtigung beenden
-			
-			//TODO: PRÜFUNG OB LEITER ENTZOGEN
-			//TODO: PROBLEMLÖSUNG!
-			foreach($_POST[self::$PREFIX . '_leiter_innenID'] AS $leiter_in) {
+			$io_groups = new io_groups(get_post(array('ID' => $post_id)), true);
+			$neueLeiterInnen = array_diff($_POST[self::$PREFIX . '_leiter_innenID'], $io_groups->leiter_innenID);
+			$alteLeiterInnen = array_diff($io_groups->leiter_innenID, $_POST[self::$PREFIX . '_leiter_innenID']);
+			foreach($neueLeiterInnen AS $leiter_in) {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
 			}
 			
-			//TODO: PRÜFUNG NAME RICHTIG?
+			foreach($alteLeiterInnen AS $leiter_in) {
+				$ldapConn->delGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+			}
+			
 			if(!filter_var($_POST[self::$PREFIX . '_verteiler'], FILTER_VALIDATE_EMAIL)) {
 				add_action('admin_notices', array('io_groups', 'errorMessageVerteiler'));
 			} else {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_verteiler', sanitize_text_field($_POST[self::$PREFIX . '_verteiler']));
 			}
 			
-			//TODO: PRÜFUNG NAME RICHTIG?
 			$listen = explode("\n\r", $_POST[self::$PREFIX . '_listen']);
 			foreach($listen AS $liste) {
 				if(!filter_var($liste, FILTER_VALIDATE_EMAIL)) {
@@ -333,16 +323,34 @@ class io_groups extends io_postlist {
 				}
 			}
 			
-			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
-			//TODO: PROBLEMLÖSUNG!
-			foreach($_POST[self::$PREFIX . '_mitgliedschaftenID'] AS $mitglied) {
+			$neueMitglieder = array_diff($_POST[self::$PREFIX . '_mitgliedschaftenID'], $io_groups->mitgliedschaftenID);
+			$alteMitglieder = array_diff($io_groups->mitgliedschaftenID, $_POST[self::$PREFIX . '_mitgliedschaftenID']);
+			foreach($neueMitglieder AS $mitglied) {
 				$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
 			}
 			
-			//TODO: PRÜFUNG OB MITGLIEDSCHAFT ENTZOGEN
-			//TODO: PROBLEMLÖSUNG!
-			foreach($_POST[self::$PREFIX . '_gruppenID'] AS $gruppe) {
+			foreach($alteMitglieder AS $mitglied) {
+				$ldapConn->delUserFromGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+			}
+			
+			$neueGruppen = array_diff($_POST[self::$PREFIX . '_gruppenID'], $io_groups->gruppenID);
+			$alteGruppen = array_diff($io_groups->gruppenID, $_POST[self::$PREFIX . '_gruppenID']);
+			foreach($neueGruppen AS $gruppe) {
 				$ldapConn->addGroupToGroup(get_the_title($gruppe), get_the_title($post_id));
+			}
+			
+			foreach($alteGruppen AS $gruppe) {
+				$ldapConn->delGroupFromGroup(get_the_title($gruppe), get_the_title($post_id));
+			}
+			
+			$neueBerechtigung = array_diff($_POST[self::$PREFIX . '_berechtigungenID'], $io_groups->berechtigungenID);
+			$alteBerechtigung = array_diff($io_groups->berechtigungenID, $_POST[self::$PREFIX . '_berechtigungenID']);
+			foreach($neueBerechtigung AS $berechtigung) {
+				$ldapConn->addGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
+			}
+			
+			foreach($alteBerechtigung AS $berechtigung) {
+				$ldapConn->delGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
 			}
 		}
 	}

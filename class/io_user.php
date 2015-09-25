@@ -2,10 +2,11 @@
 
 /**
  * //TODO: LDAP Anbindung
- * //TODO: Berechtigungszuordnung
- * //TODO: Gruppenzuordnung
+ * //TODO: Berechtigungszuordnung via Profil
+ * //TODO: Gruppenzuordnung via Profil
  * //TODO: Technischer User
  * //TODO: Passwort Zusendungsprozess
+ * //TODO: Passwort Änderung
  */
 
 /**
@@ -112,8 +113,8 @@ class io_user {
 <p id="land_box">
 	<label for="land">Bundesland:<br>
 		<select name="land" id="land">
-			<option value="0">--- Bitte auswÃ¤hlen ---</option>
-			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
+			<option value="0">--- Bitte ausw&auml;hlen ---</option>
+			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
 			<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 			<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 			<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -128,7 +129,7 @@ class io_user {
 			<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 			<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 			<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-			<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
+			<option<?php echo $landChecked[15]; ?> value="thueringen">Th&uuml;ringen</option>
 		</select>
 	</label>
 </p>
@@ -278,8 +279,8 @@ class io_user {
 		<th scope="row"><label for="land">Bundesland <span class="description">(erforderlich)</span></label></th>
 		<td>
 			<select name="land" id="land">
-				<option value="0">--- Bitte auswÃ¤hlen ---</option>
-				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
+				<option value="0">--- Bitte ausw&auml;hlen ---</option>
+				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 				<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 				<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -294,7 +295,7 @@ class io_user {
 				<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-				<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
+				<option<?php echo $landChecked[15]; ?> value="thueringen">Th&uuml;ringen</option>
 			</select>
 		</td>
 	</tr>
@@ -448,7 +449,7 @@ class io_user {
 			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
 			
 			//TODO: Wenn User bereits im LDAP vorhanden ist, sofort aktivieren
-			//VORSICHT: PrÃ¼fung ob selbe Mail-Adresse
+			//VORSICHT: Pruefung ob selbe Mail-Adresse
 			update_user_meta($user_id, "user_aktiv", 1);
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", trim($_POST['first_name']));
@@ -462,10 +463,10 @@ class io_user {
 	
 	function user_register_msg($errors, $redirect_to) {
 		if(isset( $errors->errors['registered'])) {
-			$needle = __('Registrierung vollstÃ¤ndig. Bitte schau in dein E-Mail-Postfach.');
+			$needle = __('Registrierung vollst&auml;ndig. Bitte schau in dein E-Mail-Postfach.');
 			foreach( $errors->errors['registered'] as $index => $msg ) {
 				if( $msg === $needle ) {
-					$errors->errors['registered'][$index] = 'Registrierung vollstÃ¤ndig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
+					$errors->errors['registered'][$index] = 'Registrierung vollst&auml;ndig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
 				}
 			}
 		}
@@ -558,7 +559,7 @@ class io_user {
 		$user_id = $user->ID;
 		
 		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
-			//update_user_meta($user_id, "user_aktiv", 0);
+			update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
 		

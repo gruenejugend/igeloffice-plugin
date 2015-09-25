@@ -320,7 +320,7 @@ class ldapConnector extends LDAP {
 	 * @see ldapConnector::addGroupToGroup() why this doen't work at the moment
 	 * @todo implement
 	 */
-	private function delGroupToGroup($groupToDel, $group) {
+	private function delGroupFromGroup($groupToDel, $group) {
 		
 	}
 
@@ -382,7 +382,18 @@ class ldapConnector extends LDAP {
 		return false;
 	}
 	
-
+	//TODO: Deletes
+	private function delGroupAttribute($group, $attribute, $value) {
+		
+	}
+	
+	private function delPermissionAttribute($permission, $attribute, $value) {
+		
+	}
+	
+	private function delUserAttribute($user, $attribute, $value) {
+		
+	}
 
 	//TODO: Array bei Value
 	private function setGroupAttribute($group, $attribute, $value, $mode = 'add', $old_value = null) {
