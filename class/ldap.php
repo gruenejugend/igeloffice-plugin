@@ -144,4 +144,11 @@ class LDAP {
 		trigger_error('An internal LDAP error occured. Please contact the system administrator and provide him*her this message: '.ldap_error($this->res), E_USER_ERROR);
 		return false;
 	}
+
+	/**
+	 * closes LDAP connection
+	 */
+	public function __destruct() {
+		ldap_close($this->res);
+	}
 }

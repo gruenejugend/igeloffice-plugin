@@ -386,15 +386,15 @@ class ldapConnector extends LDAP {
 
 	//TODO: Array bei Value
 	private function setGroupAttribute($group, $attribute, $value, $mode = 'add', $old_value = null) {
-		
+		$this->setAttribute($this->groupDN($group), $attribute, $value, $mode, $old_value);
 	}
 	
-	private function setPermissionAttribute($permissions, $attribute, $value, $mode = 'add', $old_value = null) {
-		
+	private function setPermissionAttribute($permission, $attribute, $value, $mode = 'add', $old_value = null) {
+		$this->setAttribute($this->permissionDN($permission), $attribute, $value, $mode, $old_value);
 	}
 
-	private function setUserAttribute($permissions, $attribute, $value, $mode = 'add', $old_value = null) {
-		
+	private function setUserAttribute($user, $attribute, $value, $mode = 'add', $old_value = null) {
+		$this->setAttribute($this->userDN($user), $attribute, $value, $mode, $old_value);
 	}	
 
 	//TODO
@@ -402,14 +402,6 @@ class ldapConnector extends LDAP {
 		return $this->DNexists($this->domainDN($domain));
 	}
 
-
-
-	/**
-	 * closes LDAP connection
-	 */
-	public function __destruct() {
-		ldap_close($this->res);
-	}
 
 
 	// PRIVATE METHODS //
