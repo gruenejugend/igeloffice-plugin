@@ -12,7 +12,7 @@ class io_permission extends io_postlist {
 	private $berechtigte;
 	private $berechtigteID;
 	
-	public function __construct($post) {
+	public function __construct($post, $load = false) {
 		$id = $post->ID;
 		$this->name				= get_the_title($id);
 		
@@ -20,20 +20,21 @@ class io_permission extends io_postlist {
 		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
 			$this->system			= $ldapConn->getPermissionAttribute(get_the_title($id), "permission_system");
-			$this->berechtigte		= $ldapConn->getPermissionAttribute(get_the_title($id), "permission_berechtigte");
+			$this->berechtigte		= $ldapConn->getPermissionAttribute(get_the_title($id), "member");
 			$this->kategorie		= $ldapConn->getPermissionAttribute(get_the_title($id), "permission_kategorie");
 			
-			$this->berechtigteID = array();
-			foreach($this->berechtigte AS $berechtigte) {
-				$users = get_users(array(
-					'meta_key'		=> 'display_name',
-					'meta_value'	=> $berechtigte
-				));
-				
-				$user = (isset($users[0]) ? $user[0] : false);
-				$user_id = ($user ? $user->ID : false);
-				
-				array_push($this->berechtigteID, $user_id);
+			if($load == true) {
+				$this->berechtigteID = array();
+				foreach($this->berechtigte AS $berechtigte) {
+					$berechtigte = explode(",", substr($berechtigte, 3))[0];
+					$users = get_user_by("login", $berechtigte);
+					
+					$user_id = (isset($users) ? $users->ID : false);
+
+					if($user_id) {
+						$this->berechtigteID[$user_id] = $user_id;
+					}
+				}
 			}
 		}
 	}
@@ -59,7 +60,7 @@ class io_permission extends io_postlist {
 	}
 	
 	public static function updBackendForm($post) {
-		$io_permission = new io_permission($post);
+		$io_permission = new io_permission($post, true);
 		
 		$form = new io_form(array(
 			'form'		=> false,
@@ -100,18 +101,16 @@ class io_permission extends io_postlist {
 		
 		$values = array();
 		foreach($users AS $user) {
-			$values[$user->ID] = $user->first_name . ' ' . $user->last_name;
+			$values[$user->ID] = $user->user_login;
 		}
 		
-		//SELECT
 		$form->td_select(array(
 			'beschreibung'	=> 'Mitglieder:',
 			'name'			=> 'berechtigteID',
 			'values'		=> $values,
 			'multiple'		=> true,
 			'selected'		=> $io_permission->berechtigteID,
-			'size'			=> 10,
-			'first'			=> true
+			'size'			=> 10
 		));
 		
 		io_form::jsHead();
@@ -158,11 +157,15 @@ class io_permission extends io_postlist {
 				//FEHLER
 			}
 			
-			//TODO! PROBLEMLÖSUNG!
-			foreach($_POST[self::$PREFIX . '_berechtigteID'] AS $berechtigte) {
-				//TODO: USER ADD PERMISSION, ABER WIE?
-				//FESTSTELLUNG: NEUE BERECHTIGUNG? ODER ZU LÖSCHENDE BERECHTIGUNGEN?
-				$ldapConn->addUserPermission(get_the_title($post_id), get_userdata($berechtigte)->user_login);
+			$io_permission = new io_permission(get_post(array('ID' => $post_id)));
+			$neuBerechtigte = array_diff($_POST[self::$PREFIX . '_berechtigteID'], $io_permission->berechtigteID);
+			$altBerechtigte = array_diff($io_permission->berechtigteID, $_POST[self::$PREFIX . '_berechtigteID']);
+			foreach ($neuBerechtigte AS $berechtigte) {
+				$ldapConn->addUserPermission(get_userdata($berechtigte)->user_login, get_the_title($post_id));
+			}
+			
+			foreach ($altBerechtigte AS $berechtigte) {
+				$ldapConn->delUserPermission(get_userdata($berechtigte)->user_login, get_the_title($post_id));
 			}
 		}
 	}

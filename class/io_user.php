@@ -1,9 +1,11 @@
 <?php
 
 /**
- * TODO: LDAP Anbindung
- * TODO: Berechtigungszuordnung
- * TODO: Gruppenzuordnung
+ * //TODO: LDAP Anbindung
+ * //TODO: Berechtigungszuordnung
+ * //TODO: Gruppenzuordnung
+ * //TODO: Technischer User
+ * //TODO: Passwort Zusendungsprozess
  */
 
 /**
@@ -110,8 +112,8 @@ class io_user {
 <p id="land_box">
 	<label for="land">Bundesland:<br>
 		<select name="land" id="land">
-			<option value="0">--- Bitte auswählen ---</option>
-			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
+			<option value="0">--- Bitte auswÃ¤hlen ---</option>
+			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
 			<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 			<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 			<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -126,7 +128,7 @@ class io_user {
 			<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 			<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 			<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-			<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
+			<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
 		</select>
 	</label>
 </p>
@@ -169,7 +171,7 @@ class io_user {
 			switch($("input[name='user_art']:checked").val()) {
 				case 'user':
 				default:
-					userLoginValue = $("#first_name").val() + "." + $("#last_name").val();
+					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
 				case 'basisgruppe':
@@ -177,17 +179,6 @@ class io_user {
 					break;
 			}
 			
-			do {
-				userLoginValueTmp = userLoginValue;
-				userLoginValue = userLoginValue.replace("ä", "ae");
-				userLoginValue = userLoginValue.replace("Ä", "Ae");
-				userLoginValue = userLoginValue.replace("ö", "oe");
-				userLoginValue = userLoginValue.replace("Ö", "Oe");
-				userLoginValue = userLoginValue.replace("ü", "ue");
-				userLoginValue = userLoginValue.replace("Ü", "Ue");
-				userLoginValue = userLoginValue.replace("ß", "ss");
-				userLoginValue = userLoginValue.replace(" ", "");
-			} while(userLoginValueTmp !== userLoginValue);
 			$("#user_login").val(userLoginValue);
 		};
 		
@@ -217,7 +208,7 @@ class io_user {
 	}
 	
 	/*
-	 * TODO: KEINE ÄNDERUNGEN AN LANDESVERBAND UND ORT
+	 * TODO: KEINE Ã„NDERUNGEN AN LANDESVERBAND UND ORT
 	 */
 	public static function new_user_form($user) {
 		wp_enqueue_script('jqueryIO');
@@ -287,8 +278,8 @@ class io_user {
 		<th scope="row"><label for="land">Bundesland <span class="description">(erforderlich)</span></label></th>
 		<td>
 			<select name="land" id="land">
-				<option value="0">--- Bitte auswählen ---</option>
-				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
+				<option value="0">--- Bitte auswÃ¤hlen ---</option>
+				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 				<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 				<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -303,7 +294,7 @@ class io_user {
 				<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-				<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
+				<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
 			</select>
 		</td>
 	</tr>
@@ -388,7 +379,7 @@ class io_user {
 			switch($("input[name='user_art']:checked").val()) {
 				case 'user':
 				default:
-					userLoginValue = $("#first_name").val() + "." + $("#last_name").val();
+					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
 				case 'basisgruppe':
@@ -396,17 +387,6 @@ class io_user {
 					break;
 			}
 			
-			do {
-				userLoginValueTmp = userLoginValue;
-				userLoginValue = userLoginValue.replace("ä", "ae");
-				userLoginValue = userLoginValue.replace("Ä", "Ae");
-				userLoginValue = userLoginValue.replace("ö", "oe");
-				userLoginValue = userLoginValue.replace("Ö", "Oe");
-				userLoginValue = userLoginValue.replace("ü", "ue");
-				userLoginValue = userLoginValue.replace("Ü", "Ue");
-				userLoginValue = userLoginValue.replace("ß", "ss");
-				userLoginValue = userLoginValue.replace(" ", "");
-			} while(userLoginValueTmp !== userLoginValue);
 			$("#user_login").val(userLoginValue);
 		};
 		
@@ -468,7 +448,7 @@ class io_user {
 			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
 			
 			//TODO: Wenn User bereits im LDAP vorhanden ist, sofort aktivieren
-			//VORSICHT: Prüfung ob selbe Mail-Adresse
+			//VORSICHT: PrÃ¼fung ob selbe Mail-Adresse
 			update_user_meta($user_id, "user_aktiv", 1);
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", trim($_POST['first_name']));
@@ -482,10 +462,10 @@ class io_user {
 	
 	function user_register_msg($errors, $redirect_to) {
 		if(isset( $errors->errors['registered'])) {
-			$needle = __('Registrierung vollständig. Bitte schau in dein E-Mail-Postfach.');
+			$needle = __('Registrierung vollstÃ¤ndig. Bitte schau in dein E-Mail-Postfach.');
 			foreach( $errors->errors['registered'] as $index => $msg ) {
 				if( $msg === $needle ) {
-					$errors->errors['registered'][$index] = 'Registrierung vollständig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
+					$errors->errors['registered'][$index] = 'Registrierung vollstÃ¤ndig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
 				}
 			}
 		}
@@ -578,7 +558,7 @@ class io_user {
 		$user_id = $user->ID;
 		
 		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
-			update_user_meta($user_id, "user_aktiv", 0);
+			//update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
 		
@@ -615,9 +595,7 @@ class io_user {
 <?php
 	}
 	
-	/*
-	 * TODO: SPEICHERUNG GRUPPENMITGLIEDSCHAFT
-	 */
+	//TODO: SPEICHERUNG GRUPPENMITGLIEDSCHAFT
 	public static function user_profile_save($user_id) {
 		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 			if( !isset($_POST['io_users_nonce']) || 
@@ -670,9 +648,7 @@ class io_user {
 	}
 	
 	public static function user_ldap_add($user_id) {
-		/*
-		 * TODO: Passwort erstelle und versenden
-		 */
+		//TODO: Passwort erstelle und versenden
 		
 		$ldapConn = ldapConnector::get();
 		$user = get_userdata($user_id);

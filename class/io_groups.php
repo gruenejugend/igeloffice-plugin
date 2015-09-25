@@ -23,14 +23,14 @@ class io_groups extends io_postlist {
 	private $listen;
 	private $mitgliedschaften;
 	private $mitgliedschaftenID;
-	private $groups;
-	private $groupsID;
+	private $gruppen;
+	private $gruppenID;
 	private $berechtigungen;
 	private $berechtigungenID;
 	
 	private $ldapConn;
 	
-	public function __construct($post) {
+	public function __construct($post, $load = false) {
 		$id = $post->ID;
 		$this->name				= get_the_title($id);
 		
@@ -43,65 +43,58 @@ class io_groups extends io_postlist {
 			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_verteiler');
 			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_listen');
 			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_mitgliedschaft');
-			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_gruppen');
+			$this->gruppen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_gruppen');
 			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
-			$this->leiter_innenID = array();
-			foreach($this->leiter_innen AS $leiter_in) {
-				$users = get_users(array(
-					'meta_key'		=> 'display_name',
-					'meta_value'	=> $leiter_in
-				));
-				
-				$user = (isset($users[0]) ? $users[0] : false);
-				$user_id = ($user ? $user->ID : false);
-				
-				if ($user_id) {
-					array_push($this->leiter_innenID, $user_id);
+			if($load == true) {
+				$this->leiter_innenID = array();
+				foreach($this->leiter_innen AS $leiter_in) {
+					$users = get_user_by("login", $leiter_in);
+					
+					$user_id = (isset($users) ? $users->ID : false);
+
+					if ($user_id) {
+						$this->leiter_innenID[$user_id] = $user_id;
+					}
 				}
-			}
-			
-			$this->mitgliedschaftenID = array();
-			foreach($this->mitgliedschaften AS $mitglied) {
-				$users = get_users(array(
-					'meta_key'		=> 'display_name',
-					'meta_value'	=> $mitglied
-				));
-				
-				$user = (isset($users[0]) ? $users[0] : false);
-				$user_id = ($user ? $user->ID : false);
-				
-				if ($user_id) {
-					array_push($this->mitgliedschaftenID, $user_id);
+
+				$this->mitgliedschaftenID = array();
+				foreach($this->mitgliedschaften AS $mitglied) {
+					$users = get_user_by("login", $mitglied);
+					
+					$user_id = (isset($users) ? $users->ID : false);
+
+					if ($user_id) {
+						$this->mitgliedschaftenID[$user_id] = $user_id;
+					}
 				}
-			}
-			
-			$this->groupsID = array();
-			foreach ($this->groups AS $gruppe) {
-				$gruppen = get_users(array(
-					'meta_key'		=> 'display_name',
-					'meta_value'	=> $gruppe
-				));
+
 				
-				$group = (isset($gruppen[0]) ? $gruppen[0] : false);
-				$group_id = ($group ? $group->ID : false);
 				
-				if($group_id) {
-					array_push($this->groupsID, $group_id);
+				
+				
+				
+				
+				$this->gruppenID = array();
+				foreach ($this->gruppen AS $gruppe) {
+					$gruppe = get_post(array('post_title' => $gruppe));
+
+					$gruppe_id = (isset($gruppe) ? $gruppe->ID : false);
+
+					if($gruppe_id) {
+						$this->gruppenID[$gruppe_id] = $gruppe_id;
+					}
 				}
-			}
-			
-			$this->berechtigungenID = array();
-			foreach($this->berechtigungen AS $berechtigung) {
-				$posts = get_posts(array(
-					'post_title'	=> $berechtigung
-				));
-				
-				$post = (isset($posts[0]) ? $posts[0] : false);
-				$post_id = ($post ? $post->ID : false);
-				
-				if ($user_id) {
-					array_push($this->berechtigungenID, $post_id);
+
+				$this->berechtigungenID = array();
+				foreach($this->berechtigungen AS $berechtigung) {
+					$berechtigung = get_post(array('post_title' => $berechtigung));
+
+					$berechtigung_id = (isset($berechtigung) ? $berechtigung->ID : false);
+
+					if ($berechtigung_id) {
+						$this->berechtigungenID[$berechtigung_id] = $berechtigung_id;
+					}
 				}
 			}
 		}
@@ -304,6 +297,12 @@ class io_groups extends io_postlist {
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
 				//FEHLER
 			}
+			
+			
+			
+			//Schnittmengen zwischen Selected und Bereichtsberechtigte
+			//Selected aber nicht Berechtigt: Neu berechtigen
+			//Berechtigt aber nicht Selected: Berechtigung beenden
 			
 			//TODO: PRÜFUNG OB LEITER ENTZOGEN
 			//TODO: PROBLEMLÖSUNG!

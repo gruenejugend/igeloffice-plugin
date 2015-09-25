@@ -409,7 +409,7 @@ class ldapConnector extends LDAP {
 	/**
 	 * connects to LDAP
 	 */
-	private function __construct() {
+	protected function __construct() {
 		parent::__construct(LDAP_HOST, LDAP_PORT);
 	}
 

@@ -21,6 +21,7 @@
 	require_once('class/io_user.php');
 	require_once('class/permissions/io_mailing.php');
 	require_once('functions/register.php');
+	require_once('functions/functions.php');
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
 	
@@ -76,6 +77,7 @@
 	
 	//Permission Shortcodes
 	add_shortcode('io_mail',									array('io_mailing', 'mask'));
+	add_filter('sanitize_user',									'io_sanitize_user', 10, 3);
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

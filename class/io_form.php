@@ -1437,11 +1437,7 @@ class io_form
 			$arr['size'] = 1;
 		}
 		
-		if(isset($arr['selected']) && is_array($arr['selected']))
-		{
-			$arr['selected'] = $arr['selected']['value'];
-		}
-		elseif(!isset($arr['selected'])) {
+		if(!isset($arr['selected'])) {
 			$arr['selected'] = array();
 		}
 		
@@ -1458,7 +1454,7 @@ class io_form
 		{
 			$this->jsHiding($arr['name'], $arr['hidings']);
 		}
-
+		
 		//Formularanzeige
 		echo ('				<select id="' . $arr['name'] . '" name="' . $arr['name']. $arr['multiple_name'] . '" size="' . $arr['size'] . '"' . $arr['multiple'] . $arr['checking'] . '>
 ');
@@ -1557,7 +1553,7 @@ class io_form
 		{
 			$selected_uebergabe = "";
 		}
-
+		
 		echo (str_repeat("	", $stage) . '						<option value="' . $id . '"' . $selected_uebergabe . '>' . $prefix . $value . '</option>
 ');
 	}
