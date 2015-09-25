@@ -82,6 +82,7 @@ class ldapConnector extends LDAP {
 	 * @param string $mail      mail address of user
 	 * @return boolean successful or not
 	 * @todo check if DN already exists
+	 * @todo password sending
 	 */
 	private function addUser($firstname, $surname, $mail) { //check if user or DN exists!
 		if(empty($firstname) || empty($surname) || empty($mail)) {

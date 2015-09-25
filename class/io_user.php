@@ -2,11 +2,10 @@
 
 /**
  * //TODO: LDAP Anbindung
- * //TODO: Berechtigungszuordnung via Profil
- * //TODO: Gruppenzuordnung via Profil
+ * //TODO: Berechtigungszuordnung
+ * //TODO: Gruppenzuordnung
  * //TODO: Technischer User
  * //TODO: Passwort Zusendungsprozess
- * //TODO: Passwort Änderung
  */
 
 /**
@@ -113,8 +112,8 @@ class io_user {
 <p id="land_box">
 	<label for="land">Bundesland:<br>
 		<select name="land" id="land">
-			<option value="0">--- Bitte ausw&auml;hlen ---</option>
-			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
+			<option value="0">--- Bitte auswÃ¤hlen ---</option>
+			<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
 			<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 			<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 			<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -129,7 +128,7 @@ class io_user {
 			<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 			<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 			<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-			<option<?php echo $landChecked[15]; ?> value="thueringen">Th&uuml;ringen</option>
+			<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
 		</select>
 	</label>
 </p>
@@ -279,8 +278,8 @@ class io_user {
 		<th scope="row"><label for="land">Bundesland <span class="description">(erforderlich)</span></label></th>
 		<td>
 			<select name="land" id="land">
-				<option value="0">--- Bitte ausw&auml;hlen ---</option>
-				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
+				<option value="0">--- Bitte auswÃ¤hlen ---</option>
+				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-WÃ¼rttemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 				<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 				<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -295,7 +294,7 @@ class io_user {
 				<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-				<option<?php echo $landChecked[15]; ?> value="thueringen">Th&uuml;ringen</option>
+				<option<?php echo $landChecked[15]; ?> value="thueringen">ThÃ¼ringen</option>
 			</select>
 		</td>
 	</tr>
@@ -449,7 +448,7 @@ class io_user {
 			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
 			
 			//TODO: Wenn User bereits im LDAP vorhanden ist, sofort aktivieren
-			//VORSICHT: Pruefung ob selbe Mail-Adresse
+			//VORSICHT: PrÃ¼fung ob selbe Mail-Adresse
 			update_user_meta($user_id, "user_aktiv", 1);
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", trim($_POST['first_name']));
@@ -463,10 +462,10 @@ class io_user {
 	
 	function user_register_msg($errors, $redirect_to) {
 		if(isset( $errors->errors['registered'])) {
-			$needle = __('Registrierung vollst&auml;ndig. Bitte schau in dein E-Mail-Postfach.');
+			$needle = __('Registrierung vollstÃ¤ndig. Bitte schau in dein E-Mail-Postfach.');
 			foreach( $errors->errors['registered'] as $index => $msg ) {
 				if( $msg === $needle ) {
-					$errors->errors['registered'][$index] = 'Registrierung vollst&auml;ndig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
+					$errors->errors['registered'][$index] = 'Registrierung vollstÃ¤ndig. Bitte warte auf deine Aktivierung. Du wirst via Mail benachrichtigt.';
 				}
 			}
 		}
@@ -559,7 +558,7 @@ class io_user {
 		$user_id = $user->ID;
 		
 		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
-			update_user_meta($user_id, "user_aktiv", 0);
+			//update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
 		
@@ -652,8 +651,8 @@ class io_user {
 		//TODO: Passwort erstelle und versenden
 		
 		$ldapConn = ldapConnector::get();
-		$user = get_userdata($user_id);
-		if(is_wp_error($ldapConn->addUser($user->first_name, $user->last_name, $user->user_email))) {
+		$user_data = get_userdata($user_id);
+		if(is_wp_error($ldapConn->addUser($user_data->first_name, $user_data->last_name, $user_data->user_email))) {
 			return false;
 		}
 		$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_art", get_user_meta($user_id, 'user_art', true));
@@ -665,5 +664,130 @@ class io_user {
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe') {
 			$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_ort", get_user_meta($user_id, 'ort', true));
 		}
+
+		//send passwort reset link to user. modified version of receive_password from wp-login.php
+
+		global $wpdb, $wp_hasher;
+
+		$errors = new WP_Error();
+
+		/**
+		 * Fires before errors are returned from a password reset request.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'lostpassword_post' );
+
+		// Redefining user_login ensures we return the right case in the email.
+		$user_login = $user_data->user_login;
+		$user_email = $user_data->user_email;
+
+		/**
+		 * Fires before a new password is retrieved.
+		 *
+		 * @since 1.5.0
+		 * @deprecated 1.5.1 Misspelled. Use 'retrieve_password' hook instead.
+		 *
+		 * @param string $user_login The user login name.
+		 */
+		do_action( 'retreive_password', $user_login );
+
+		/**
+		 * Fires before a new password is retrieved.
+		 *
+		 * @since 1.5.1
+		 *
+		 * @param string $user_login The user login name.
+		 */
+		do_action( 'retrieve_password', $user_login );
+
+		/**
+		 * Filter whether to allow a password to be reset.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @param bool true           Whether to allow the password to be reset. Default true.
+		 * @param int  $user_data->ID The ID of the user attempting to reset a password.
+		 */
+		$allow = apply_filters( 'allow_password_reset', true, $user_data->ID );
+
+		if ( ! $allow ) {
+			return new WP_Error( 'no_password_reset', __('Password reset is not allowed for this user') );
+		} elseif ( is_wp_error( $allow ) ) {
+			return $allow;
+		}
+
+		// Generate something random for a password reset key.
+		$key = wp_generate_password( 20, false );
+
+		/**
+		 * Fires when a password reset key is generated.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param string $user_login The username for the user.
+		 * @param string $key        The generated password reset key.
+		 */
+		do_action( 'retrieve_password_key', $user_login, $key );
+
+		// Now insert the key, hashed, into the DB.
+		if ( empty( $wp_hasher ) ) {
+			require_once ABSPATH . WPINC . '/class-phpass.php';
+			$wp_hasher = new PasswordHash( 8, true );
+		}
+		$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
+		$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
+
+		$message = __('Someone requested that the password be reset for the following account:') . "\r\n\r\n";
+		$message .= network_home_url( '/' ) . "\r\n\r\n";
+		$message .= sprintf(__('Username: %s'), $user_login) . "\r\n\r\n";
+		$message .= __('If this was a mistake, just ignore this email and nothing will happen.') . "\r\n\r\n";
+		$message .= __('To reset your password, visit the following address:') . "\r\n\r\n";
+		$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . ">\r\n";
+
+		if ( is_multisite() )
+			$blogname = $GLOBALS['current_site']->site_name;
+		else
+			/*
+			 * The blogname option is escaped with esc_html on the way into the database
+			 * in sanitize_option we want to reverse this for the plain text arena of emails.
+			 */
+			$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+
+		$title = sprintf( __('[%s] Password Reset'), $blogname );
+
+		/**
+		 * Filter the subject of the password reset email.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $title Default email title.
+		 */
+		$title = apply_filters( 'retrieve_password_title', $title );
+
+		/**
+		 * Filter the message body of the password reset mail.
+		 *
+		 * @since 2.8.0
+		 * @since 4.1.0 Added `$user_login` and `$user_data` parameters.
+		 *
+		 * @param string  $message    Default mail message.
+		 * @param string  $key        The activation key.
+		 * @param string  $user_login The username for the user.
+		 * @param WP_User $user_data  WP_User object.
+		 */
+		$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
+
+		if ( $message && !wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) )
+			wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
+
+		return true;
+
+
+	}
+
+	public static function password_reset($user, $password) {
+		$ldapConn = ldapConnector::get();
+		$ldapConn->setUserPassword($user->user_login, $password);
 	}
 }
