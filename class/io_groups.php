@@ -36,13 +36,13 @@ class io_groups extends io_postlist {
 		$ldapConn = ldapConnector::get();
 		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
-			$this->oberkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_oberkategorie');
-			$this->unterkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_unterkategorie');
-			$this->leiter_innen		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_leiter_in');
-			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_verteiler');
-			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_listen');
-			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_mitgliedschaft');
-			$this->gruppen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . '_gruppen');
+			$this->oberkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Oberkategorie');
+			$this->unterkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Unterkategorie');
+			$this->leiter_innen		= $ldapConn->getGroupAttribute($this->name, 'owner');
+			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Verteiler');
+			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Listen');
+			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Mitgliedschaft');
+			$this->gruppen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Gruppen');
 			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
 			if($load == true) {
@@ -265,28 +265,28 @@ class io_groups extends io_postlist {
 			
 			$isOberkategorie = false;
 			if($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_oberkategorie', utf8_encode("Nicht Kategorisiert"));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode("Nicht Kategorisiert"));
 				checkKat("Oberkategorie", "Nicht Kategorisiert");
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_unterkategorie', utf8_encode(""));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(""));
 				checkKat("Unterkategorie", "");
 			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])));
 				checkKat("Oberkategorie", sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT']));
 				$isOberkategorie = true;
 			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']));
 				$isOberkategorie = true;
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
 				//FEHLER
 			}
 			
 			if($isOberkategorie && $_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_unterkategorie', utf8_encode(""));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(""));
 			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])));
 				checkKat("Unterkategorie", sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT']));
 			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']));
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
 				//FEHLER
 			}
@@ -305,7 +305,7 @@ class io_groups extends io_postlist {
 			if(!filter_var($_POST[self::$PREFIX . '_verteiler'], FILTER_VALIDATE_EMAIL)) {
 				add_action('admin_notices', array('io_groups', 'errorMessageVerteiler'));
 			} else {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_verteiler', sanitize_text_field($_POST[self::$PREFIX . '_verteiler']));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Verteiler', sanitize_text_field($_POST[self::$PREFIX . '_verteiler']));
 			}
 			
 			$listen = explode("\n\r", $_POST[self::$PREFIX . '_listen']);
@@ -313,7 +313,7 @@ class io_groups extends io_postlist {
 				if(!filter_var($liste, FILTER_VALIDATE_EMAIL)) {
 					add_action('admin_notices', array('io_groups', 'errorMessageListe'));
 				} else {
-					$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . '_listen', sanitize_text_field($liste));
+					$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Listen', sanitize_text_field($liste));
 				}
 			}
 			

@@ -742,14 +742,14 @@ class io_user {
 		if(is_wp_error($ldapConn->addUser($user_data->first_name, $user_data->last_name, $user_data->user_email))) {
 			return false;
 		}
-		$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_art", get_user_meta($user_id, 'user_art', true));
+		$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "employeeType", get_user_meta($user_id, 'user_art', true));
 		
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe' || get_user_meta($user_id, 'user_art', true) == 'Landesverband') {
-			$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_land", get_usermeta($user_id, 'land', true));
+			$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "st", get_usermeta($user_id, 'land', true));
 		}
 		
 		if(get_user_meta($user_id, 'user_art', true) == 'Basisgruppe') {
-			$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "user_ort", get_user_meta($user_id, 'ort', true));
+			$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "l", get_user_meta($user_id, 'ort', true));
 		}
 
 		//send passwort reset link to user. modified version of receive_password from wp-login.php
