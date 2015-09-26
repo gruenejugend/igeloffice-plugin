@@ -5,7 +5,6 @@
  * //TODO: Berechtigungszuordnung
  * //TODO: Gruppenzuordnung
  * //TODO: Technischer User
- * //TODO: Passwort Zusendungsprozess
  */
 
 /**
@@ -31,33 +30,44 @@ class io_user {
 		wp_enqueue_script('jqueryIO');
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? trim($_POST['user_art']) : ''));
+		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? sanitize_text_field($_POST['user_art']) : ''));
 		switch($userArtInput) {
 			case 'User':
 				$userArtValue[0] = " checked";
 				$userArtValue[1] = "";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 			case 'Landesverband':
 				$userArtValue[0] = "";
 				$userArtValue[1] = " checked";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 			case 'Basisgruppe':
 				$userArtValue[0] = "";
 				$userArtValue[1] = "";
 				$userArtValue[2] = " checked";
+				$userArtValue[3] = "";
+				break;
+			case 'Organisatorisch':
+				$userArtValue[0] = "";
+				$userArtValue[1] = "";
+				$userArtValue[2] = "";
+				$userArtValue[3] = " checked";
 				break;
 			default:
 				$userArtValue[0] = " checked";
 				$userArtValue[1] = "";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 		}
-		$first_name = (!empty($_POST['first_name'])) ? trim($_POST['first_name']) : '';
-		$last_name = (!empty($_POST['last_name'])) ? trim($_POST['last_name']) : '';
-		$name = (!empty($_POST['name'])) ? trim($_POST['name']) : '';
-		$land = (!empty($_POST['land'])) ? trim($_POST['land']) : '';
+		$first_name = (!empty($_POST['first_name'])) ? sanitize_text_field($_POST['first_name']) : '';
+		$last_name = (!empty($_POST['last_name'])) ? sanitize_text_field($_POST['last_name']) : '';
+		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
+		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
+		$land = (!empty($_POST['land'])) ? sanitize_text_field($_POST['land']) : '';
 		
 		$landChecked[0]  = ($land == 'baden-wuerttemberg' ? ' checked' : '');
 		$landChecked[1]  = ($land == 'bayern' ? ' checked' : '');
@@ -88,6 +98,9 @@ class io_user {
 		<label for="user_art_basisgruppe">Basisgruppe
 			<input type="radio" name="user_art" id="user_art_basisgruppe" class="input" value="basisgruppe"<?php echo $userArtValue[2]; ?>>
 		</label>
+		<label for="user_art_basisgruppe">Organisatorische*r Benutzer*in
+			<input type="radio" name="user_art" id="user_art_organisatorisch" class="input" value="organisatorisch"<?php echo $userArtValue[3]; ?>>
+		</label>
 	</label>
 </p>
 
@@ -100,6 +113,12 @@ class io_user {
 <p id="last_name_box">
 	<label for="last_name">Nachname:<br>
 		<input type="text" name="last_name" id="last_name" class="input" value="<?php echo esc_attr(wp_unslash($last_name)); ?>" size="25">
+	</label>
+</p>
+
+<p id="orga_name_box">
+	<label for="last_name">Name:<br>
+		<input type="text" name="orga_name" id="orga_name" class="input" value="<?php echo esc_attr(wp_unslash($orga_name)); ?>" size="25">
 	</label>
 </p>
 
@@ -152,6 +171,7 @@ class io_user {
 				default:
 					$("#first_name_box").show();
 					$("#last_name_box").show();
+					$("#orga_name_box").hide();
 					$("#name_box").hide();
 					$("#land_box").hide();
 					break;
@@ -159,9 +179,17 @@ class io_user {
 				case 'basisgruppe':
 					$("#first_name_box").hide();
 					$("#last_name_box").hide();
+					$("#orga_name_box").hide();
 					$("#name_box").show();
 					$("#land_box").show();
 					break;
+				case 'organisatorisch':
+					$("#first_name_box").hide();
+					$("#last_name_box").hide();
+					$("#orga_name_box").show();
+					$("#name_box").hide();
+					$("#land_box").hide();
+					break
 			}
 			userNameKeyUp();
 			$("#user_login").val(userLoginValue);
@@ -176,6 +204,9 @@ class io_user {
 				case 'landesverband':
 				case 'basisgruppe':
 					userLoginValue = "GrueneJugend" + $("#name").val();
+					break;
+				case 'organisatorisch':
+					userLoginValue = $("#name").val();
 					break;
 			}
 			
@@ -193,6 +224,10 @@ class io_user {
 		});
 		
 		$("#last_name").keyup(function() {
+			userNameKeyUp();
+		});
+		
+		$("#orga_name").keyup(function() {
 			userNameKeyUp();
 		});
 		
@@ -214,31 +249,42 @@ class io_user {
 		wp_enqueue_script('jqueryIO');
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? trim($_POST['user_art']) : ''));
+		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? sanitize_text_field($_POST['user_art']) : ''));
 		switch($userArtInput) {
 			case 'User':
 				$userArtValue[0] = " checked";
 				$userArtValue[1] = "";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 			case 'Landesverband':
 				$userArtValue[0] = "";
 				$userArtValue[1] = " checked";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 			case 'Basisgruppe':
 				$userArtValue[0] = "";
 				$userArtValue[1] = "";
 				$userArtValue[2] = " checked";
+				$userArtValue[3] = "";
+				break;
+			case 'Organisatorisch':
+				$userArtValue[0] = "";
+				$userArtValue[1] = "";
+				$userArtValue[2] = "";
+				$userArtValue[3] = " checked";
 				break;
 			default:
 				$userArtValue[0] = " checked";
 				$userArtValue[1] = "";
 				$userArtValue[2] = "";
+				$userArtValue[3] = "";
 				break;
 		}
-		$name = (!empty($_POST['name'])) ? trim($_POST['name']) : '';
-		$land = (!empty($_POST['land'])) ? trim($_POST['land']) : '';
+		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
+		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
+		$land = (!empty($_POST['land'])) ? sanitize_text_field($_POST['land']) : '';
 		
 		$landChecked[0]  = ($land == 'baden-wuerttemberg' ? ' checked' : '');
 		$landChecked[1]  = ($land == 'bayern' ? ' checked' : '');
@@ -265,13 +311,20 @@ class io_user {
 		<td>
 			<input type="radio" name="user_art" id="user_art_user" value="user"<?php echo $userArtValue[0]; ?>> Normale*r Benutzer*in<br>
 			<input type="radio" name="user_art" id="user_art_landesverband" value="landesverband"<?php echo $userArtValue[1]; ?>> Landesverband<br>
-			<input type="radio" name="user_art" id="user_art_basisgruppe" value="basisgruppe"<?php echo $userArtValue[2]; ?>> Basisgruppe
+			<input type="radio" name="user_art" id="user_art_basisgruppe" value="basisgruppe"<?php echo $userArtValue[2]; ?>> Basisgruppe<br>
+			<input type="radio" name="user_art" id="user_art_organisatorisch" value="organisatorisch"<?php echo $userArtValue[3]; ?>> Organisatorische*r Benutzer*in
 		</td>
 	</tr>
 	<tr class="form-field form-required">
 		<th scope="row"><label for="name">Ort <span class="description">(erforderlich)</span></label></th>
 		<td>
 			<input type="text" name="name" id="name" class="input" value="<?php echo esc_attr(wp_unslash($name)); ?>" size="25">
+		</td>
+	</tr>
+	<tr class="form-field form-required">
+		<th scope="row"><label for="name">Name <span class="description">(erforderlich)</span></label></th>
+		<td>
+			<input type="text" name="orga_name" id="orga_name" class="input" value="<?php echo esc_attr(wp_unslash($orga_name)); ?>" size="25">
 		</td>
 	</tr>
 	<tr class="form-field form-required">
@@ -368,6 +421,12 @@ class io_user {
 					$(".form-field:eq(2)").hide();
 					$(".form-field:eq(3)").hide();
 					$(".form-field:eq(4)").show();
+					$(".form-field:eq(5)").hide();
+					break;
+				case 'organisatorisch':
+					$(".form-field:eq(2)").hide();
+					$(".form-field:eq(3)").hide();
+					$(".form-field:eq(4)").hide();
 					$(".form-field:eq(5)").show();
 					break;
 			}
@@ -385,6 +444,9 @@ class io_user {
 				case 'basisgruppe':
 					userLoginValue = "GrueneJugend" + $("#name").val();
 					break;
+				case 'organisatorisch':
+					userLoginValue = $("#orga_name").val();
+					break;
 			}
 			
 			$("#user_login").val(userLoginValue);
@@ -401,6 +463,10 @@ class io_user {
 		});
 		
 		$("#last_name").keyup(function() {
+			userNameKeyUp();
+		});
+		
+		$("#orga_name").keyup(function() {
 			userNameKeyUp();
 		});
 		
@@ -431,7 +497,7 @@ class io_user {
 			if(empty($_POST['last_name'])) {
 				$errors->add('last_name_error', '<strong>FEHLER:</strong> Du musst einen Nachnamen angeben!');
 			}
-		} else if($_POST['user_art'] != "user" && (empty($_POST['name']) || $_POST['land'] == 0)) {
+		} else if(($_POST['user_art'] == "landesverband" || $_POST['user_art'] == "basisgruppe") && (empty($_POST['name']) || $_POST['land'] == 0)) {
 			if(empty($_POST['name'])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
@@ -439,6 +505,8 @@ class io_user {
 			if(empty($_POST['land'])) {
 				$errors->add('land_error', '<strong>FEHLER:</strong> Du musst ein Bundesland angeben!');
 			}
+		} else if($_POST['user_art'] == "organisatorisch" && empty($_POST['orga_name'])) {
+			$errors->add('orga_error', '<strong>FEHLER:</strong> Du musst einen Namen angeben!');
 		}
 		
 		return $errors;
@@ -452,7 +520,7 @@ class io_user {
 				return;
 			}
 			
-			update_user_meta($user_id, "user_art", trim($_POST['user_art']));
+			update_user_meta($user_id, "user_art", sanitize_text_field($_POST['user_art']));
 			
 			$ldapConn = ldapConnector::get();
 			if($ldapConn->isLDAPUser(get_userdata($user_id)->user_login) && (
@@ -466,11 +534,13 @@ class io_user {
 			}
 			
 			if($_POST['user_art'] == "user") {
-				update_user_meta($user_id, "first_name", trim($_POST['first_name']));
-				update_user_meta($user_id, "last_name", trim($_POST['last_name']));
-			} else {
-				update_user_meta($user_id, "ort", trim($_POST['name']));
-				update_user_meta($user_id, "land", trim($_POST['land']));
+				update_user_meta($user_id, "first_name", sanitize_text_field($_POST['first_name']));
+				update_user_meta($user_id, "last_name", sanitize_text_field($_POST['last_name']));
+			} elseif($_POST['user_art'] == "landesverband" || $_POST['user_art'] == "basisgruppe") {
+				update_user_meta($user_id, "ort", sanitize_text_field($_POST['name']));
+				update_user_meta($user_id, "land", sanitize_text_field($_POST['land']));
+			} elseif($_POST['user_art'] == "organisatorisch") {
+				update_user_meta($user_id, "orga_name", sanitize_text_field($_POST['orga_name']));
 			}
 		}
 	}
@@ -514,6 +584,8 @@ class io_user {
 					return 'Basisgruppe (' . get_user_meta($user_id, 'land', true) . ')';
 				case 'landesverband':
 					return 'Landesverband (' . get_user_meta($user_id, 'land', true) . ')';
+				case 'organisatorisch':
+					return 'Organisatorisch';
 				default:
 					return 'User';
 			}
@@ -573,7 +645,7 @@ class io_user {
 		$user_id = $user->ID;
 		
 		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
-			//update_user_meta($user_id, "user_aktiv", 0);
+			update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
 		}
 		
