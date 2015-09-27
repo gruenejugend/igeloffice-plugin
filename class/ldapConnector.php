@@ -372,6 +372,7 @@ class ldapConnector extends LDAP {
 		return $this->getMemberOfList($this->userDN($user), 'groups');
 	}
 
+	//TODO: Sowohl Berechtigungen durch Permission und Group berücksichtigen
 	private function isQualified($user, $permission) {
 		$members = $this->getAttribute($this->permissionDN($permission), 'member');
 		$user = $this->userDN($user);

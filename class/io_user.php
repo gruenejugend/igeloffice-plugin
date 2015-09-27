@@ -2,8 +2,8 @@
 
 /**
  * //TODO: LDAP Anbindung
- * //TODO: Berechtigungszuordnung
- * //TODO: Gruppenzuordnung
+ * //TODO: Berechtigungszuordnung (TESTEN!!!)
+ * //TODO: Gruppenzuordnung (TESTEN!!!)
  * //TODO: Technischer User (TESTEN!!!)
  */
 
@@ -376,6 +376,10 @@ class io_user {
 		$landChecked[14] = ($land == 'schleswig-holstein' ? ' checked' : '');
 		$landChecked[15] = ($land == 'thueringen' ? ' checked' : '');
 		
+		
+		if(has_action('admin_notices', 'io_request_notice')) {
+			remove_action('admin_notices', 'io_request_notice');
+		}
 ?>
 
 <table class="form-table">
@@ -424,9 +428,6 @@ class io_user {
 			</select>
 		</td>
 	</tr>
-	<?php 
-		if(is_admin()) {
-	?>
 	<tr class="form-field">
 		<th scope="row"><label for="groups">Gruppenmitgliedschaften</label></th>
 		<td>
@@ -455,12 +456,7 @@ class io_user {
 					}
 				}
 			?>
-						</optgroup>
-			<?php 
-
-			}
-
-		?>
+				</optgroup>
 			</select>
 		</td>
 	</tr>
@@ -789,36 +785,59 @@ class io_user {
 	
 	//TODO: SPEICHERUNG GRUPPENMITGLIEDSCHAFT
 	public static function user_profile_save($user_id) {
-		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0) {
+		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0 && is_admin()) {
 			if( !isset($_POST['io_users_nonce']) || 
 				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
 			
-			$ldapConn = ldapConnector::get();
-			$io_user = new io_user(get_userdata($user_id));
-			
-			$neueGruppen = array_diff($_POST['groups'], $io_user->groupsID);
-			$alteGruppen = array_diff($io_user->groupsID, $_POST['groups']);
+			update_user_meta($user_id, "user_aktiv", 0);
+			self::user_ldap_add($user_id);
+		}
+		
+		$ldapConn = ldapConnector::get();
+		$io_user = new io_user(get_userdata($user_id));
+		
+		$neueGruppen = array_diff($_POST['groups'], $io_user->groupsID);
+		$alteGruppen = array_diff($io_user->groupsID, $_POST['groups']);
+		
+		$neuePermissions = array_diff($_POST['permissions'], $io_user->permissionsID);
+		$altePermissions = array_diff($io_user->permissionsID, $_POST['permissions']);
+		
+		foreach($alteGruppen AS $gruppe) {
+			$ldapConn->delUserToGroup(array($io_user->login), get_the_title($gruppe));
+		}
+		
+		foreach($altePermissions AS $permission) {
+			$ldapConn->delUserPermission(array($io_user->login), get_the_title($permission));
+		}
+
+		if(is_admin()) {
 			foreach($neueGruppen AS $gruppe) {
 				$ldapConn->addUsersToGroup(array($io_user->login), get_the_title($gruppe));
 			}
-			foreach($alteGruppen AS $gruppe) {
-				$ldapConn->delUserToGroup(array($io_user->login), get_the_title($gruppe));
-			}
-			
-			$neuePermissions = array_diff($_POST['permissions'], $io_user->permissionsID);
-			$altePermissions = array_diff($io_user->permissionsID, $_POST['permissions']);
+
 			foreach($neuePermissions AS $permission) {
 				$ldapConn->addUserPermission(array($io_user->login), get_the_title($permission));
 			}
-			foreach($altePermissions AS $permission) {
-				$ldapConn->delUserPermission(array($io_user->login), get_the_title($permission));
+		} else {
+			foreach($neueGruppen AS $gruppe) {
+				io_request::addRequest($io_user->login, "g", get_the_title($gruppe));
 			}
 			
-			update_user_meta($user_id, "user_aktiv", 0);
-			self::user_ldap_add($user_id);
+			foreach($neuePermissions AS $permission) {
+				io_request::addRequest($io_user->login, "p", get_the_title($permission));
+			}
+			
+			function io_request_notice() {
+    ?>
+    <div class="updated">
+        <p>Es wurde ein Antrag für die von dir beantragten Berechtigungen und/oder Mitgliedschaftsanfragen der Gruppe gestellt. Dieser wird so bald wie möglich bearbeitet.</p>
+    </div>
+<?php
+			}
+			add_action('admin_notices', 'io_request_notice');
 		}
 	}
 	
@@ -861,8 +880,6 @@ class io_user {
 	}
 	
 	public static function user_ldap_add($user_id) {
-		//TODO: Passwort erstelle und versenden
-		
 		$ldapConn = ldapConnector::get();
 		$user_data = get_userdata($user_id);
 		if(is_wp_error($ldapConn->addUser($user_data->first_name, $user_data->last_name, $user_data->user_email))) {

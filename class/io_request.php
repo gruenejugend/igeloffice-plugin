@@ -181,7 +181,7 @@ class io_request extends io_postlist {
 		
 	}
 	
-	public static function addRequest($user, $active, $art, $object) {
+	public static function addRequest($user, $art, $object, $active = true) {
 		$id = wp_insert_post(array(
 			'post_type'		=> self::$POST_TYPE,
 			'post_title'	=> ($art == 'p') ? 'Berechtigung - ' : 'Gruppe - ' . ($art == 'p') ? (new io_permission($object)).name : (new io_groups($object)).name
