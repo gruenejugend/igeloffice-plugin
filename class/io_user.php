@@ -804,7 +804,7 @@ class io_user {
 			foreach($neueGruppen AS $gruppe) {
 				$ldapConn->addUsersToGroup(array($io_user->login), get_the_title($gruppe));
 			}
-			foreach($neueGruppen AS $gruppe) {
+			foreach($alteGruppen AS $gruppe) {
 				$ldapConn->delUserToGroup(array($io_user->login), get_the_title($gruppe));
 			}
 			
