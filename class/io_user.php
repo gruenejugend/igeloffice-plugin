@@ -4,7 +4,7 @@
  * //TODO: LDAP Anbindung
  * //TODO: Berechtigungszuordnung
  * //TODO: Gruppenzuordnung
- * //TODO: Technischer User
+ * //TODO: Technischer User (TESTEN!!!)
  */
 
 /**
@@ -13,15 +13,88 @@
  * @author KWM
  */
 class io_user {
+	private $login;
+	private $art;
+	private $aktiv;
+	private $first_name;
+	private $last_name;
+	private $orga_name;
+	private $landesverband;
+	private $ort;
+	private $groups;
+	private $groupsID;
+	private $permissions;
+	private $permissionsID;
 	
+	public function __construct($user, $load = false) {
+		$id						= $user->ID;
+		$this->login			= $user->user_login;
+		$this->art				= get_user_meta($id, "user_art", true);
+		$this->aktiv			= get_user_meta($id, "user_aktiv", true);
+		$this->first_name		= get_user_meta($id, "first_name", true);
+		$this->last_name		= get_user_meta($id, "last_name", true);
+		$this->orga_name		= get_user_meta($id, "orga_name", true);
+		$this->landesverband	= get_user_meta($id, "landesverband", true);
+		$this->ort				= get_user_meta($id, "ort", true);
+		
+		if($load == true) {
+			$ldapConn = ldapConnector::get();
+			$this->groups			= $ldapConn->getUserGroups($this->login);
+			$this->groupsID			= array();
+			foreach($this->groups AS $groups) {
+				$groups = explode(",", substr($groups, 3))[0];
+				$post = get_post(array('post_title' => $groups));
+				
+				$post_id = (isset($post)) ? $post->ID : false;
+				
+				if($post_id) {
+					$this->groupsID[$post_id] = $post_id;
+				}
+			}
+			
+			$this->permissions		= $ldapConn->getUserPermissions($this->login);
+			$this->permissionsID	= array();
+			foreach($this->permissions AS $permissions) {
+				$permissions = explode(",", substr($permissions, 3))[0];
+				$post = get_post(array('post_title' => $permissions));
+				
+				$post_id = (isset($post)) ? $post->ID : false;
+				
+				if($post_id) {
+					$this->permissionsID[$post_id] = $post_id;
+				}
+			}
+		}
+	}
 	
-	
-	
-	
-	
-	
-	
-	
+	public function __get($name) {
+		switch($name) {
+			case 'login':
+				return $this->login;
+			case 'art':
+				return $this->art;
+			case 'aktiv':
+				return $this->aktiv;
+			case 'first_name':
+				return $this->first_name;
+			case 'last_name':
+				return $this->last_name;
+			case 'orga_name':
+				return $this->orga_name;
+			case 'landesverband':
+				return $this->landesverband;
+			case 'ort':
+				return $this->ort;
+			case 'groups':
+				return $this->groups;
+			case 'groupsID':
+				return $this->groupsID;
+			case 'permissions':
+				return $this->permissions;
+			case 'permissionsID':
+				return $this->permissionsID;
+		}
+	}
 	
 	/***********************************************************
 	 ***********************  Formulare  ***********************
@@ -351,43 +424,73 @@ class io_user {
 			</select>
 		</td>
 	</tr>
-	<tr class="form-field form-required">
+	<?php 
+		if(is_admin()) {
+	?>
+	<tr class="form-field">
 		<th scope="row"><label for="groups">Gruppenmitgliedschaften</label></th>
 		<td>
-			<select name="groups" id="groups" size="10" multiple>
-	<?php
-
-		$values = io_groups::getValues();
-		foreach($values AS $key_1 => $value_1) {
-			?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
+			<select name="groups[]" id="groups" size="10" multiple>
 		<?php
-			if(is_array($value_1)) {
-				foreach($value_1 AS $key_2 => $value_2) {
-					?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
-					<?php
 
-						foreach($value_2 AS $key_3 => $value_3) {
-							?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
-						}
+			$values = io_groups::getValues();
+			foreach($values AS $key_1 => $value_1) {
+				?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
+			<?php
+				if(is_array($value_1)) {
+					foreach($value_1 AS $key_2 => $value_2) {
+						?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
+						<?php
 
-					?>					</optgroup>
-					<?php
+							foreach($value_2 AS $key_3 => $value_3) {
+								?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
+							}
+
+						?>					</optgroup>
+						<?php
+					}
+				} else {
+					foreach($value_1 AS $key_2 => $value_2) {
+						?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
+					}
 				}
-			} else {
-				foreach($value_1 AS $key_2 => $value_2) {
-					?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
-				}
+			?>
+						</optgroup>
+			<?php 
+
 			}
+
 		?>
-					</optgroup>
-		<?php 
-
-		}
-
-	?>
 			</select>
 		</td>
 	</tr>
+	<tr class="form-field">
+		<th scope="row"><label for="permissions">Berechtigungen</label></th>
+		<td>
+			<select name="permissions[]" id="permissions" size="10" multiple>
+		<?php
+
+			$values = io_permission::getValues();
+			foreach($values AS $key_1 => $value_1) {
+				?>				<optgroup label="<?php echo get_option('io_per_k_' . $key_1); ?>">
+			<?php
+				foreach($value_1 AS $key_2 => $value_2) {
+					?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option>
+<?php
+				}
+			?>
+						</optgroup>
+			<?php 
+
+			}
+
+		?>
+			</select>
+		</td>
+	</tr>
+	<?php
+		}
+	?>
 </table>
 
 <script type="text/javascript">
@@ -536,7 +639,9 @@ class io_user {
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", sanitize_text_field($_POST['first_name']));
 				update_user_meta($user_id, "last_name", sanitize_text_field($_POST['last_name']));
-			} elseif($_POST['user_art'] == "landesverband" || $_POST['user_art'] == "basisgruppe") {
+			} elseif($_POST['user_art'] == "landesverband") {
+				update_user_meta($user_id, "land", sanitize_text_field($_POST['land']));
+			} elseif($_POST['user_art'] == "basisgruppe") {
 				update_user_meta($user_id, "ort", sanitize_text_field($_POST['name']));
 				update_user_meta($user_id, "land", sanitize_text_field($_POST['land']));
 			} elseif($_POST['user_art'] == "organisatorisch") {
@@ -689,6 +794,27 @@ class io_user {
 				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
+			}
+			
+			$ldapConn = ldapConnector::get();
+			$io_user = new io_user(get_userdata($user_id));
+			
+			$neueGruppen = array_diff($_POST['groups'], $io_user->groupsID);
+			$alteGruppen = array_diff($io_user->groupsID, $_POST['groups']);
+			foreach($neueGruppen AS $gruppe) {
+				$ldapConn->addUsersToGroup(array($io_user->login), get_the_title($gruppe));
+			}
+			foreach($neueGruppen AS $gruppe) {
+				$ldapConn->delUserToGroup(array($io_user->login), get_the_title($gruppe));
+			}
+			
+			$neuePermissions = array_diff($_POST['permissions'], $io_user->permissionsID);
+			$altePermissions = array_diff($io_user->permissionsID, $_POST['permissions']);
+			foreach($neuePermissions AS $permission) {
+				$ldapConn->addUserPermission(array($io_user->login), get_the_title($permission));
+			}
+			foreach($altePermissions AS $permission) {
+				$ldapConn->delUserPermission(array($io_user->login), get_the_title($permission));
 			}
 			
 			update_user_meta($user_id, "user_aktiv", 0);
