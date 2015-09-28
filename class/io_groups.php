@@ -445,6 +445,25 @@ class io_groups extends io_postlist {
 		return $return;
 	}
 	
+	public static function getLeaderGroups() {
+		$ldapConn = ldapConnector::get();
+		$groups = $ldapConn->getUserGroups(get_current_user()->user_login);
+		
+		$leaderOf = array();
+		foreach($groups AS $group) {
+			$group = explode(',', substr($group, 3))[0];
+			$leaders = $ldapConn->getGroupAttribute($group, 'owner');
+			
+			foreach($leaders AS $leader) {
+				if($leader == get_current_user()->user_login) {
+					array_push($leaderOf, $group);
+					break;
+				}
+			}
+		}
+		return $leaderOf;
+	}
+	
 	/*****************************************************
 	 ***************** Register Posttype *****************
 	 *****************************************************/

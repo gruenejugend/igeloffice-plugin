@@ -1,7 +1,6 @@
 <?php
 
 /**
- * //TODO: LDAP Anbindung
  * //TODO: Berechtigungszuordnung (TESTEN!!!)
  * //TODO: Gruppenzuordnung (TESTEN!!!)
  * //TODO: Technischer User (TESTEN!!!)
@@ -99,6 +98,7 @@ class io_user {
 	/***********************************************************
 	 ***********************  Formulare  ***********************
 	 ***********************************************************/
+	//TODO: Auch hier Gruppen- und Berechtigungsanfragen
 	public static function register_form() {
 		wp_enqueue_script('jqueryIO');
 		wp_nonce_field('io_users', 'io_users_nonce');

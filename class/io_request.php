@@ -1,5 +1,7 @@
 <?php
 
+//TODO: Gruppenmitgliedschaftsantragsbearbeitung durch Leiter*innen
+
 /**
  * Klasse zur Regelung von Anfragen für Berechtigungen oder Gruppenmitgliedschaften
  *
@@ -144,7 +146,7 @@ class io_request extends io_postlist {
 	public static function updBackendFormButton($post) {
 		$io_request = new io_request($post);
 		
-		if(isset($_GET['action']) && 
+		if(isset($_GET['action']) && is_admin() && 
 				!(!isset($_POST['io_requests_nonce']) || 
 				!wp_verify_nonce($_POST['io_requests_nonce'], 'io_requests') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
@@ -174,11 +176,58 @@ class io_request extends io_postlist {
 		}
 	}
 	
+	public static function groupRequests() {
+		$requests = self::getGroupValues();
+		
+		if(isset($_GET['request']) && isset($_GET['action'])) {
+			$io_request = new io_request(get_post(array('ID' => sanitize_text_field($_GET['request']))));
+			
+			if(in_array($io_request->group, io_groups::getLeaderGroups())) {
+				if($_GET['action'] == 0) {
+					update_post_meta(sanitize_text_field($_GET['request']), self::$PREFIX . '_status', 'Abgelehnt');
+					echo '<h2>Antrag abgelehnt.</h2><hr>';
+				} else if($_GET['action'] == 1) {
+					update_post_meta(sanitize_text_field($_GET['request']), self::$PREFIX . '_status', 'Angenommen');
+					self::grant($io_request->user, $io_request->art, $io_request->group);
+					echo '<h2>Antrag angenommen.</h2><hr>';
+				}
+			}
+		}
+		
+		?>
+			<h1>Gruppen-Anfragen</h1>
+			
+			Als Gruppe-Leiter*in* kannst du über Gruppen-Mitgliedschaftsanfragen befinden. Dabei kannst du entscheiden, ob du sie annimmst oder ablehnst. Die Rechtfertigung darüber obliegt dir ganz allein.<br><br>
+			
+			Berücksichtige bitte, dass mit deiner Gruppe unter Umständen Berechtigungen verknüpft sind, die den*die* neu berechtigte*n* Benutzer*in* neue Optionen eröffnen. Diese könnten unter Umständen ausgenutzt werden. Die Entscheidung darüber ist aus Sicherheitsgründen der GRÜNEN JUGEND gegenüber sehr vorsichtig zu treffen.<hr>
+		<?php
+		
+		foreach($requests AS $request) {
+			$io_request = new io_request(get_post(array('ID' => $request)));
+			
+			?>			<h2><?php echo $io_request->name; ?></h2>
+				Benutzer*in*: <?php echo $io_request->user ?> - Status: <?php echo $io_request->status ?><br><br>
+				<div align="right">
+					<a  href="<?php echo io_get_current_url(); ?>&request=<?php echo $request; ?>&action=1" style="padding: 7px; background: red; font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: white; border: 1px solid darkred; border-radius: 10px;">Annehmen</a><br>
+					<a  href="<?php echo io_get_current_url(); ?>&request=<?php echo $request; ?>&action=0" style="padding: 7px; background: red; font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: white; border: 1px solid darkred; border-radius: 10px;">Ablehnen</a><br>
+				</div>
+			<?php
+		}
+	}
+	
 	/*****************************************************
 	 ************** Database & LDAP Change ***************
 	 *****************************************************/
 	public static function grant($user, $art, $permission) {
-		
+		if(is_admin()) {
+			$ldapConn = ldapConnector::get();
+			
+			if($art == 'p') {
+				$ldapConn.addUserPermission($user, $permission);
+			} elseif($art == 'g') {
+				$ldapConn.addUsersToGroup(array($user), $permission);
+			}
+		}
 	}
 	
 	public static function addRequest($user, $art, $object, $active = true) {
@@ -190,15 +239,38 @@ class io_request extends io_postlist {
 		update_post_meta($id, self::$PREFIX . '_user', $user);
 		update_post_meta($id, self::$PREFIX . '_active', ($active == true) ? 1 : 0);
 		update_post_meta($id, self::$PREFIX . '_art', ($art == 'p') ? 'p' : 'g');
-		update_post_meta($id, self::$PREFIX . ($art == 'p') ? '_permiission' : '_group', $object);
+		update_post_meta($id, self::$PREFIX . ($art == 'p') ? '_permission' : '_group', $object);
 		update_post_meta($id, self::$PREFIX . '_status', 'Eingereicht');
 	}
 	
 	/*****************************************************
 	 ****************** Hilfsfunktionen ******************
 	 *****************************************************/
-	public static function getValues() {
-		
+	public static function getGroupValues() {
+		if(count(io_groups::getLeaderGroups()) != 0) {
+			$requests = array();
+			foreach(io_groups::getLeaderGroups() AS $group) {
+				$posts = get_posts(array(
+					'post_type'		=> self::$POST_TYPE,
+					'meta_query'	=> array(
+						array(
+							'meta_key'		=> self::$PREFIX . '_group',
+							'meta_value'	=> $group
+						),
+						array(
+							'meta_key'		=> self::$PREFIX . '_status',
+							'meta_value'	=> 'Eingereicht'
+						)
+					)
+				));
+				
+				foreach($posts AS $post) {
+					array_push($requests, $post->ID);
+				}
+			}
+			return $requests;
+		}
+		return null;
 	}
 	
 	/*****************************************************
