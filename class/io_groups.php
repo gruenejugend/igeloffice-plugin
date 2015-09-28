@@ -2,9 +2,10 @@
 
 /**
  * Weitere, noch nicht implementierte Features:
- * - Mitgliedschaftsbeantragung übers Frontend (und Zulassung)
- * - Gruppenverwaltung übers Frontend (Mitglieder hinzufügen, entfernen, Leiter*innen verändern, Verteiler ändern, Listen hinzufügen)
- * - Listenerstellung, bei Eintrag
+ * //TODO: Mitgliedschaftsbeantragung übers Frontend (und Zulassung) (TEST)
+ * //TODO: Gruppenverwaltung übers Frontend (Mitglieder hinzufügen, entfernen, Leiter*innen verändern, Verteiler ändern, Listen hinzufügen) (TEST)
+ * //TODO: Maximale Anzahl von Gruppenmitgliedern
+ * //TODO: Listenerstellung, bei Eintrag
  */
 
 /**
@@ -239,6 +240,163 @@ class io_groups extends io_postlist {
 		unset($form);
 	}
 	
+	public static function edit() {
+		if(!isset($_GET['group'])) {
+			?>
+			
+			<h1>Gruppen-Bearbeitung</h1>
+			
+			Als Gruppen-Leiter*in* bist du hier in der Lage, deine Gruppen zu bearbeiten. Dabei kannst du einzelne Mitglieder deiner Gruppe entfernen oder neue hinzufügen.<hr>
+
+			<table border="0" cellpadding="5" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th><b>Name</b></th>
+						<th><b>Oberkategorie</b></th>
+						<th><b>Unterkategorie</b></th>
+						<th><b>Aktion</b></th>
+					</tr>
+				</thead>
+			<?php
+				foreach(self::getLeaderGroups() AS $group) {
+					$io_group = new io_groups($group);
+					
+					?>
+				<tr>
+					<td><b><?php echo $io_group->name; ?></b></td>
+					<td><?php echo $io_group->oberkategorie; ?></td>
+					<td><?php echo $io_group->unterkategorie; ?></td>
+					<td>
+					<a  href="<?php echo io_get_current_url(); ?>&group=<?php echo $group; ?>" style="padding: 7px; background: red; font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: white; border: 1px solid darkred; border-radius: 10px;">Bearbeiten</a></td>
+				</tr>
+					<?php
+				}
+			?>
+			</table>
+			<?php
+		} else if(isset($_GET['group']) && in_array((new io_groups(get_post(array('ID' => sanitize_text_field($_GET['group'])))))->name, self::getLeaderGroups())) {
+			$io_group = new io_groups(get_post(array('ID' => sanitize_text_field($_GET['group']))));
+			
+			if(isset($_POST['io_group_submit'])) {
+				$ldapConn = ldapConnector::get();
+				foreach($io_group->mitgliedschaftenID AS $user_id) {
+					if(isset($_POST['io_group_mit_' . $user_id]) && $_POST['io_group_mit_' . $user_id] == true) {
+						$ldapConn->delUserFromGroup(get_userdata($user_id)->user_lgoin, $io_group->name);
+					}
+				}
+				
+				foreach($io_group->gruppenID AS $group_id) {
+					if(isset($_POST['io_group_grp_' . $group_id]) && $_POST['io_group_grp_' . $group_id] == true) {
+						$ldapConn->delGroupFromGroup(get_post(array('ID' => $group_id))->post_title, $io_group->name);
+					}
+				}
+				
+				$newUsers = explode("\n\r", sanitize_text_field($_POST['io_group_add_mit']));
+				foreach($newUsers AS $user) {
+					if(get_user_by('login', $user)) {
+						$ldapConn->addUsersToGroup(array($user), $io_group->name);
+					} else {
+						?>			<b>Der*die* Benutzer*in* <?php echo $user; ?> ist im IGELoffice nicht registriert.</b><hr>
+<?php
+					}
+				}
+				
+				$newGroups = explode("\n\r", sanitize_text_field($_POST['io_group_grp_mit']));
+				foreach($newGroups AS $group) {
+					if(get_post(array('post_title' => $group)) != null) {
+						$ldapConn->addGroupToGroup($group, $io_group->name);
+					} else {
+						?>			<b>Die Gruppe <?php echo $group; ?> ist nicht existent.</b><hr>
+<?php
+					}
+				}
+				
+				?>			<b>Bearbeitung abgeschlossen.</b>
+<?php
+			}
+			
+			?>
+			<form action="<?php echo io_get_current_url(); ?>" method="post">
+			
+				<h1>Gruppenbearbeitung</h1>
+				<h2><?php echo $io_group->name; ?></h2>
+				<b>Oberkategorie:</b> <?php echo $io_group->oberkategorie; ?><br>
+				<b>Unterkategorie:</b> <?php echo $io_group->unterkategorie; ?><br>
+				<b>Leiter*innen*:</b><br>
+				<?php 
+					foreach($io_group->leiter_innen AS $leiter_in) {
+						?>				<?php echo $leiter_in; ?><br>
+<?php
+					}
+				?><br>
+				<b>Verteiler:</b><br>
+				<?php 
+					foreach($io_group->verteiler AS $verteiler) {
+						?>				<?php echo $verteiler; ?><br>
+<?php
+					}
+				?><br>
+				<b>Listen:</b><br>
+				<?php 
+					foreach($io_group->listen AS $listen) {
+						?>				<?php echo $listen; ?><br>
+<?php
+					}
+				?><br>
+				
+				<b>Mitglieder:</b>
+				<table border="0" cellpadding="5" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th width="10%"><b>Entfernen</b></th>
+							<th width="90%"><b>Name</b></th>
+						</tr>
+					</thead>
+					<?php
+						foreach($io_group->mitgliedschaftenID AS $user_id) {
+							?>					<tr>
+							<td><input type="checkbox" name="io_group_mit_<?php echo $user_id ?>" value="true"></td>
+							<td><?php echo get_userdata($user_id)->user_login; ?></td>
+						<td></td>
+					</tr>
+<?php
+						}
+					?>
+				</table><br>
+				
+				<b>Mitglieder hinzufügen (Je Zeile ein Mitglied):</b><br>
+				<textarea name="io_group_add_mit" cols="20" rows="5"></textarea><br>
+				
+				<b>Gruppen als Mitglied:</b>
+				<table border="0" cellpadding="5" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th width="10%"><b>Entfernen</b></th>
+							<th width="90%"><b>Name</b></th>
+						</tr>
+					</thead>
+					<?php
+						foreach($io_group->gruppenID AS $group_id) {
+							?>					<tr>
+							<td><input type="checkbox" name="io_group_grp_<?php echo $group_id ?>" value="true"></td>
+							<td><?php echo get_post(array('ID' => $group_id))->post_title; ?></td>
+						<td></td>
+					</tr>
+<?php
+						}
+					?>
+				</table><br>
+				
+				<b>Gruppen hinzufügen (Je Zeile eine):</b><br>
+				<textarea name="io_group_add_grp" cols="20" rows="5"></textarea><br><br>
+				
+				<input type="submit" name="io_group_submit" value="Abschicken">
+			</form>	
+			<?php
+		}
+	}
+
+
 	/*****************************************************
 	 ************** Database & LDAP Change ***************
 	 *****************************************************/
@@ -277,7 +435,7 @@ class io_groups extends io_postlist {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']));
 				$isOberkategorie = true;
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
-				//FEHLER
+				//TODO FEHLER
 			}
 			
 			if($isOberkategorie && $_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] == 0) {
@@ -288,7 +446,7 @@ class io_groups extends io_postlist {
 			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
 				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']));
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
-				//FEHLER
+				//TODO FEHLER
 			}
 			
 			$io_groups = new io_groups(get_post(array('ID' => $post_id)), true);

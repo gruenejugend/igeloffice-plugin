@@ -77,6 +77,8 @@
 	
 	//Permission Shortcodes
 	add_shortcode('io_mail',									array('io_mailing', 'mask'));
+	add_shortcode('io_group_edit',								array('io_group', 'edit'));
+	add_shortcode('io_group_requests',							array('io_request', 'groupRequests'));
 	add_filter('sanitize_user',									'io_sanitize_user', 10, 3);
 	
 	if (!function_exists('wp_new_user_notification')) {
