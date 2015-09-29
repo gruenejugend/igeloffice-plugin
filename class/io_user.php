@@ -4,6 +4,8 @@
  * //TODO: Berechtigungszuordnung (TESTEN!!!)
  * //TODO: Gruppenzuordnung (TESTEN!!!)
  * //TODO: Technischer User (TESTEN!!!)
+ * //TODO: Koordinaten auf Karte (TESTEN!!!)
+ * //TODO: Webseite wieder mit rein (TESTEN!!!)
  */
 
 /**
@@ -249,6 +251,12 @@ class io_user {
 					$("#land_box").hide();
 					break;
 				case 'landesverband':
+					$("#first_name_box").hide();
+					$("#last_name_box").hide();
+					$("#orga_name_box").hide();
+					$("#name_box").hide();
+					$("#land_box").show();
+					break;
 				case 'basisgruppe':
 					$("#first_name_box").hide();
 					$("#last_name_box").hide();
@@ -269,17 +277,73 @@ class io_user {
 		};
 		
 		var userNameKeyUp = function() {
+			switch($("#land").val()) {
+				case 'baden-wuerttemberg':
+					landKurz = 'BW';
+					break;
+				case 'bayern':
+					landKurz = 'BY';
+					break;
+				case 'berlin':
+					landKurz = 'BE';
+					break;
+				case 'brandenburg':
+					landKurz = 'BB';
+					break;
+				case 'bremen':
+					landKurz = 'HB';
+					break;
+				case 'hamburg':
+					landKurz = 'HH';
+					break;
+				case 'hessen':
+					landKurz = 'HE';
+					break;
+				case 'mecklemburg-vorpommern':
+					landKurz = 'MV';
+					break;
+				case 'niedersachsen':
+					landKurz = 'NI';
+					break;
+				case 'nordrhein-westfalen':
+					landKurz = 'NW';
+					break;
+				case 'rheinland-pfalz':
+					landKurz = 'RP';
+					break;
+				case 'schleswig-holstein':
+					landKurz = 'SH';
+					break;
+				case 'saarland':
+					landKurz = 'SL';
+					break;
+				case 'sachsen':
+					landKurz = 'SN';
+					break;
+				case 'sachsen-anhalt':
+					landKurz = 'ST';
+					break;
+				case 'thueringen':
+					landKurz = 'TH';
+					break;
+				default:
+					landKurz = '';
+					break;
+			}
+			
 			switch($("input[name='user_art']:checked").val()) {
 				case 'user':
 				default:
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
+					userLoginValue = "GrueneJugend" + landKurz;
+					break;
 				case 'basisgruppe':
 					userLoginValue = "GrueneJugend" + $("#name").val();
 					break;
 				case 'organisatorisch':
-					userLoginValue = $("#name").val();
+					userLoginValue = $("#orga_name").val();
 					break;
 			}
 			
@@ -305,6 +369,10 @@ class io_user {
 		});
 		
 		$("#name").keyup(function() {
+			userNameKeyUp();
+		});
+		
+		$("#land").change(function() {
 			userNameKeyUp();
 		});
     });
@@ -357,6 +425,7 @@ class io_user {
 		}
 		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
 		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
+		$geo = (!empty($_POST['geo'])) ? sanitize_text_field($_POST['geo']) : '';
 		$land = (!empty($_POST['land'])) ? sanitize_text_field($_POST['land']) : '';
 		
 		$landChecked[0]  = ($land == 'baden-wuerttemberg' ? ' checked' : '');
@@ -409,7 +478,7 @@ class io_user {
 		<td>
 			<select name="land" id="land">
 				<option value="0">--- Bitte auswählen ---</option>
-				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
+				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
 				<option<?php echo $landChecked[2];  ?> value="berlin">Berlin</option>
 				<option<?php echo $landChecked[3];  ?> value="brandenburg">Brandenburg</option>
@@ -424,8 +493,14 @@ class io_user {
 				<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
-				<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
+				<option<?php echo $landChecked[15]; ?> value="thueringen">Th&uuml;ringen</option>
 			</select>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row"><label for="name">Ort Geo-Koordinaten <span class="description">(erforderlich, bei Google Maps ermittelbar)</span></label></th>
+		<td>
+			<input type="text" name="geo" id="geo" class="input" value="<?php echo esc_attr(wp_unslash($geo)); ?>" size="25">
 		</td>
 	</tr>
 	<tr class="form-field">
@@ -434,29 +509,37 @@ class io_user {
 			<select name="groups[]" id="groups" size="10" multiple>
 		<?php
 
-			$values = io_groups::getValues();
-			foreach($values AS $key_1 => $value_1) {
-				?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
-			<?php
-				if(is_array($value_1)) {
-					foreach($value_1 AS $key_2 => $value_2) {
-						?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
-						<?php
+			if(count(io_groups::getValues()) > 0) {
+				$values = io_groups::getValues();
+				foreach($values AS $key_1 => $value_1) {
+					?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
+				<?php
+					if(is_array($value_1)) {
+						foreach($value_1 AS $key_2 => $value_2) {
+							?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
+							<?php
 
-							foreach($value_2 AS $key_3 => $value_3) {
-								?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
-							}
+								foreach($value_2 AS $key_3 => $value_3) {
+									?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
+								}
 
-						?>					</optgroup>
-						<?php
+							?>					</optgroup>
+							<?php
+						}
+					} else {
+						foreach($value_1 AS $key_2 => $value_2) {
+							?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
+						}
 					}
-				} else {
-					foreach($value_1 AS $key_2 => $value_2) {
-						?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
-					}
-				}
+					
 			?>
 				</optgroup>
+		<?php
+		
+				}
+			}
+			
+			?>
 			</select>
 		</td>
 	</tr>
@@ -466,36 +549,38 @@ class io_user {
 			<select name="permissions[]" id="permissions" size="10" multiple>
 		<?php
 
-			$values = io_permission::getValues();
-			foreach($values AS $key_1 => $value_1) {
-				?>				<optgroup label="<?php echo get_option('io_per_k_' . $key_1); ?>">
-			<?php
-				foreach($value_1 AS $key_2 => $value_2) {
-					?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option>
-<?php
-				}
-			?>
-						</optgroup>
-			<?php 
+			if(count(io_permission::getValues()) > 0) {
+				$values = io_permission::getValues();
+				foreach($values AS $key_1 => $value_1) {
+					?>				<optgroup label="<?php echo $key_1; ?>">
+				<?php
+					foreach($value_1 AS $key_2 => $value_2) {
+						?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option>
+	<?php
+					}
+				?>
+							</optgroup>
+				<?php 
 
+				}
 			}
 
 		?>
 			</select>
 		</td>
 	</tr>
-	<?php
-		}
-	?>
 </table>
 
 <script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function() { 
-		$(".form-field:eq(4)").hide();
-		$(".form-field:eq(3)").after($(".form-field:eq(0)"));
-		$(".form-field:eq(0)").after($(".form-field:eq(8)"));
-		$(".form-field:eq(3)").after($(".form-field:eq(9)"));
-		$(".form-field:eq(4)").after($(".form-field:eq(10)"));
+	document.addEventListener("DOMContentLoaded", function() {
+		$(".form-field:eq(0)").before($(".form-field:eq(1)"));
+		$(".form-field:eq(1)").before($(".form-field:eq(8)"));
+		$(".form-field:eq(2)").before($(".form-field:eq(3)"));
+		$(".form-field:eq(3)").before($(".form-field:eq(4)"));
+		$(".form-field:eq(4)").before($(".form-field:eq(9)"));
+		$(".form-field:eq(5)").before($(".form-field:eq(10)"));
+		$(".form-field:eq(6)").before($(".form-field:eq(11)"));
+		$(".form-field:eq(8)").before($(".form-field:eq(12)"));
 		$(".form-field:eq(2)").addClass("form-required");
 		$(".form-field:eq(3)").addClass("form-required");
 		$("#user_login").prop('readonly', 'true');
@@ -514,19 +599,32 @@ class io_user {
 					$(".form-field:eq(3)").show();
 					$(".form-field:eq(4)").hide();
 					$(".form-field:eq(5)").hide();
+					$(".form-field:eq(6)").hide();
+					$(".form-field:eq(8)").hide();
 					break;
 				case 'landesverband':
+					$(".form-field:eq(2)").hide();
+					$(".form-field:eq(3)").hide();
+					$(".form-field:eq(4)").hide();
+					$(".form-field:eq(5)").hide();
+					$(".form-field:eq(6)").show();
+					$(".form-field:eq(8)").show();
+					break
 				case 'basisgruppe':
 					$(".form-field:eq(2)").hide();
 					$(".form-field:eq(3)").hide();
 					$(".form-field:eq(4)").show();
 					$(".form-field:eq(5)").hide();
+					$(".form-field:eq(6)").show();
+					$(".form-field:eq(8)").show();
 					break;
 				case 'organisatorisch':
 					$(".form-field:eq(2)").hide();
 					$(".form-field:eq(3)").hide();
 					$(".form-field:eq(4)").hide();
 					$(".form-field:eq(5)").show();
+					$(".form-field:eq(6)").hide();
+					$(".form-field:eq(8)").hide();
 					break;
 			}
 			userNameKeyUp();
@@ -534,12 +632,68 @@ class io_user {
 		};
 		
 		var userNameKeyUp = function() {
+			switch($("#land").val()) {
+				case 'baden-wuerttemberg':
+					landKurz = 'BW';
+					break;
+				case 'bayern':
+					landKurz = 'BY';
+					break;
+				case 'berlin':
+					landKurz = 'BE';
+					break;
+				case 'brandenburg':
+					landKurz = 'BB';
+					break;
+				case 'bremen':
+					landKurz = 'HB';
+					break;
+				case 'hamburg':
+					landKurz = 'HH';
+					break;
+				case 'hessen':
+					landKurz = 'HE';
+					break;
+				case 'mecklemburg-vorpommern':
+					landKurz = 'MV';
+					break;
+				case 'niedersachsen':
+					landKurz = 'NI';
+					break;
+				case 'nordrhein-westfalen':
+					landKurz = 'NW';
+					break;
+				case 'rheinland-pfalz':
+					landKurz = 'RP';
+					break;
+				case 'schleswig-holstein':
+					landKurz = 'SH';
+					break;
+				case 'saarland':
+					landKurz = 'SL';
+					break;
+				case 'sachsen':
+					landKurz = 'SN';
+					break;
+				case 'sachsen-anhalt':
+					landKurz = 'ST';
+					break;
+				case 'thueringen':
+					landKurz = 'TH';
+					break;
+				default:
+					landKurz = '';
+					break;
+			}
+			
 			switch($("input[name='user_art']:checked").val()) {
 				case 'user':
 				default:
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
+					userLoginValue = "GrueneJugend" + landKurz;
+					break;
 				case 'basisgruppe':
 					userLoginValue = "GrueneJugend" + $("#name").val();
 					break;
@@ -570,6 +724,10 @@ class io_user {
 		});
 		
 		$("#name").keyup(function() {
+			userNameKeyUp();
+		});
+		
+		$("#land").change(function() {
 			userNameKeyUp();
 		});
 	});
@@ -637,9 +795,11 @@ class io_user {
 				update_user_meta($user_id, "last_name", sanitize_text_field($_POST['last_name']));
 			} elseif($_POST['user_art'] == "landesverband") {
 				update_user_meta($user_id, "land", sanitize_text_field($_POST['land']));
+				update_user_meta($user_id, "geo", sanitize_text_field($_POST['geo']));
 			} elseif($_POST['user_art'] == "basisgruppe") {
 				update_user_meta($user_id, "ort", sanitize_text_field($_POST['name']));
 				update_user_meta($user_id, "land", sanitize_text_field($_POST['land']));
+				update_user_meta($user_id, "geo", sanitize_text_field($_POST['geo']));
 			} elseif($_POST['user_art'] == "organisatorisch") {
 				update_user_meta($user_id, "orga_name", sanitize_text_field($_POST['orga_name']));
 			}
@@ -783,7 +943,6 @@ class io_user {
 <?php
 	}
 	
-	//TODO: SPEICHERUNG GRUPPENMITGLIEDSCHAFT
 	public static function user_profile_save($user_id) {
 		if(isset($_POST["user_aktiv"]) && $_POST["user_aktiv"] == 0 && get_user_meta($user_id, 'user_aktiv', true) != 0 && is_admin()) {
 			if( !isset($_POST['io_users_nonce']) || 

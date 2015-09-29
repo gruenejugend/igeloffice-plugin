@@ -280,7 +280,7 @@ class io_groups extends io_postlist {
 			if(isset($_POST['io_group_submit'])) {
 				$ldapConn = ldapConnector::get();
 				foreach($io_group->mitgliedschaftenID AS $user_id) {
-					if(isset($_POST['io_group_mit_' . $user_id]) && $_POST['io_group_mit_' . $user_id] == true) {
+					if(isset($_POST['io_group_mit_' . $user_id]) && $_POST['io_group_mit_' . $user_id] == true && !in_array($user_id, $io_group->leiter_innenID)) {
 						$ldapConn->delUserFromGroup(get_userdata($user_id)->user_lgoin, $io_group->name);
 					}
 				}
@@ -311,6 +311,7 @@ class io_groups extends io_postlist {
 					}
 				}
 				
+				$io_group = new io_groups(get_post(array('ID' => sanitize_text_field($_GET['group']))));
 				?>			<b>Bearbeitung abgeschlossen.</b>
 <?php
 			}
@@ -355,7 +356,10 @@ class io_groups extends io_postlist {
 					<?php
 						foreach($io_group->mitgliedschaftenID AS $user_id) {
 							?>					<tr>
-							<td><input type="checkbox" name="io_group_mit_<?php echo $user_id ?>" value="true"></td>
+							<td><?php
+							if(!in_array($user_id, $io_group->leiter_innenID)) {
+								?><input type="checkbox" name="io_group_mit_<?php echo $user_id ?>" value="true"><?php
+							} ?></td>
 							<td><?php echo get_userdata($user_id)->user_login; ?></td>
 						<td></td>
 					</tr>

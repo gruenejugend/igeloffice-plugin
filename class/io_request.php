@@ -1,6 +1,6 @@
 <?php
 
-//TODO: Gruppenmitgliedschaftsantragsbearbeitung durch Leiter*innen
+//TODO: Gruppenmitgliedschaftsantragsbearbeitung durch Leiter*innen (TESTEN!)
 
 /**
  * Klasse zur Regelung von Anfragen für Berechtigungen oder Gruppenmitgliedschaften
