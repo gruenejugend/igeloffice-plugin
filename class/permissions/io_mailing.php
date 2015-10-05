@@ -1,5 +1,9 @@
 <?php
 
+//TODO: Generelle Frage, Umgang mit mehreren E-Mail-Adressen
+//TODO: Aliase als Weiterleitung, Alias: alias != self::$mailBox
+//TODO: Antrag auf Alias
+
 /**
  * Masken für die Berechtigungsverwaltung Mailing
  *
@@ -13,20 +17,17 @@ class io_mailing {
 		$ldapConn = ldapConnector::get();
 		
 		self::$mail = io_case_mail_change(wp_get_current_user()->user_firstname) . '.' . io_case_mail_change(wp_get_current_user()->user_lastname) . '@gruene-jugend.de';
-		if(	self::$mail == $ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0] &&
-			strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de')) {
+		if(	self::$mail == self::getGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')) &&
+			self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 			self::$mailBox = self::$mail;
-		} else if(strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de')) {
-			self::$mailBox = $ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0];
+		} else if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+			self::$mailBox = self::getGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
 		}
 		
-		//TODOs beachten
 		if( $ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
 			$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
-				//TODO: Mailweiterleitung Attribut
-				//TODO: Was passiert, wenn mehrere Einträge vorhanden sind?
-			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == self::$mail ||
-			strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de')) {
+			self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) ||
+			self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 			
 			?>
 
@@ -44,15 +45,13 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 			<?php
 			
 			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
-					//TODO: Mehrere Weiterleitungen?
-				$ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == self::$mail) {
-					//TODO: Mehrere Weiterleitungen?
-				self::mailForwarding($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == self::$mail ? " checked" : "");
+				self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
+				self::mailForwarding(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) ? " checked" : "");
 			}
 			
 			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
-				strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de')) {
-				self::mailBox(strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de') ? " checked" : "");
+				self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+				self::mailBox(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')) ? " checked" : "");
 			}
 			
 			?>
@@ -91,17 +90,27 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 		
 		$ldapConn = ldapConnector::get();
 		
-		//TODO: Mailweiterleitung Attribut
-		//TODO: Was passiert, wenn mehrere Einträge vorhanden sind?
-		if($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress") == self::$mail && !isset($_POST['io_mail_forward'])) {
+		if(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) && !isset($_POST['io_mail_forward'])) {
+			$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail);
 			
-			//TODO: Weiterleitung löschen
+			//Wenn Postfach gesetzt ist, dann Mail-Attribut der privaten Adresse hinzufügen
+			if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
+				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+			}
+			
 			?><b>Die Weiterleitung wurde gelöscht.</b><?php
 		}
 		
-		if(isset($_POST['io_mail_forward']) && $_POST['io_mail_forward'] == true) {
+		if(isset($_POST['io_mail_forward']) && $_POST['io_mail_forward'] == true && !self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail);
+
+			//Wenn Postfach gesetzt ist, dann Mail-Attribut der privaten Adresse hinzufügen
+			if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+			}
 			
-			//TODO: Weiterleitung einrichten
 			?><b>Die Weiterleitung wurde eingerichtet.</b><?php
 		}
 	}
@@ -161,26 +170,70 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 		
 		$ldapConn = ldapConnector::get();
 		
-		if(strpos($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mail")[0], '@gruene-jugend.de') && !isset($_POST['io_mail_box'])) {
+		if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')) && !isset($_POST['io_mail_box'])) {
+			//Wenn eine Weiterleitung besteht
+			if(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
+				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
+				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
+			} else {
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+			}
 			
-			//TODO: Postfach löschen
 			?><b>Dein Postfach wurde gelöscht.</b><?php
 		}
 		
-		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true) {
+		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true && !self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
+			//TODO: LDAP Änderung, hier: Veränderung des Attributes
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
 			
-			//TODO: Postfach einrichten
+			//Wenn eine Weiterleitung besteht, Weiterleitung weiter aufrecht halten
+			if(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
+				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+			}
+			
 			?><b>Dein Postfach wurde eingerichtet.</b><?php
 		}
+	}
+	
+	private static function isGJMail($array) {
+		if(count($array) > 0) {
+			foreach($array AS $mail) {
+				if(strpos($mail, '@gruene-jugend.de')) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static function getGJMail($array) {
+		if(count($array) > 0) {
+			foreach($array AS $mail) {
+				if(strpos($mail, '@gruene-jugend.de')) {
+					return $mail;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static function isGJMailForward($array, $forward) {
+		if(count($array) > 0) {
+			foreach($array AS $mail) {
+				if($mail == $forward) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	
 	
 	
-	
-	
-	
-	
+	//TODO: Oben beachten
 	private static function mailForwardings() {
 		
 	}
