@@ -24,33 +24,28 @@ class io_mailing {
 			self::$mailBox = self::getGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
 		}
 		
-		if( $ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
-			$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
-			self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) ||
-			self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+		if(mailIsPermitted()) {
 			
 			?>
 
 Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 <b><?php 
-	echo self::$mail; 
-	
-	if(self::$mailBox != self::$mail) {
-		echo ' (Postfach: ' . self::$mailBox . ')';
-	}
-	
+		echo self::$mail; 
+
+		if(self::$mailBox != self::$mail) {
+			echo ' (Postfach: ' . self::$mailBox . ')';
+		}
+
 ?></b><br><hr>
 
 <form action="<?php echo($_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]); ?>" method="post">
 			<?php
 			
-			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
-				self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
+			if(self::mailForwardIsPermitted()) {
 				self::mailForwarding(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) ? " checked" : "");
 			}
 			
-			if(	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
-				self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
+			if(self::mailPostboxIsPermitted()) {
 				self::mailBox(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')) ? " checked" : "");
 			}
 			
@@ -228,6 +223,24 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 			}
 		}
 		return false;
+	}
+	
+	public static function mailIsPermitted() {
+		return self::mailForwardIsPermitted() || self::mailPostboxIsPermitted();
+	}
+	
+	public static function mailForwardIsPermitted() {
+		$ldapConn = ldapConnector::get();
+		
+		return	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
+				self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail);
+	}
+	
+	public static function mailPostboxIsPermitted() {
+		$ldapConn = ldapConnector::get();
+		
+		return	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
+				self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
 	}
 	
 	

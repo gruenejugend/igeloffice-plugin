@@ -406,6 +406,7 @@ class ldapConnector extends LDAP {
 		$this->setAttribute($this->permissionDN($permission), $attribute, $value, $mode, $old_value);
 	}
 
+	//TODO: Was heißt hier $mode = 'add'? Manchmal muss ein Attribute als komplett neues Attribut hinzugefügt werden, manchmal geändert werden
 	private function setUserAttribute($user, $attribute, $value, $mode = 'add', $old_value = null) {
 		$this->setAttribute($this->userDN($user), $attribute, $value, $mode, $old_value);
 	}	

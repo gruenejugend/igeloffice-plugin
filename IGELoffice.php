@@ -79,6 +79,8 @@
 	add_shortcode('io_mail',									array('io_mailing', 'mask'));
 	add_shortcode('io_group_edit',								array('io_group', 'edit'));
 	add_shortcode('io_group_requests',							array('io_request', 'groupRequests'));
+	add_shortcode('io_owncloud',								array('io_owncloud', 'mask'));
+	add_shortcode('io_sympa',									array('io_sympa', 'mask'));
 	add_filter('sanitize_user',									'io_sanitize_user', 10, 3);
 	
 	if (!function_exists('wp_new_user_notification')) {
