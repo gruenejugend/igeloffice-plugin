@@ -38,8 +38,8 @@ class LDAP {
 		return true;
 	}
 
-	protected function getAttribute($dn, $attribute) {
-		$read = ldap_read($this->res, $dn, '(objectclass=*)', array($attribute));
+	protected function getAttribute($dn, $attribute, $filter = '(objectclass=*)') {
+		$read = ldap_read($this->res, $dn, $filter, array($attribute));
 		if($read === false) {
 			return $this->error();
 		}
@@ -54,8 +54,21 @@ class LDAP {
 		return $data[$attribute];
 	}
 
-	protected function getCNList($dn, $attribute, $ou = '*') {
-		$data = $this->getAttribute($dn, $attribute, $ou);
+	/**
+	 * gets a list of CNs from a attribute values
+	 * @param  string  $dn        DN
+	 * @param  string  $attribute attribute
+	 * @param  boolean|string $filter filter the CNs for this substring
+	 * @return array             list of CNs
+	 */
+	protected function getCNList($dn, $attribute, $filter = false) {
+		if($filter) {
+			$filter = '&(objectclass=*)('.$attribute.'~='.$ou_filter.')';
+			$data = $this->getAttribute($dn, $attribute, $filter);
+		}
+		else {
+			$data = $this->getAttribute($dn, $attribute);
+		}
 		return $this->DNtoCN($data);
 	}
 
@@ -134,6 +147,19 @@ class LDAP {
 		}
 
 		return false;
+	}
+
+	/**
+	 * deletes an attribute of an DN
+	 * @param  string $dn     DN
+	 * @param  array $values attributes to delete. if you want to delete all values of an atttribute use array('attribute' => ''). otherwise use array('attribute'=>'value').
+	 * @return bool         successfull or not
+	 */
+	protected function delAttribute($dn, $values) {
+		if(!ldap_mod_dell($this->res, $dn, $values)) {
+			$this->error();
+		}
+		return true;
 	}
 
 	/**

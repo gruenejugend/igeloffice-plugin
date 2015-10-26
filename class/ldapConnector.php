@@ -232,13 +232,12 @@ class ldapConnector extends LDAP {
 	}
 
 	/**
-	 * adds an group to and group. this isn't implementet in LDAP yet, so this method does nothing.
-	 * @param string $groupToAdd group CN
+	 * adds an group to and group
+	 * @param string $groupToAdd group CN to add as member
 	 * @param string $group      group CN
-	 * @todo implement this in LDAP server
 	 */
 	private function addGroupToGroup($groupToAdd, $group) {
-		
+		return $this->setAttribute($this->groupDN($group), 'member', $this->groupDN($groupToAdd));
 	}
 
 	/**
@@ -266,22 +265,33 @@ class ldapConnector extends LDAP {
 		return $this->getAttribute($this->groupDN($group), $attribute);
 	}
 	
-	//TODO
+	/**
+	 * returns a list of users in a group
+	 * @param  string $group group name
+	 * @return array        list of CNs
+	 */
 	private function getAllGroupMembers($group) {
-		return $this->getCNList($this->groupDN($group), 'member');
+		return $this->getCNList($this->groupDN($group), 'member', LDAP_USER_BASE);
 	}
 	
-	//TODO
+	/**
+	 * returns a list of groups in a group
+	 * @param  string $group group name
+	 * @return array        list of CNs
+	 */
 	private function getAllGroupGroups($group) {
-		
+		return $this->getCNList($this->groupDN($group), 'member', LDAP_GROUP_BASE);
 	}
 	
-	//TODO
+	/**
+	 * returns a list of owners of a group
+	 * @param  string $group group name
+	 * @return array        list of CNs
+	 */
 	private function getAllGroupLeaders($group) {
 		return $this->getCNList($this->groupDN($group), 'owner');
 	}
 	
-	//TODO!
 	private function getGroupPermissions($group) {
 		return $this->getMemberOfList($this->groupDN($group), 'permissions');
 	}
@@ -315,14 +325,12 @@ class ldapConnector extends LDAP {
 
 	/**
 	 * deletes group from group
-	 * @param  string $groupToDel group CN
-	 * @param  string $group      group CN
+	 * @param  string $groupToDel child group to delete
+	 * @param  string $group      group CN of parent group
 	 * @return boolean             successful or not
-	 * @see ldapConnector::addGroupToGroup() why this doen't work at the moment
-	 * @todo implement
 	 */
 	private function delGroupFromGroup($groupToDel, $group) {
-		
+		return $this->delAttribute($this->groupDN($group), array('member' => $this->groupDN($groupToDel)));
 	}
 
 
@@ -384,17 +392,37 @@ class ldapConnector extends LDAP {
 		return false;
 	}
 	
-	//TODO: Deletes
+	/**
+	 * Deletes an attribute from a group
+	 * @param  string $group     Group name
+	 * @param  string $attribute attribute
+	 * @param  string $value     value to delete
+	 * @return bool            successfull or not
+	 */
 	private function delGroupAttribute($group, $attribute, $value) {
-		
+		return $this->delAttribute($this->groupDN($group), array($attribute => $value));
 	}
 	
+	/**
+	 * Deletes an attribute from a permission
+	 * @param  string $group     permission name
+	 * @param  string $attribute attribute
+	 * @param  string $value     value to delete
+	 * @return bool            successfull or not
+	 */
 	private function delPermissionAttribute($permission, $attribute, $value) {
-		
+		return $this->delAttribute($this->permissionDN($permission), array($attribute => $value));
 	}
 	
+	/**
+	 * Deletes an attribute from an user
+	 * @param  string $group     user name
+	 * @param  string $attribute attribute
+	 * @param  string $value     value to delete
+	 * @return bool            successfull or not
+	 */
 	private function delUserAttribute($user, $attribute, $value) {
-		
+		return $this->delAttribute($this->userDN($user), array($attribute => $vale));
 	}
 
 	//TODO: Array bei Value
