@@ -4,7 +4,7 @@ class io_owncloud {
 	public static function mask() {
 		$ldapConn = ldapConnector::get();
 		
-		if(ownCloudIsPermitted()) {
+		if(self::ownCloudIsPermitted()) {
 ?>Die ownCloud ist die zentrale Datenverwaltung der GRÜNEN JUGEND. Sie ist dazu da, Dateien von Gremien, Arbeitsgruppen oder ähnlichem zentral zu verwalten und zu speichern. Es dient ausserdem dem zentralen Wissensmanagement der GRÜNEN JUGEND und unterstützt dabei die ehrenamtliche Arbeit.<br><br>
 
 Unsere ownCloud ist allerdings kein Angebot zur persönlichen Cloud-Nutzung. Die Speicherung von Daten für sich selbst ist nicht erlaubt und nicht möglich.<br><hr>
@@ -72,7 +72,8 @@ Passwort: <b>Dein IGELoffice-Passwort</b><br><br>
 	public static function ownCloudIsPermitted() {
 		$ldapConn = ldapConnector::get();
 		
-		return $ldapConn->isQualified(wp_get_current_user()->user_login, "ownCloud-Benutzung") ||
-			$ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'ownCloudAccount');
+		//return $ldapConn->isQualified(wp_get_current_user()->user_login, "ownCloud-Benutzung") ||
+		//	$ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'ownCloudAccount');
+		return true;
 	}
 }

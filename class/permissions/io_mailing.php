@@ -24,7 +24,7 @@ class io_mailing {
 			self::$mailBox = self::getGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
 		}
 		
-		if(mailIsPermitted()) {
+		if(self::mailIsPermitted()) {
 			
 			?>
 

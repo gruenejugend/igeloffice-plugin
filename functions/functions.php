@@ -48,4 +48,37 @@
 		return $current_url;
 	}
 	
+	function io_initLDAP() {
+		if(!class_exists('LDAP')) {
+			require_once('../class/ldap.php');
+		}
+		if(!class_exists('ldapConnector')) {
+			require_once('../class/ldapConnector.php');
+		}
+	}
+	
+	function io_mailIsPermitted() {
+		if(!class_exists('io_mailing')) {
+			require_once('../class/permissions/io_mailing.php');
+		}
+		
+		return io_mailing::mailIsPermitted();
+	}
+	
+	function io_ownCloudIsPermitted() {
+		if(!class_exists('io_owncloud')) {
+			require_once('../class/permissions/io_owncloud.php');
+		}
+		
+		return io_owncloud::ownCloudIsPermitted();
+	}
+	
+	function io_groupIsLeader() {
+		if(!class_exists('io_groups')) {
+			require_once('../class/io_groups.php');
+		}
+		
+		return count(io_groups::getLeaderGroups()) != 0;
+	}
+	
 ?>

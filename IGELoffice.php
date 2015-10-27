@@ -20,6 +20,8 @@
 	require_once('class/io_request.php');
 	require_once('class/io_user.php');
 	require_once('class/permissions/io_mailing.php');
+	require_once('class/permissions/io_owncloud.php');
+	require_once('class/permissions/io_sympa.php');
 	require_once('functions/register.php');
 	require_once('functions/functions.php');
 	
@@ -77,7 +79,7 @@
 	
 	//Permission Shortcodes
 	add_shortcode('io_mail',									array('io_mailing', 'mask'));
-	add_shortcode('io_group_edit',								array('io_group', 'edit'));
+	add_shortcode('io_group_edit',								array('io_groups', 'edit'));
 	add_shortcode('io_group_requests',							array('io_request', 'groupRequests'));
 	add_shortcode('io_owncloud',								array('io_owncloud', 'mask'));
 	add_shortcode('io_sympa',									array('io_sympa', 'mask'));
