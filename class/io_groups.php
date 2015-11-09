@@ -424,44 +424,44 @@ class io_groups extends io_postlist {
 					add_option('io_grp_' . $artK . '_' . utf8_encode($name), $name);
 				}
 			}
+			$io_groups = new io_groups(get_post(array('ID' => $post_id)), true);
 			
 			$isOberkategorie = false;
 			if($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode("Nicht Kategorisiert"));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode("Nicht Kategorisiert"), "replacce", $io_groups->oberkategorie);
 				checkKat("Oberkategorie", "Nicht Kategorisiert");
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(""));
-				checkKat("Unterkategorie", "");
 			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])), "replacce", $io_groups->oberkategorie);
 				checkKat("Oberkategorie", sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT']));
 				$isOberkategorie = true;
 			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']), "replacce", $io_groups->oberkategorie);
 				$isOberkategorie = true;
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
 				//TODO FEHLER
 			}
 			
-			if($isOberkategorie && $_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(""));
-			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])));
+			if($_POST[self::$PREFIX . '_unterkategorieTXT'] != "") {
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])), "replacce", $io_groups->oberkategorie);
 				checkKat("Unterkategorie", sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT']));
 			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']));
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']), "replacce", $io_groups->oberkategorie);
 			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
 				//TODO FEHLER
 			}
 			
-			$io_groups = new io_groups(get_post(array('ID' => $post_id)), true);
 			$neueLeiterInnen = array_diff($_POST[self::$PREFIX . '_leiter_innenID'], $io_groups->leiter_innenID);
 			$alteLeiterInnen = array_diff($io_groups->leiter_innenID, $_POST[self::$PREFIX . '_leiter_innenID']);
 			foreach($neueLeiterInnen AS $leiter_in) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+				if(get_userdata($leiter_in)->user_login != "") {
+					$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+				}
 			}
 			
 			foreach($alteLeiterInnen AS $leiter_in) {
-				$ldapConn->delGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+				if(get_userdata($leiter_in)->user_login != "") {
+					$ldapConn->delGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+				}
 			}
 			
 			if(!filter_var($_POST[self::$PREFIX . '_verteiler'], FILTER_VALIDATE_EMAIL)) {

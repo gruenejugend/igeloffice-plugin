@@ -104,6 +104,27 @@ class ldapConnector extends LDAP {
 		}
 		return true;
 	}
+	
+	private function addOrgaUser($firstname, $mail) { //check if user or DN exists!
+		if(empty($firstname) || empty($mail)) {
+			return new WP_Error('ldap_add_user_nodata', 'Der User benötigt einen Vornamen, Nachnamen und eine gültige E-Mail-Adresse.');
+		}
+		if(!ldap_add($this->res, $this->userDN($firstname), array(
+			'cn' => $firstname,
+			'sn' => $firstname,
+			'mail' => $mail,
+			'mailAlternateAddress' => $mail,
+			'objectClass' => array(
+				'top',
+				'person',
+				'inetOrgPerson',
+				'qmailUser'
+			)
+		))) {
+			return $this->error();
+		}
+		return true;
+	}
 
 	/**
 	 * gives a user a LDAP permission

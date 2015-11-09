@@ -14,14 +14,13 @@ class io_permission extends io_postlist {
 	
 	public function __construct($post, $load = false) {
 		$id = $post->ID;
-		$this->name				= get_the_title($id);
+		$this->name = $post->post_title;
 		
 		$ldapConn = ldapConnector::get();
-		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
-			$this->system			= $ldapConn->getPermissionAttribute(get_the_title($id), "permissionSystem");
-			$this->berechtigte		= $ldapConn->getPermissionAttribute(get_the_title($id), "member");
-			$this->kategorie		= $ldapConn->getPermissionAttribute(get_the_title($id), "permissionKategorie");
+			$this->system			= $ldapConn->getPermissionAttribute($this->name, "permissionSystem")[0];
+			$this->berechtigte		= $ldapConn->getPermissionAttribute($this->name, "member");
+			$this->kategorie		= $ldapConn->getPermissionAttribute($this->name, "permissionKategorie")[0];
 			
 			if($load == true) {
 				$this->berechtigteID = array();
@@ -88,30 +87,30 @@ class io_permission extends io_postlist {
 			'beschreibung'			=> '-- oder --<br>Kategorie Auswahl:',
 			'name'					=> 'KategorieSEL',
 			'values'				=> self::getKategorie(),
-			'selected'				=> $io_permission->Kategorie,
+			'selected'				=> $io_permission->kategorie,
 			'optgroup'				=> true,
 			'checking'				=> 'Selection',
 			'first'					=> true
 		));
-		
-		$users = get_users(array(
-			'meta_key'		=> 'user_aktiv',
-			'meta_value'	=> 0
-		));
-		
-		$values = array();
-		foreach($users AS $user) {
-			$values[$user->ID] = $user->user_login;
-		}
-		
-		$form->td_select(array(
-			'beschreibung'	=> 'Mitglieder:',
-			'name'			=> 'berechtigteID',
-			'values'		=> $values,
-			'multiple'		=> true,
-			'selected'		=> $io_permission->berechtigteID,
-			'size'			=> 10
-		));
+//		
+//		$users = get_users(array(
+//			'meta_key'		=> 'user_aktiv',
+//			'meta_value'	=> 0
+//		));
+//		
+//		$values = array();
+//		foreach($users AS $user) {
+//			$values[$user->ID] = $user->user_login;
+//		}
+//		
+//		$form->td_select(array(
+//			'beschreibung'	=> 'Mitglieder:',
+//			'name'			=> 'berechtigteID',
+//			'values'		=> $values,
+//			'multiple'		=> true,
+//			'selected'		=> $io_permission->berechtigteID,
+//			'size'			=> 10
+//		));
 		
 		io_form::jsHead();
 		io_form::jsScript();
@@ -136,28 +135,31 @@ class io_permission extends io_postlist {
 				$ldapConn->addPermission(get_the_title($post_id));
 				update_post_meta($post_id, self::$PREFIX . '_active', true);
 			}
+			
+			$io_permission = new io_permission(get_post(array('ID' => $post_id)));
 
-			$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . 'System', sanitize_text_field($_POST[self::$PREFIX . '_system']));
+			if(sanitize_text_field($_POST[self::$PREFIX . '_system']) != "" && sanitize_text_field($_POST[self::$PREFIX . '_system']) != $io_permission->system) {
+				$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . 'System', sanitize_text_field($_POST[self::$PREFIX . '_system']), "replace", $io_permission->kategorie);
+			}
 			
 			function checkKat($name) {
 				if(!get_option('io_per_' . utf8_encode($name), false)) {
 					add_option('io_per_' . utf8_encode($name), $name);
 				}
 			}
-
+			
 			if($_POST[self::$PREFIX . '_KategorieTXT'] == "" && $_POST[self::$PREFIX . '_KategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', utf8_encode("Nicht Kategorisiert"));
+				$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', utf8_encode("Nicht Kategorisiert"), "replace", $io_permission->kategorie);
 				checkKat("Nicht Kategorisiert");
 			} elseif($_POST[self::$PREFIX . '_KategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT'])));
+				$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT'])), "replace", $io_permission->kategorie);
 				checkKat(sanitize_text_field($_POST[self::$PREFIX . '_KategorieTXT']));
 			} elseif($_POST[self::$PREFIX . '_KategorieTXT'] == "" && $_POST[self::$PREFIX . '_KategorieSEL'] != 0 && get_option('io_per_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL']));
+				$ldapConn->setPermissionAttribute(get_the_title($post_id), self::$PREFIX . 'Kategorie', sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL']), "replace", $io_permission->kategorie);
 			} elseif(!get_option('io_per_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_KategorieSEL'])), false)) {
 				//FEHLER
 			}
 			
-			$io_permission = new io_permission(get_post(array('ID' => $post_id)));
 			$neuBerechtigte = array_diff($_POST[self::$PREFIX . '_berechtigteID'], $io_permission->berechtigteID);
 			$altBerechtigte = array_diff($io_permission->berechtigteID, $_POST[self::$PREFIX . '_berechtigteID']);
 			foreach ($neuBerechtigte AS $berechtigte) {
@@ -208,9 +210,11 @@ class io_permission extends io_postlist {
 			$kategorie = new io_permission($post);
 			
 			if(!in_array($kategorie->kategorie, $return)) {
-				$return[$kategorie->kategorie] = get_option("io_per_k_" . $kategorie->kategorie);
+				$return[$kategorie->kategorie] = get_option("io_per_" . utf8_encode($kategorie->kategorie));
 			}
 		}
+		
+		return $return;
 	}
 	
 	

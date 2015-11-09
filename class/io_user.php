@@ -337,10 +337,10 @@ class io_user {
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
-					userLoginValue = "GrueneJugend" + landKurz;
+					userLoginValue = landKurz;
 					break;
 				case 'basisgruppe':
-					userLoginValue = "GrueneJugend" + $("#name").val();
+					userLoginValue = $("#name").val();
 					break;
 				case 'organisatorisch':
 					userLoginValue = $("#orga_name").val();
@@ -692,10 +692,10 @@ class io_user {
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
 					break;
 				case 'landesverband':
-					userLoginValue = "GrueneJugend" + landKurz;
+					userLoginValue = landKurz;
 					break;
 				case 'basisgruppe':
-					userLoginValue = "GrueneJugend" + $("#name").val();
+					userLoginValue = $("#name").val();
 					break;
 				case 'organisatorisch':
 					userLoginValue = $("#orga_name").val();
@@ -737,13 +737,15 @@ class io_user {
 	}
 	
 	public static function register_error($errors) {
+		/*
+		 * Workaround
 		$ldapConn = ldapConnector::get();
 		if(	$ldapConn->isLDAPUser(sanitize_text_field($_POST['user_login'])) && 
 			$ldapConn->getUserAttribute(sanitize_text_field($_POST['user_login']), 'mail') != $_POST['user_email'] &&
 			$ldapConn->getUserAttribute(sanitize_text_field($_POST['user_login']), 'mailAlternateAddress') != $_POST['user_email']) {
 			$errors->add('user_ldap_error', '<strong>FEHLER:</strong> Du bist bereits in unserem System registriert, allerdings stimmt die E-Mail-Adress nicht!');
 		}
-		
+		*/
 		if(empty($_POST['user_art'])) {
 			$errors->add('user_art_error', '<strong>FEHLER:</strong> Du musst eine Nutzungsart angeben!');
 		} else if($_POST['user_art'] == "user" && (empty($_POST['first_name']) || empty($_POST['last_name']))) {
@@ -779,16 +781,28 @@ class io_user {
 			
 			update_user_meta($user_id, "user_art", sanitize_text_field($_POST['user_art']));
 			
-			$ldapConn = ldapConnector::get();
-			if($ldapConn->isLDAPUser(get_userdata($user_id)->user_login) && (
-					$ldapConn->getUserAttribute(get_userdata($user_id)->user_login, 'mail') == get_userdata($user_id)->user_email ||
-					$ldapConn->getUserAttribute(get_userdata($user_id)->user_login, 'mailAlternateAddress') == get_userdata($user_id)->user_email)
-			) {
-				update_user_meta($user_id, "user_aktiv", 0);
-				self::user_ldap_add($user_id);
-			} else {
-				update_user_meta($user_id, "user_aktiv", 1);
-			}
+			/*
+			 * Problem: Wenn niemand eingeloggt ist, ist niemand berechtigt zu schauen, ob der*die neu registrierte Benutzer*in berechtigt ist nachzuschauen,
+			 * ob er*sie bereits im LDAP vorhanden ist.
+			 * 
+			 * Lösung des Problems suchen!
+			 * 
+			 * Workaround: Alle sind nicht aktiv und alle müssen aktiviert werden. Bei Aktivierung wird geprüft, ob User da ist
+			 */
+//			$ldapConn = ldapConnector::get();
+//			if($ldapConn->isLDAPUser(get_userdata($user_id)->user_login) && (
+//					$ldapConn->getUserAttribute(get_userdata($user_id)->user_login, 'mail') == get_userdata($user_id)->user_email ||
+//					$ldapConn->getUserAttribute(get_userdata($user_id)->user_login, 'mailAlternateAddress') == get_userdata($user_id)->user_email)
+//			) {
+//				update_user_meta($user_id, "user_aktiv", 0);
+//				self::user_ldap_add($user_id);
+//			} else {
+//				update_user_meta($user_id, "user_aktiv", 1);
+//			}
+			
+			//Workaround Lösung Start
+			update_user_meta($user_id, "user_aktiv", 1);
+			//Workaround Lösung Ende
 			
 			if($_POST['user_art'] == "user") {
 				update_user_meta($user_id, "first_name", sanitize_text_field($_POST['first_name']));
@@ -1041,7 +1055,11 @@ class io_user {
 	public static function user_ldap_add($user_id) {
 		$ldapConn = ldapConnector::get();
 		$user_data = get_userdata($user_id);
-		if(is_wp_error($ldapConn->addUser($user_data->first_name, $user_data->last_name, $user_data->user_email))) {
+		
+		if(	
+			(get_user_meta($user_id, 'user_art', true) == 'user' && !$ldapConn->isLDAPUser($user_data->first_name . ' ' . $user_data->last_name) && is_wp_error($ldapConn->addUser($user_data->first_name, $user_data->last_name, $user_data->user_email))) ||
+			((get_user_meta($user_id, 'user_art', true) == 'basisgruppe' || get_user_meta($user_id, 'user_art', true) == 'landesverband') && !$ldapConn->isLDAPUser($user_data->user_login) && is_wp_error($ldapConn->addOrgaUser($user_data->user_login, $user_data->user_email)))
+		) {
 			return false;
 		}
 		$ldapConn->setUserAttribute(str_replace(".", " ", get_userdata($user_id)->user_login), "employeeType", get_user_meta($user_id, 'user_art', true));

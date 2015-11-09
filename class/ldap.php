@@ -114,9 +114,9 @@ class LDAP {
 	protected function DNexists($dn) {
 		$read = ldap_read($this->res, $dn, '(objectclass=*)', array());
 		if($read === false) {
-			return $this->error();
+			return false;
 		}
-		$count = ldap_count_entries($read);
+		$count = ldap_count_entries($this->res, $read);
 		if($count !== false || $count > 0) {
 			return true;
 		}
