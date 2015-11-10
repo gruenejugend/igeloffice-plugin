@@ -63,7 +63,7 @@ class LDAP {
 	 */
 	protected function getCNList($dn, $attribute, $filter = false) {
 		if($filter) {
-			$filter = '&(objectclass=*)('.$attribute.'~='.$ou_filter.')';
+			$filter = '&(objectclass=*)('.$attribute.'~='.$filter.')';
 			$data = $this->getAttribute($dn, $attribute, $filter);
 		}
 		else {
@@ -87,13 +87,15 @@ class LDAP {
 	protected function getMemberOfList($dn, $ou = '*') {
 		$data = $this->getAttribute($dn, 'memberOf');
 		$return = array();
-		foreach($data as $dat) {
-			$dat = ldap_explode_dn($dat, 1);
-			if($ou == '*' || $dat[1] == $ou) {
-				$return[] = $dat[0];
+		if(count($data) > 0) {
+			foreach($data as $dat) {
+				$dat = ldap_explode_dn($dat, 1);
+				if($ou == '*' || $dat[1] == $ou) {
+					$return[] = $dat[0];
+				}
 			}
 		}
-		return $dat;
+		return $return;
 	}
 
 	protected function search($base, $filter) {
@@ -138,7 +140,7 @@ class LDAP {
 			}
 			return $this->error();
 		}
-		elseif($mode ==  'replace') {
+		elseif($mode == 'replace') {
 			ldap_mod_del($this->res, $dn, array($attr => $old_value));
 			if(ldap_mod_add($this->res, $dn, array($attr => $value))) {
 				return true;

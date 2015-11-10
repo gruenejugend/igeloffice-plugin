@@ -37,57 +37,67 @@ class io_groups extends io_postlist {
 		$ldapConn = ldapConnector::get();
 		
 		if(get_post_meta($id, self::$PREFIX . '_active', true) == true) {
-			$this->oberkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Oberkategorie');
-			$this->unterkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Unterkategorie');
+			$this->oberkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Oberkategorie')[0];
+			$this->unterkategorie	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Unterkategorie')[0];
 			$this->leiter_innen		= $ldapConn->getGroupAttribute($this->name, 'owner');
 			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Verteiler');
 			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Listen');
 			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Mitgliedschaft');
+			print_r($ldapConn->getAllGroupGroups($this->name));
+			die;
 			$this->gruppen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Gruppen');
 			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
+			$this->leiter_innenID = array();
 			if($load == true) {
-				$this->leiter_innenID = array();
-				foreach($this->leiter_innen AS $leiter_in) {
-					$users = get_user_by("login", $leiter_in);
-					
-					$user_id = (isset($users) ? $users->ID : false);
+				if(count($this->leiter_innen) > 0) {
+					foreach($this->leiter_innen AS $leiter_in) {
+						$users = get_user_by("login", $leiter_in);
 
-					if ($user_id) {
-						$this->leiter_innenID[$user_id] = $user_id;
+						$user_id = (isset($users) ? $users->ID : false);
+
+						if ($user_id) {
+							$this->leiter_innenID[$user_id] = $user_id;
+						}
 					}
 				}
-
+				
 				$this->mitgliedschaftenID = array();
-				foreach($this->mitgliedschaften AS $mitglied) {
-					$users = get_user_by("login", $mitglied);
-					
-					$user_id = (isset($users) ? $users->ID : false);
+				if(count($this->mitgliedschaften) > 0) {
+					foreach($this->mitgliedschaften AS $mitglied) {
+						$users = get_user_by("login", $mitglied);
 
-					if ($user_id) {
-						$this->mitgliedschaftenID[$user_id] = $user_id;
+						$user_id = (isset($users) ? $users->ID : false);
+
+						if ($user_id) {
+							$this->mitgliedschaftenID[$user_id] = $user_id;
+						}
 					}
 				}
 
 				$this->gruppenID = array();
-				foreach ($this->gruppen AS $gruppe) {
-					$gruppe = get_post(array('post_title' => $gruppe));
+				if(count($this->gruppen) > 0) {
+					foreach ($this->gruppen AS $gruppe) {
+						$gruppe = get_post(array('post_title' => $gruppe));
 
-					$gruppe_id = (isset($gruppe) ? $gruppe->ID : false);
+						$gruppe_id = (isset($gruppe) ? $gruppe->ID : false);
 
-					if($gruppe_id) {
-						$this->gruppenID[$gruppe_id] = $gruppe_id;
+						if($gruppe_id) {
+							$this->gruppenID[$gruppe_id] = $gruppe_id;
+						}
 					}
 				}
 
 				$this->berechtigungenID = array();
-				foreach($this->berechtigungen AS $berechtigung) {
-					$berechtigung = get_post(array('post_title' => $berechtigung));
+				if(count($this->berechtigungen) > 0) {
+					foreach($this->berechtigungen AS $berechtigung) {
+						$berechtigung = get_post(array('post_title' => $berechtigung));
 
-					$berechtigung_id = (isset($berechtigung) ? $berechtigung->ID : false);
+						$berechtigung_id = (isset($berechtigung) ? $berechtigung->ID : false);
 
-					if ($berechtigung_id) {
-						$this->berechtigungenID[$berechtigung_id] = $berechtigung_id;
+						if ($berechtigung_id) {
+							$this->berechtigungenID[$berechtigung_id] = $berechtigung_id;
+						}
 					}
 				}
 			}
@@ -145,7 +155,13 @@ class io_groups extends io_postlist {
 		
 		$values = array();
 		foreach($users AS $user) {
-			$values[$user->ID] = $user->first_name . ' ' . $user->last_name;
+			$user_art = get_user_meta($user->ID, "user_art", true);
+			if($user_art != null && $user_art != "") {
+				$values[$user->ID] = $user->first_name . ' ' . $user->last_name;
+				if($values[$user->ID] == ' ') {
+					$values[$user->ID] = $user->user_login;
+				}
+			}
 		}
 		
 		$form->td_select(array(
@@ -169,7 +185,7 @@ class io_groups extends io_postlist {
 			'name'					=> 'oberkategorieSEL',
 			'values'				=> self::getOberkategorie(),
 			'selected'				=> $io_groups->oberkategorie,
-			'first'					=> true
+			'erste'					=> true
 		));
 		
 		$form->td_text(array(
@@ -183,8 +199,8 @@ class io_groups extends io_postlist {
 			'name'					=> 'unterkategorieSEL',
 			'values'				=> self::getUnterkategorie(),
 			'selected'				=> $io_groups->unterkategorie,
-			'optgroup'				=> true,
-			'first'					=> true
+			'opt_group'				=> true,
+			'erste'					=> true
 		));
 		
 		$form->td_text(array(
@@ -424,43 +440,48 @@ class io_groups extends io_postlist {
 					add_option('io_grp_' . $artK . '_' . utf8_encode($name), $name);
 				}
 			}
-			$io_groups = new io_groups(get_post(array('ID' => $post_id)), true);
+			
+			$io_groups = new io_groups(get_post($post_id), true);
 			
 			$isOberkategorie = false;
-			if($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] == 0) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode("Nicht Kategorisiert"), "replacce", $io_groups->oberkategorie);
+			if($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] == -1) {
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode("Nicht Kategorisiert"), "replace", $io_groups->oberkategorie);
 				checkKat("Oberkategorie", "Nicht Kategorisiert");
 			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])), "replacce", $io_groups->oberkategorie);
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT'])), "replace", $io_groups->oberkategorie);
 				checkKat("Oberkategorie", sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieTXT']));
 				$isOberkategorie = true;
-			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']), "replacce", $io_groups->oberkategorie);
+			} elseif($_POST[self::$PREFIX . '_oberkategorieTXT'] == "" && $_POST[self::$PREFIX . '_oberkategorieSEL'] != -1 && get_option('io_grp_ok_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Oberkategorie', sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL']), "replace", $io_groups->oberkategorie);
 				$isOberkategorie = true;
-			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
+			} elseif(!get_option('io_grp_ok_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_oberkategorieSEL'])), false)) {
 				//TODO FEHLER
 			}
 			
 			if($_POST[self::$PREFIX . '_unterkategorieTXT'] != "") {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])), "replacce", $io_groups->oberkategorie);
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT'])), "replace", $io_groups->unterkategorie);
 				checkKat("Unterkategorie", sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieTXT']));
-			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] != 0 && get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
-				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']), "replacce", $io_groups->oberkategorie);
-			} elseif(!get_option('io_grp_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
+			} elseif($_POST[self::$PREFIX . '_unterkategorieTXT'] == "" && $_POST[self::$PREFIX . '_unterkategorieSEL'] != -1 && get_option('io_grp_uk_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
+				$ldapConn->setGroupAttribute(get_the_title($post_id), self::$PREFIX . 'Unterkategorie', sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL']), "replace", $io_groups->unterkategorie);
+			} elseif(!get_option('io_grp_uk_' . utf8_encode(sanitize_text_field($_POST[self::$PREFIX . '_unterkategorieSEL'])), false)) {
 				//TODO FEHLER
 			}
 			
-			$neueLeiterInnen = array_diff($_POST[self::$PREFIX . '_leiter_innenID'], $io_groups->leiter_innenID);
-			$alteLeiterInnen = array_diff($io_groups->leiter_innenID, $_POST[self::$PREFIX . '_leiter_innenID']);
-			foreach($neueLeiterInnen AS $leiter_in) {
-				if(get_userdata($leiter_in)->user_login != "") {
-					$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+			if(count($_POST[self::$PREFIX . '_leiter_innenID']) > 0) {
+				$neueLeiterInnen = array_diff($_POST[self::$PREFIX . '_leiter_innenID'], $io_groups->leiter_innenID);
+				foreach($neueLeiterInnen AS $leiter_in) {
+					if(get_userdata($leiter_in)->user_login != "") {
+						$ldapConn->setGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+					}
 				}
 			}
 			
-			foreach($alteLeiterInnen AS $leiter_in) {
-				if(get_userdata($leiter_in)->user_login != "") {
-					$ldapConn->delGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+			if(count($io_groups->leiter_innenID) > 0) {
+				$alteLeiterInnen = array_diff($io_groups->leiter_innenID, $_POST[self::$PREFIX . '_leiter_innenID']);
+				foreach($alteLeiterInnen AS $leiter_in) {
+					if(get_userdata($leiter_in)->user_login != "") {
+						$ldapConn->delGroupAttribute(get_the_title($post_id), 'owner', get_userdata($leiter_in)->user_login);
+					}
 				}
 			}
 			
@@ -479,40 +500,54 @@ class io_groups extends io_postlist {
 				}
 			}
 			
-			foreach($_POST[self::$PREFIX . '_leiter_innenID'] AS $key => $leiter_in) {
-				if(!(isset($_POST[self::$PREFIX . '_mitgliedschaftenID'][$key]) && $_POST[self::$PREFIX . '_mitgliedschaftenID'][$key] != $leiter_in)) {
-					$_POST[self::$PREFIX . '_mitgliedschaftenID'][$key] = $leiter_in;
+			if(count($_POST[self::$PREFIX . '_leiter_innenID']) > 0) {
+				foreach($_POST[self::$PREFIX . '_leiter_innenID'] AS $key => $leiter_in) {
+					if(!(isset($_POST[self::$PREFIX . '_mitgliedschaftenID'][$key]) && $_POST[self::$PREFIX . '_mitgliedschaftenID'][$key] != $leiter_in)) {
+						$_POST[self::$PREFIX . '_mitgliedschaftenID'][$key] = $leiter_in;
+					}
 				}
 			}
 			
-			$neueMitglieder = array_diff($_POST[self::$PREFIX . '_mitgliedschaftenID'], $io_groups->mitgliedschaftenID);
-			$alteMitglieder = array_diff($io_groups->mitgliedschaftenID, $_POST[self::$PREFIX . '_mitgliedschaftenID']);
-			foreach($neueMitglieder AS $mitglied) {
-				$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+			if(count($_POST[self::$PREFIX . '_mitgliedschaftenID']) > 0) {
+				$neueMitglieder = array_diff($_POST[self::$PREFIX . '_mitgliedschaftenID'], $io_groups->mitgliedschaftenID);
+				foreach($neueMitglieder AS $mitglied) {
+					$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+				}
 			}
 			
-			foreach($alteMitglieder AS $mitglied) {
-				$ldapConn->delUserFromGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+			if(count($io_groups->mitgliedschaftenID) > 0) {
+				$alteMitglieder = array_diff($io_groups->mitgliedschaftenID, $_POST[self::$PREFIX . '_mitgliedschaftenID']);
+				foreach($alteMitglieder AS $mitglied) {
+					$ldapConn->delUserFromGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+				}
 			}
 			
-			$neueGruppen = array_diff($_POST[self::$PREFIX . '_gruppenID'], $io_groups->gruppenID);
-			$alteGruppen = array_diff($io_groups->gruppenID, $_POST[self::$PREFIX . '_gruppenID']);
-			foreach($neueGruppen AS $gruppe) {
-				$ldapConn->addGroupToGroup(get_the_title($gruppe), get_the_title($post_id));
+			if(count($_POST[self::$PREFIX . '_gruppenID']) > 0) {
+				$neueGruppen = array_diff($_POST[self::$PREFIX . '_gruppenID'], $io_groups->gruppenID);
+				foreach($neueGruppen AS $gruppe) {
+					$ldapConn->addGroupToGroup(get_the_title($gruppe), get_the_title($post_id));
+				}
 			}
 			
-			foreach($alteGruppen AS $gruppe) {
-				$ldapConn->delGroupFromGroup(get_the_title($gruppe), get_the_title($post_id));
+			if(count($io_groups->gruppenID) > 0) {
+				$alteGruppen = array_diff($io_groups->gruppenID, $_POST[self::$PREFIX . '_gruppenID']);
+				foreach($alteGruppen AS $gruppe) {
+					$ldapConn->delGroupFromGroup(get_the_title($gruppe), get_the_title($post_id));
+				}
 			}
 			
-			$neueBerechtigung = array_diff($_POST[self::$PREFIX . '_berechtigungenID'], $io_groups->berechtigungenID);
-			$alteBerechtigung = array_diff($io_groups->berechtigungenID, $_POST[self::$PREFIX . '_berechtigungenID']);
-			foreach($neueBerechtigung AS $berechtigung) {
-				$ldapConn->addGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
+			if(count($_POST[self::$PREFIX . '_berechtigungenID']) > 0) {
+				$neueBerechtigung = array_diff($_POST[self::$PREFIX . '_berechtigungenID'], $io_groups->berechtigungenID);
+				foreach($neueBerechtigung AS $berechtigung) {
+					$ldapConn->addGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
+				}
 			}
 			
-			foreach($alteBerechtigung AS $berechtigung) {
-				$ldapConn->delGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
+			if(count($io_groups->berechtigungenID) > 0) {
+				$alteBerechtigung = array_diff($io_groups->berechtigungenID, $_POST[self::$PREFIX . '_berechtigungenID']);
+				foreach($alteBerechtigung AS $berechtigung) {
+					$ldapConn->delGroupPermission(get_the_title($post_id), get_the_title($berechtigung));
+				}
 			}
 		}
 	}
@@ -554,8 +589,9 @@ class io_groups extends io_postlist {
 	 *****************************************************/
 	public static function getValues() {
 		$posts = get_posts(array(
-			'post_type'		=> self::$POST_TYPE,
-			'order_by'		=> 'title'
+			'post_type'			=> self::$POST_TYPE,
+			'order_by'			=> 'title',
+			'posts_per_page'	=> -1
 		));
 		
 		$return = array();
@@ -573,8 +609,9 @@ class io_groups extends io_postlist {
 	
 	public static function getOberkategorie() {
 		$posts = get_posts(array(
-			'post_type'		=> self::$POST_TYPE,
-			'order_by'		=> 'title'
+			'post_type'			=> self::$POST_TYPE,
+			'order_by'			=> 'title',
+			'posts_per_page'	=> -1
 		));
 		
 		$return = array();
@@ -600,7 +637,7 @@ class io_groups extends io_postlist {
 			$unterkategorie = new io_groups($post);
 			
 			if(!in_array($unterkategorie->unterkategorie, $return)) {
-				$return[$unterkategorie->oberkategorie][$unterkategorie->unterkategorie] = get_option("io_grp_uk_" . $unterkategorie->oberkategorie);
+				$return[$unterkategorie->oberkategorie][$unterkategorie->unterkategorie] = get_option("io_grp_uk_" . $unterkategorie->unterkategorie, 'Fehler - Bitte an Webmaster wenden!');
 			}
 		}
 

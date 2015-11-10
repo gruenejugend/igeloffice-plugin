@@ -245,7 +245,12 @@ class ldapConnector extends LDAP {
 	private function addGroup($group) {
 		if(!ldap_add($this->res, $this->groupDN($group), array(
 			'cn' => $group,
-			'objectClass' => 'groupOfNames'
+			'member' => '',
+			'objectClass' => array(
+				'groupOfNames',
+				'gjGroup',
+				'top'
+			)
 		))) {
 			return $this->error();
 		}
