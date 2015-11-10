@@ -58,16 +58,13 @@ class LDAP {
 	 * gets a list of CNs from a attribute values
 	 * @param  string  $dn        DN
 	 * @param  string  $attribute attribute
-	 * @param  boolean|string $filter filter the CNs for this substring
-	 * @return array             list of CNs
+	 * @param  string  $ou        ou filter for DN's
+	 * @return array              list of CNs
 	 */
-	protected function getCNList($dn, $attribute, $filter = false) {
+	protected function getCNList($dn, $attribute, $ou = false) {
+		$data = $this->getAttribute($dn, $attribute);
 		if($filter) {
-			$filter = '&(objectclass=*)('.$attribute.'~='.$filter.')';
-			$data = $this->getAttribute($dn, $attribute, $filter);
-		}
-		else {
-			$data = $this->getAttribute($dn, $attribute);
+			return $this->DNtoCN($data, $ou);
 		}
 		return $this->DNtoCN($data);
 	}

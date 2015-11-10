@@ -297,7 +297,7 @@ class ldapConnector extends LDAP {
 	 * @return array        list of CNs
 	 */
 	private function getAllGroupMembers($group) {
-		return $this->getCNList($this->groupDN($group), 'member', LDAP_USER_BASE);
+		return $this->getCNList($this->groupDN($group), 'member', 'users');
 	}
 	
 	/**
@@ -306,7 +306,7 @@ class ldapConnector extends LDAP {
 	 * @return array        list of CNs
 	 */
 	private function getAllGroupGroups($group) {
-		return $this->getCNList($this->groupDN($group), 'member', LDAP_GROUP_BASE);
+		return $this->getCNList($this->groupDN($group), 'member', 'groups');
 	}
 	
 	/**
