@@ -148,8 +148,10 @@ class ldapConnector extends LDAP {
 	 * @return boolean successful or not
 	 */
 	private function addUsersToGroup($users, $group) {
-		array_walk($users, array($this, 'userDN'));
-
+		array_walk($users, function(&$user) {
+			$user = 'cn='.$user.','.LDAP_USER_BASE;
+		});
+		
 		if(!ldap_mod_replace($this->res, $this->groupDN($group), array(
 			'member' => $users
 		))) {

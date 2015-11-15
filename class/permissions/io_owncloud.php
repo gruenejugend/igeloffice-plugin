@@ -36,7 +36,7 @@ Du bist berechtigt, die ownCloud zu nutzen. Du musst nur noch deinen IGELoffice-
 Durch deine Gruppen-Mitgliedschaften werden deinem ownCloud-Zugang diverse Ordner freigegeben. Dieser zentrale Space ist deine einzige Möglichkeit, Dateien anzuschauen, zu verwalten, zu bearbeiten, herunterzuladen oder hochzuladen. Bitte beachte dabei den Sinn und Zweck des jeweiligen Ordners, der sich anhand des Namens ableiten kann.<br><br>
 
 <h2>ownCloud-Zugang</h2>
-ownCloud-URL: <b><a href="https://owncloud.gruene-jugend.de" target="_blank">owncloud.gruene-jugend.de</a></b><br>
+ownCloud-URL: <b><a href="https://cloud.gruene-jugend.de" target="_blank">cloud.gruene-jugend.de</a></b><br>
 Benutzer*innen*name: <b><?php echo wp_get_current_user()->user_login; ?></b><br>
 Passwort: <b>Dein IGELoffice-Passwort</b><br><br>
 

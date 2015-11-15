@@ -63,7 +63,7 @@ class LDAP {
 	 */
 	protected function getCNList($dn, $attribute, $ou = false) {
 		$data = $this->getAttribute($dn, $attribute);
-		if($filter) {
+		if($ou) {
 			return $this->DNtoCN($data, $ou);
 		}
 		return $this->DNtoCN($data);
@@ -73,12 +73,14 @@ class LDAP {
 		if(!is_array($dns)) {
 			$dns = array($dns);
 		}
-		return array_map(function($dn) {
+		$return = array();
+		foreach($dns as $dn) {
 			$dn = ldap_explode_dn($dn, 1);
 			if($ou == '*' || $dn[1] == $ou) {
-				return $dn[0];
+				$return[] = urldecode(str_replace("\\", "%", $dn[0]));
 			}
-		}, $dns);
+		}
+		return $return;
 	}
 
 	protected function getMemberOfList($dn, $ou = '*') {

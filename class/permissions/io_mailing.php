@@ -52,6 +52,16 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 			?>
 	<input type="submit" name="io_mail_submit" value="Bestätigen">
 </form>	
+
+<script type="text/javascript">
+	$(".chb").each(function() {
+		$(this).change(function()
+		{
+			$(".chb").prop('checked',false);
+			$(this).prop('checked',true);
+		});
+	});
+</script>
 <?php
 		}
 	}
@@ -71,7 +81,9 @@ Mit einer Weiterleitung werden alle E-Mails an <b><?php echo(io_case_mail_change
 
 Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstname) . '.' . io_case_mail_change(wp_get_current_user()->user_lastname)); ?>@gruene-jugend.de verschicken zu können, benötigst du ein Postfach. Eine Weiterleitung kann parallel zum Postfach existieren.<br><br>
 
-<input type="checkbox" name="io_mail_forward" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte eine Weiterleitung an meine private Mail-Adresse <?php echo (wp_get_current_user()->user_email); ?></b><br><hr>
+<input class="chb" type="checkbox" name="io_mail_forward" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte eine Weiterleitung an meine private Mail-Adresse <?php echo (wp_get_current_user()->user_email); ?></b><br><br>
+
+<b>ACHTUNG: Zur Zeit ist entweder eine Weiterleitung oder ein Postfach möglich. Beides kann derzeit nicht eingerichtet werden! Wählst du hier die Weiterleitung aus, wird dein Postfach gelöscht.</b><br><hr>
 
 		<?php
 	}
@@ -148,8 +160,10 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 			Benutzer*innen*name: <b><?php echo self::$mailBox; ?></b><br>
 			Passwort: <b>Dein IGELoffice-Passwort</b><br><br>
 			
-			<input type="checkbox" name="io_mail_box" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte meine E-Mail-Adresse als Postfach nutzen</b><br><br>
+			<input class="chb" type="checkbox" name="io_mail_box" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte meine E-Mail-Adresse als Postfach nutzen</b><br><br>	
 			
+			<b>ACHTUNG: Zur Zeit ist entweder eine Weiterleitung oder ein Postfach möglich. Beides kann derzeit nicht eingerichtet werden! Wählst du hier das Postfach aus, wird die Weiterleitung gelöscht..</b><br><br>
+
 			<b>Hinweis:</b> Mit dem Ende eines Amtes oder einer ähnlichen Aufgabe, die dich legitimiert ein Postfach zu besitzen, endet auch die Berechtigung deine E-Mail-Adresse auch als Postfach einzurichten. Nach deiner Amtszeit kannst du das Postfach aber weiterhin nutzen, bis du es hier deaktivierst. Nach einer Deaktivierung kann dein Postfach nicht wieder aktiviert werden, solltest du dafür keine Legitimation besitzen.<br><br>
 			
 			Auf Grund der Sicherheit behält sich der*die Webmaster vor, einzelne Postfächer eigenständig auf kurze Zeit oder auf Dauer zu deaktivieren. Dies ist insbesondere der Fall, wenn das Postfach mehrere Monate inaktiv war.<br><hr>

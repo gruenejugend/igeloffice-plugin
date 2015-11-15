@@ -42,10 +42,8 @@ class io_groups extends io_postlist {
 			$this->leiter_innen		= $ldapConn->getGroupAttribute($this->name, 'owner');
 			$this->verteiler		= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Verteiler');
 			$this->listen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Listen');
-			$this->mitgliedschaften	= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Mitgliedschaft');
-			print_r($ldapConn->getAllGroupGroups($this->name));
-			die;
-			$this->gruppen			= $ldapConn->getGroupAttribute($this->name, self::$PREFIX . 'Gruppen');
+			$this->mitgliedschaften	= $ldapConn->getAllGroupMembers($this->name);
+			$this->gruppen			= $ldapConn->getAllGroupGroups($this->name);
 			$this->berechtigungen	= $ldapConn->getGroupPermissions($this->name);
 			
 			$this->leiter_innenID = array();
@@ -78,7 +76,7 @@ class io_groups extends io_postlist {
 				$this->gruppenID = array();
 				if(count($this->gruppen) > 0) {
 					foreach ($this->gruppen AS $gruppe) {
-						$gruppe = get_post(array('post_title' => $gruppe));
+						$gruppe = get_page_by_title($gruppe, OBJECT, self::$POST_TYPE);
 
 						$gruppe_id = (isset($gruppe) ? $gruppe->ID : false);
 
@@ -91,7 +89,7 @@ class io_groups extends io_postlist {
 				$this->berechtigungenID = array();
 				if(count($this->berechtigungen) > 0) {
 					foreach($this->berechtigungen AS $berechtigung) {
-						$berechtigung = get_post(array('post_title' => $berechtigung));
+						$berechtigung = get_page_by_title($berechtigung, OBJECT, io_permission::$POST_TYPE);
 
 						$berechtigung_id = (isset($berechtigung) ? $berechtigung->ID : false);
 
@@ -509,10 +507,12 @@ class io_groups extends io_postlist {
 			}
 			
 			if(count($_POST[self::$PREFIX . '_mitgliedschaftenID']) > 0) {
-				$neueMitglieder = array_diff($_POST[self::$PREFIX . '_mitgliedschaftenID'], $io_groups->mitgliedschaftenID);
-				foreach($neueMitglieder AS $mitglied) {
-					$ldapConn->addUserToGroup(get_userdata($mitglied)->user_login, get_the_title($post_id));
+				$neueMitgliederID = array_diff($_POST[self::$PREFIX . '_mitgliedschaftenID'], $io_groups->mitgliedschaftenID);
+				$neueMitglieder = array();
+				foreach($neueMitgliederID AS $mitglied) {
+					$neueMitglieder[] = get_userdata($mitglied)->user_login;
 				}
+				$ldapConn->addUsersToGroup($neueMitglieder, get_the_title($post_id));
 			}
 			
 			if(count($io_groups->mitgliedschaftenID) > 0) {

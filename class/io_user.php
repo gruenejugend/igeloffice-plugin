@@ -917,30 +917,103 @@ class io_user {
 	 *******************  User Aktivierung  ********************
 	 ***********************************************************/
 	public static function user_profile($user) {
-		$user_id = $user->ID;
-		
-		if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
-			update_user_meta($user_id, "user_aktiv", 0);
-			self::user_ldap_add($user_id);
-		}
-		
 		wp_enqueue_script('jqueryIO');
 		wp_nonce_field('io_users', 'io_users_nonce');
+		
+		$user = new io_user($user, true);
+		
 ?>
-
 <table class="form-table">
+	<tr class="form-field">
+		<th scope="row"><label for="groups">Gruppenmitgliedschaften</label></th>
+		<td>
+			<select name="groups[]" id="groups" size="10" multiple>
+		<?php
+
+			if(count(io_groups::getValues()) > 0) {
+				$values = io_groups::getValues();
+				foreach($values AS $key_1 => $value_1) {
+					?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
+				<?php
+					if(is_array($value_1)) {
+						foreach($value_1 AS $key_2 => $value_2) {
+							?>					<optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;<?php echo get_option('io_grp_uk_' . $key_2); ?>">
+							<?php
+
+								foreach($value_2 AS $key_3 => $value_3) {
+									?>						<option value="<?php echo $key_3; ?>"<?php echo isset($user->groupsID[$key_3]) ? " selected" : ""; ?>>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $value_3; ?></option><?php
+								}
+
+							?>					</optgroup>
+							<?php
+						}
+					} else {
+						foreach($value_1 AS $key_2 => $value_2) {
+							?>					<option value="<?php echo $key_2; ?>"<?php echo isset($user->groupsID[$key_2]) ? " selected" : ""; ?>><?php echo $value_2; ?></option><?php
+						}
+					}
+					
+			?>
+				</optgroup>
+		<?php
+		
+				}
+			}
+			
+			?>
+			</select>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row"><label for="permissions">Berechtigungen</label></th>
+		<td>
+			<select name="permissions[]" id="permissions" size="10" multiple>
+		<?php
+
+			if(count(io_permission::getValues()) > 0) {
+				$values = io_permission::getValues();
+				foreach($values AS $key_1 => $value_1) {
+					?>				<optgroup label="<?php echo $key_1; ?>">
+				<?php
+					foreach($value_1 AS $key_2 => $value_2) {
+						?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option>
+	<?php
+					}
+				?>
+							</optgroup>
+				<?php 
+
+				}
+			}
+
+		?>
+			</select>
+		</td>
+	</tr>
+<?php
+		if(is_admin()) {
+			$user_id = $user->ID;
+
+			if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
+				update_user_meta($user_id, "user_aktiv", 0);
+				self::user_ldap_add($user_id);
+			}
+?>
 	<tr>
 		<th><label for="user_aktiv">User aktiviert</label></th>
 		<td><?php
 
-		if(get_user_meta($user_id, "user_aktiv", true) == 1) {
-			?><input type="checkbox" name="user_aktiv" id="user_aktiv" value="0"><?php
-		} else {
-			?><div id="user_aktiv">Aktiv</div><?php
-		}
+			if(get_user_meta($user_id, "user_aktiv", true) == 1) {
+				?><input type="checkbox" name="user_aktiv" id="user_aktiv" value="0"><?php
+			} else {
+				?><div id="user_aktiv">Aktiv</div><?php
+			}
 
-		?></td>
+			?></td>
 	</tr>
+<?php
+		}
+?>
 </table>
 
 <script type="text/javascript">
