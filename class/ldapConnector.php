@@ -395,6 +395,15 @@ class ldapConnector extends LDAP {
 	private function getUserPermissions($user) {
 		return $this->getMemberOfList($this->userDN($user), 'permissions');
 	}
+
+	private function getAllUserPermissions($user) {
+		$search = $this->search(LDAP_PERMISSION_BASE, null, array('cn'));
+		if($search) {
+			return $this->DNtoCN($search, 'permissions');
+		}
+		return false;
+
+	}
 	
 	private function getPermissionAttribute($permission, $attribute) {
 		return $this->getAttribute($this->permissionDN($permission), $attribute);
@@ -410,12 +419,8 @@ class ldapConnector extends LDAP {
 
 	//TODO: Sowohl Berechtigungen durch Permission und Group berücksichtigen
 	private function isQualified($user, $permission) {
-		$members = $this->getAttribute($this->permissionDN($permission), 'member');
-		$user = $this->userDN($user);
-		foreach($members as $member) {
-			if($member == $user) {
-				return true;
-			}
+		if($this->searchCN(LDAP_PERMISSION_BASE, $permission)) {
+			return true;
 		}
 		return false;
 	}

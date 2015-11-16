@@ -97,19 +97,25 @@ class LDAP {
 		return $return;
 	}
 
-	protected function search($base, $filter) {
-		$serach = ldap_search($this->res, $base, $filter);
+	protected function search($base, $filter = '', $attributes = array()) {
+		$serach = ldap_search($this->res, $base, $filter, $attributes);
 		if($search === false) {
 			return $this->error();
 		}
 		if(ldap_count_entries($this->res, $search)	> 0) {
-			return $search;
+			$result = ldap_get_entries($this->res, $search);
+			unset($result['count']); //nobody needs this shit
+			return $result;
 		}
 		return false;
 	}
 
-	protected function searchCN($base, $cn) {
-		return $this->search($base, '(cn='.$cn.')');
+	protected function searchCN($base, $cn, $attributes = array()) {
+		$search = $this->search($base, '(cn='.$cn.')', $attributes);
+		if(count($search) == 1) {
+			return $search[0];
+		}
+		return false;
 	}
 
 	protected function DNexists($dn) {
