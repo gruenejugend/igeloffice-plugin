@@ -38,7 +38,7 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 
 ?></b><br><hr>
 
-<form action="<?php echo($_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]); ?>" method="post">
+<form action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post">
 			<?php
 			
 			if(self::mailForwardIsPermitted()) {
@@ -123,7 +123,7 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 	}
 	
 	private static function mailBox($checked) {
-		wp_nonce_field('io_mail_postfach', 'io_mail_postfach_nonce');
+		wp_nonce_field('io_mail_box', 'io_mail_box_nonce');
 		
 		if(isset($_POST['io_mail_submit'])) {
 			self::mailBoxSave();
@@ -193,6 +193,7 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 		
 		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true && !self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
+			die;
 			//TODO: LDAP Änderung, hier: Veränderung des Attributes
 			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
 			
@@ -204,6 +205,9 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 			
 			?><b>Dein Postfach wurde eingerichtet.</b><?php
 		}
+		
+		echo "Fertig";
+			die;
 	}
 	
 	private static function isGJMail($array) {
