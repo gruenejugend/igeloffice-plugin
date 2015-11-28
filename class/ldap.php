@@ -98,7 +98,7 @@ class LDAP {
 	}
 
 	protected function search($base, $filter = '', $attributes = array()) {
-		$serach = ldap_search($this->res, $base, $filter, $attributes);
+		$search = ldap_search($this->res, $base, $filter, $attributes);
 		if($search === false) {
 			return $this->error();
 		}
