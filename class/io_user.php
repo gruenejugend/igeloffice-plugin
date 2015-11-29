@@ -920,7 +920,8 @@ class io_user {
 		wp_enqueue_script('jqueryIO');
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		$user = new io_user($user, true);
+		$user_id = $user->ID;
+		$user = new io_user($user, false);
 		
 ?>
 <table class="form-table">
@@ -992,8 +993,6 @@ class io_user {
 	</tr>
 <?php
 		if(is_admin()) {
-			$user_id = $user->ID;
-
 			if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
 				update_user_meta($user_id, "user_aktiv", 0);
 				self::user_ldap_add($user_id);

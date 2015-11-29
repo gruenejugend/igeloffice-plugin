@@ -146,8 +146,8 @@ class LDAP {
 			return $this->error();
 		}
 		elseif($mode == 'replace') {
-			ldap_mod_del($this->res, $dn, array($attr => $old_value));
 			if(ldap_mod_add($this->res, $dn, array($attr => $value))) {
+				ldap_mod_del($this->res, $dn, array($attr => $old_value));
 				return true;
 			}
 			return $this->error();

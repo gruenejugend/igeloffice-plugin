@@ -22,6 +22,8 @@ class io_mailing {
 			self::$mailBox = self::$mail;
 		} else if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 			self::$mailBox = self::getGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
+		} else {
+			self::$mailBox = self::$mail;
 		}
 		
 		if(self::mailIsPermitted()) {
@@ -71,7 +73,7 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 		
 		if(isset($_POST['io_mail_submit'])) {
 			self::mailForwardingSave();
-		}
+		} else {
 		
 		?>
 
@@ -84,8 +86,8 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 <input class="chb" type="checkbox" name="io_mail_forward" value="true"<?php echo $checked; ?>> <b>Ja, ich möchte eine Weiterleitung an meine private Mail-Adresse <?php echo (wp_get_current_user()->user_email); ?></b><br><br>
 
 <b>ACHTUNG: Zur Zeit ist entweder eine Weiterleitung oder ein Postfach möglich. Beides kann derzeit nicht eingerichtet werden! Wählst du hier die Weiterleitung aus, wird dein Postfach gelöscht.</b><br><hr>
-
 		<?php
+		}
 	}
 	
 	private static function mailForwardingSave() {
@@ -98,24 +100,24 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 		$ldapConn = ldapConnector::get();
 		
 		if(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail) && !isset($_POST['io_mail_forward'])) {
-			$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail);
+			$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail)[0];
 			
 			//Wenn Postfach gesetzt ist, dann Mail-Attribut der privaten Adresse hinzufügen
 			if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
-				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]);
 			}
 			
 			?><b>Die Weiterleitung wurde gelöscht.</b><?php
 		}
 		
 		if(isset($_POST['io_mail_forward']) && $_POST['io_mail_forward'] == true && !self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
-			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail);
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailForwardingAddress', self::$mail)[0];
 
 			//Wenn Postfach gesetzt ist, dann Mail-Attribut der privaten Adresse hinzufügen
 			if(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
 				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
-				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]);
 			}
 			
 			?><b>Die Weiterleitung wurde eingerichtet.</b><?php
@@ -127,7 +129,7 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 		
 		if(isset($_POST['io_mail_submit'])) {
 			self::mailBoxSave();
-		}
+		} else {
 		
 		?>
 		
@@ -168,6 +170,7 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 			
 			Auf Grund der Sicherheit behält sich der*die Webmaster vor, einzelne Postfächer eigenständig auf kurze Zeit oder auf Dauer zu deaktivieren. Dies ist insbesondere der Fall, wenn das Postfach mehrere Monate inaktiv war.<br><hr>
 		<?php
+		}
 	}
 	
 	private static function mailBoxSave() {
@@ -185,29 +188,26 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
 				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
 			} else {
-				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]);
 			}
 			
 			?><b>Dein Postfach wurde gelöscht.</b><?php
 		}
 		
 		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true && !self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
-			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
-			die;
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')[0]);
+			
 			//TODO: LDAP Änderung, hier: Veränderung des Attributes
-			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
+			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail, "replace", $ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailAlternateAddress")[0]);
 			
 			//Wenn eine Weiterleitung besteht, Weiterleitung weiter aufrecht halten
 			if(self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) {
 				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
-				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress'));
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]);
 			}
 			
-			?><b>Dein Postfach wurde eingerichtet.</b><?php
+			?><h2>Dein Postfach wurde eingerichtet.</h2><?php
 		}
-		
-		echo "Fertig";
-			die;
 	}
 	
 	private static function isGJMail($array) {
