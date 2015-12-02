@@ -3,9 +3,7 @@
 class io_owncloud {
 	public static function mask() {
 		if(self::ownCloudIsPermitted()) {
-?>Die ownCloud ist die zentrale Datenverwaltung der GRÜNEN JUGEND. Sie ist dazu da, Dateien von Gremien, Arbeitsgruppen oder ähnlichem zentral zu verwalten und zu speichern. Es dient ausserdem dem zentralen Wissensmanagement der GRÜNEN JUGEND und unterstützt dabei die ehrenamtliche Arbeit.<br><br>
-
-Unsere ownCloud ist allerdings kein Angebot zur persönlichen Cloud-Nutzung. Die Speicherung von Daten für sich selbst ist nicht erlaubt und nicht möglich.<br><hr>
+?>Die ownCloud ist die zentrale Datenverwaltung der GRÜNEN JUGEND. Sie ist dazu da, Dateien von Gremien, Arbeitsgruppen oder ähnlichem zentral zu verwalten und zu speichern. Es dient ausserdem dem zentralen Wissensmanagement der GRÜNEN JUGEND und unterstützt dabei die ehrenamtliche Arbeit.<br><hr>
 
 <?php
 //TODO: LDAP Attribut ownCloudAccount für jeden LDAP Nutzer, der ownCloud bereits nutzt

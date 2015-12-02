@@ -192,7 +192,7 @@ class ldapConnector extends LDAP {
 	 * @param  string  $user user CN
 	 * @return boolean       yes or no
 	 */
-	private function isLDAPUser($user) {	
+	private function isLDAPUser($user) {
 		return $this->DNexists($this->userDN($user));
 	}
 

@@ -43,9 +43,7 @@ class io_user {
 			$this->groups			= $ldapConn->getUserGroups($this->login);
 			$this->groupsID			= array();
 			foreach($this->groups AS $groups) {
-				$groups = explode(",", substr($groups, 3))[0];
-				$post = get_post(array('post_title' => $groups));
-				
+				$post = get_page_by_title($groups, OBJECT, io_groups::$POST_TYPE);
 				$post_id = (isset($post)) ? $post->ID : false;
 				
 				if($post_id) {
@@ -161,7 +159,6 @@ class io_user {
 		$landChecked[14] = ($land == 'schleswig-holstein' ? ' checked' : '');
 		$landChecked[15] = ($land == 'thueringen' ? ' checked' : '');
 ?>
-
 <p>
 	<label for="user_art">Nutzungsart:<br>
 		<label for="user_art_user">Normale*r Benutzer*in
@@ -173,9 +170,15 @@ class io_user {
 		<label for="user_art_basisgruppe">Basisgruppe
 			<input type="radio" name="user_art" id="user_art_basisgruppe" class="input" value="basisgruppe"<?php echo $userArtValue[2]; ?>>
 		</label>
+		<?php
+			if($_GET['erweitert'] == 1) {
+		?>
 		<label for="user_art_basisgruppe">Organisatorische*r Benutzer*in
 			<input type="radio" name="user_art" id="user_art_organisatorisch" class="input" value="organisatorisch"<?php echo $userArtValue[3]; ?>>
 		</label>
+		<?php
+			}
+		?>
 	</label>
 </p>
 
@@ -236,6 +239,26 @@ class io_user {
 		$("#user_login").prop('readonly', 'true');
 		$("#new_user_login").append($("label[for='user_login']"));
 		$("label[for='user_login']").html($("label[for='user_login']").html().replace('Benutzername', 'Benutzer*innenname (wird generiert)'));
+		<?php
+			if($_GET['erweitert'] != 1) {
+		?>
+		$("label[for='user_email']").html($("label[for='user_email']").html().replace('E-Mail', 'E-Mail<br>(Keine Adresse mit @gruene-jugend.de)'));
+		
+		var userMailChange = function() {
+			if($("#user_email").val().search("@gruene-jugend.de") !== -1) {
+				$("#wp-submit").attr("disabled", true);
+			} else {
+				$("#wp-submit").attr("disabled", false);
+			}
+		};
+		
+		$("#user_email").keyup(function() {
+			userMailChange();
+		});
+		userMailChange();
+		<?php
+			}
+		?>
 		
 		var userLoginValue = "";
 		var userLoginValueTmp = "";
@@ -279,52 +302,52 @@ class io_user {
 		var userNameKeyUp = function() {
 			switch($("#land").val()) {
 				case 'baden-wuerttemberg':
-					landKurz = 'BW';
+					landKurz = 'Baden-Württemberg';
 					break;
 				case 'bayern':
-					landKurz = 'BY';
+					landKurz = 'Bayern';
 					break;
 				case 'berlin':
-					landKurz = 'BE';
+					landKurz = 'Berlin';
 					break;
 				case 'brandenburg':
-					landKurz = 'BB';
+					landKurz = 'Brandenburg';
 					break;
 				case 'bremen':
-					landKurz = 'HB';
+					landKurz = 'Bremen';
 					break;
 				case 'hamburg':
-					landKurz = 'HH';
+					landKurz = 'Hamburg';
 					break;
 				case 'hessen':
-					landKurz = 'HE';
+					landKurz = 'Hessen';
 					break;
 				case 'mecklemburg-vorpommern':
-					landKurz = 'MV';
+					landKurz = 'Mecklemburg-Vorpommern';
 					break;
 				case 'niedersachsen':
-					landKurz = 'NI';
+					landKurz = 'Niedersachsen';
 					break;
 				case 'nordrhein-westfalen':
-					landKurz = 'NW';
+					landKurz = 'Nordrhein-Westfalen';
 					break;
 				case 'rheinland-pfalz':
-					landKurz = 'RP';
+					landKurz = 'Rheinland-Pfalz';
 					break;
 				case 'schleswig-holstein':
-					landKurz = 'SH';
+					landKurz = 'Schleswig-Holstein';
 					break;
 				case 'saarland':
-					landKurz = 'SL';
+					landKurz = 'Saarland';
 					break;
 				case 'sachsen':
-					landKurz = 'SN';
+					landKurz = 'Sachsen';
 					break;
 				case 'sachsen-anhalt':
-					landKurz = 'ST';
+					landKurz = 'Sachsen-Anhalt';
 					break;
 				case 'thueringen':
-					landKurz = 'TH';
+					landKurz = 'Thüringen';
 					break;
 				default:
 					landKurz = '';
@@ -513,22 +536,24 @@ class io_user {
 				$values = io_groups::getValues();
 				foreach($values AS $key_1 => $value_1) {
 					?>				<optgroup label="<?php echo get_option('io_grp_ok_' . $key_1); ?>">
-				<?php
+<?php
 					if(is_array($value_1)) {
 						foreach($value_1 AS $key_2 => $value_2) {
 							?>					<optgroup label="<?php echo get_option('io_grp_uk_' . $key_2); ?>">
-							<?php
+<?php
 
 								foreach($value_2 AS $key_3 => $value_3) {
-									?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option><?php
+									?>						<option value="<?php echo $key_3; ?>"><?php echo $value_3; ?></option>
+<?php
 								}
 
 							?>					</optgroup>
-							<?php
+<?php
 						}
 					} else {
 						foreach($value_1 AS $key_2 => $value_2) {
-							?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option><?php
+							?>					<option value="<?php echo $key_2; ?>"><?php echo $value_2; ?></option>
+<?php
 						}
 					}
 					
@@ -921,7 +946,12 @@ class io_user {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
 		$user_id = $user->ID;
-		$user = new io_user($user, false);
+		$ldapConn = ldapConnector::get();
+		if($ldapConn->isLDAPUser($user->user_login)) {
+			$user = new io_user($user, true);
+		} else {
+			$user = new io_user($user);
+		}
 		
 ?>
 <table class="form-table">
@@ -1042,7 +1072,11 @@ class io_user {
 		}
 		
 		$ldapConn = ldapConnector::get();
-		$io_user = new io_user(get_userdata($user_id));
+		if($ldapConn->isLDAPUser(get_userdata($user_id)->user_login)) {
+			$io_user = new io_user(get_userdata($user_id), true);
+		} else {
+			$io_user = new io_user(get_userdata($user_id));
+		}
 		
 		$neueGruppen = array_diff($_POST['groups'], $io_user->groupsID);
 		$alteGruppen = array_diff($io_user->groupsID, $_POST['groups']);
@@ -1217,12 +1251,16 @@ class io_user {
 		$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 		$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
 
-		$message = __('Someone requested that the password be reset for the following account:') . "\r\n\r\n";
-		$message .= network_home_url( '/' ) . "\r\n\r\n";
-		$message .= sprintf(__('Username: %s'), $user_login) . "\r\n\r\n";
-		$message .= __('If this was a mistake, just ignore this email and nothing will happen.') . "\r\n\r\n";
-		$message .= __('To reset your password, visit the following address:') . "\r\n\r\n";
-		$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . ">\r\n";
+		$message = __('Hallo,') . "\r\n\r\n";
+		$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";
+		$message .= sprintf(__('Dein Benutzer*innenname lautet: %s'), $user_login) . "\r\n\r\n";
+		$message .= __('Um dein Passwort zu erhalten, gehe bitte auf: ') . "\r\n\r\n";
+		$message .= network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . "\r\n\r\n";
+		$message .= __('Wenn du dich nicht registriert hast, melde dich bitte umgehend an webmaster@gruene-jugend.de') . "\r\n\r\n";
+		$message .= __('Bei technischen Problemen oder Schwierigkeiten, schreibe bitte KEINE Mail, sondern öffne ein Ticket unter https://support.gruene-jugend.de.') . "\r\n\r\n";
+		$message .= __('Liebe Grüße,') . "\r\n";
+		$message .= __('Dein IGELoffice') . "\r\n";
+		
 
 		if ( is_multisite() )
 			$blogname = $GLOBALS['current_site']->site_name;
@@ -1233,7 +1271,7 @@ class io_user {
 			 */
 			$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
-		$title = sprintf( __('[%s] Password Reset'), $blogname );
+		$title = sprintf( __('[%s] Aktivierung deiner Registrierung'), $blogname );
 
 		/**
 		 * Filter the subject of the password reset email.

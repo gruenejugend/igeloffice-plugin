@@ -250,15 +250,17 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 	public static function mailForwardIsPermitted() {
 		$ldapConn = ldapConnector::get();
 		
-		return	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
-				self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail);
+		return	($ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Weiterleitung") ||
+				self::isGJMailForward($ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailForwardingAddress"), self::$mail)) &&
+				!in_array("Bundesvorstand", $ldapConn->getUserGroups(wp_get_current_user()->user_login));
 	}
 	
 	public static function mailPostboxIsPermitted() {
 		$ldapConn = ldapConnector::get();
 		
-		return	$ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
-				self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'));
+		return	($ldapConn->isQualified(wp_get_current_user()->user_login, "Mail-Postfach") ||
+				self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) &&
+				!in_array("Bundesvorstand", $ldapConn->getUserGroups(wp_get_current_user()->user_login));;
 	}
 	
 	
