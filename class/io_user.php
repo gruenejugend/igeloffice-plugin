@@ -149,7 +149,7 @@ class io_user {
 		$landChecked[4]  = ($land == 'bremen' ? ' checked' : '');
 		$landChecked[5]  = ($land == 'hamburg' ? ' checked' : '');
 		$landChecked[6]  = ($land == 'hessen' ? ' checked' : '');
-		$landChecked[7]  = ($land == 'mecklemburg-vorpommern' ? ' checked' : '');
+		$landChecked[7]  = ($land == 'mecklenburg-vorpommern' ? ' checked' : '');
 		$landChecked[8]  = ($land == 'niedersachsen' ? ' checked' : '');
 		$landChecked[9]  = ($land == 'nordrhein-westfalen' ? ' checked' : '');
 		$landChecked[10] = ($land == 'rheinland-pfalz' ? ' checked' : '');
@@ -217,7 +217,7 @@ class io_user {
 			<option<?php echo $landChecked[4];  ?> value="bremen">Bremen</option>
 			<option<?php echo $landChecked[5];  ?> value="hamburg">Hamburg</option>
 			<option<?php echo $landChecked[6];  ?> value="hessen">Hessen</option>
-			<option<?php echo $landChecked[7];  ?> value="mecklemburg-vorpommern">Mecklemburg Vorpommern</option>
+			<option<?php echo $landChecked[7];  ?> value="mecklenburg-vorpommern">Mecklenburg Vorpommern</option>
 			<option<?php echo $landChecked[8];  ?> value="niedersachsen">Niedersachsen</option>
 			<option<?php echo $landChecked[9];  ?> value="nordrhein-westfalen">Nordrhein-Westfalen</option>
 			<option<?php echo $landChecked[10]; ?> value="rheinland-pfalz">Rheinland-Pfalz</option>
@@ -322,8 +322,8 @@ class io_user {
 				case 'hessen':
 					landKurz = 'Hessen';
 					break;
-				case 'mecklemburg-vorpommern':
-					landKurz = 'Mecklemburg-Vorpommern';
+				case 'mecklenburg-vorpommern':
+					landKurz = 'Mecklenburg-Vorpommern';
 					break;
 				case 'niedersachsen':
 					landKurz = 'Niedersachsen';
@@ -458,7 +458,7 @@ class io_user {
 		$landChecked[4]  = ($land == 'bremen' ? ' checked' : '');
 		$landChecked[5]  = ($land == 'hamburg' ? ' checked' : '');
 		$landChecked[6]  = ($land == 'hessen' ? ' checked' : '');
-		$landChecked[7]  = ($land == 'mecklemburg-vorpommern' ? ' checked' : '');
+		$landChecked[7]  = ($land == 'mecklenburg-vorpommern' ? ' checked' : '');
 		$landChecked[8]  = ($land == 'niedersachsen' ? ' checked' : '');
 		$landChecked[9]  = ($land == 'nordrhein-westfalen' ? ' checked' : '');
 		$landChecked[10] = ($land == 'rheinland-pfalz' ? ' checked' : '');
@@ -508,7 +508,7 @@ class io_user {
 				<option<?php echo $landChecked[4];  ?> value="bremen">Bremen</option>
 				<option<?php echo $landChecked[5];  ?> value="hamburg">Hamburg</option>
 				<option<?php echo $landChecked[6];  ?> value="hessen">Hessen</option>
-				<option<?php echo $landChecked[7];  ?> value="mecklemburg-vorpommern">Mecklemburg Vorpommern</option>
+				<option<?php echo $landChecked[7];  ?> value="mecklenburg-vorpommern">Mecklenburg Vorpommern</option>
 				<option<?php echo $landChecked[8];  ?> value="niedersachsen">Niedersachsen</option>
 				<option<?php echo $landChecked[9];  ?> value="nordrhein-westfalen">Nordrhein-Westfalen</option>
 				<option<?php echo $landChecked[10]; ?> value="rheinland-pfalz">Rheinland-Pfalz</option>
@@ -679,7 +679,7 @@ class io_user {
 				case 'hessen':
 					landKurz = 'HE';
 					break;
-				case 'mecklemburg-vorpommern':
+				case 'mecklenburg-vorpommern':
 					landKurz = 'MV';
 					break;
 				case 'niedersachsen':
@@ -781,7 +781,7 @@ class io_user {
 			if(empty($_POST['last_name'])) {
 				$errors->add('last_name_error', '<strong>FEHLER:</strong> Du musst einen Nachnamen angeben!');
 			}
-		} else if(($_POST['user_art'] == "landesverband" || $_POST['user_art'] == "basisgruppe") && (empty($_POST['name']) || $_POST['land'] == 0)) {
+		} else if($_POST['user_art'] == "basisgruppe" && (empty($_POST['name']) || $_POST['land'] == 0)) {
 			if(empty($_POST['name'])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
@@ -995,13 +995,13 @@ class io_user {
 			</select>
 		</td>
 	</tr>
-	<tr class="form-field">
+	<!--<tr class="form-field">
 		<th scope="row"><label for="permissions">Berechtigungen</label></th>
 		<td>
 			<select name="permissions[]" id="permissions" size="10" multiple>
 		<?php
 
-			if(count(io_permission::getValues()) > 0) {
+			/*if(count(io_permission::getValues()) > 0) {
 				$values = io_permission::getValues();
 				foreach($values AS $key_1 => $value_1) {
 					?>				<optgroup label="<?php echo $key_1; ?>">
@@ -1015,12 +1015,12 @@ class io_user {
 				<?php 
 
 				}
-			}
+			}*/
 
 		?>
 			</select>
 		</td>
-	</tr>
+	</tr>-->
 <?php
 		if(is_admin()) {
 			if(is_admin() && isset($_GET['user_aktiv']) && $_GET['user_aktiv'] == true && get_user_meta($user_id, 'user_aktiv', true) != 0) {
@@ -1067,8 +1067,12 @@ class io_user {
 				return;
 			}
 			
-			update_user_meta($user_id, "user_aktiv", 0);
 			self::user_ldap_add($user_id);
+			update_user_meta($user_id, "user_aktiv", 0);
+		}
+		
+		if(isset($_POST['pass1']) && $_POST['pass1'] != "") {
+			self::password_reset(get_userdata($user_id), sanitize_text_field($_POST['pass1']));
 		}
 		
 		$ldapConn = ldapConnector::get();
@@ -1198,16 +1202,6 @@ class io_user {
 		/**
 		 * Fires before a new password is retrieved.
 		 *
-		 * @since 1.5.0
-		 * @deprecated 1.5.1 Misspelled. Use 'retrieve_password' hook instead.
-		 *
-		 * @param string $user_login The user login name.
-		 */
-		do_action( 'retreive_password', $user_login );
-
-		/**
-		 * Fires before a new password is retrieved.
-		 *
 		 * @since 1.5.1
 		 *
 		 * @param string $user_login The user login name.
@@ -1231,31 +1225,16 @@ class io_user {
 		}
 
 		// Generate something random for a password reset key.
-		$key = wp_generate_password( 20, false );
+		$key = wp_generate_password( 10, true, false );
 
-		/**
-		 * Fires when a password reset key is generated.
-		 *
-		 * @since 2.5.0
-		 *
-		 * @param string $user_login The username for the user.
-		 * @param string $key        The generated password reset key.
-		 */
-		do_action( 'retrieve_password_key', $user_login, $key );
-
-		// Now insert the key, hashed, into the DB.
-		if ( empty( $wp_hasher ) ) {
-			require_once ABSPATH . WPINC . '/class-phpass.php';
-			$wp_hasher = new PasswordHash( 8, true );
-		}
-		$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
-		$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
-
+		wp_set_password($key, $user_id);
+		self::password_reset($user_data, $key);
+		
 		$message = __('Hallo,') . "\r\n\r\n";
 		$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";
 		$message .= sprintf(__('Dein Benutzer*innenname lautet: %s'), $user_login) . "\r\n\r\n";
-		$message .= __('Um dein Passwort zu erhalten, gehe bitte auf: ') . "\r\n\r\n";
-		$message .= network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . "\r\n\r\n";
+		$message .= __('Dein Passwort lautet: ') . $key . "\r\n\r\n";
+		$message .= __('Bitte ändere dein Passwort umgehend nach dem ersten Login.') . "\r\n\r\n";
 		$message .= __('Wenn du dich nicht registriert hast, melde dich bitte umgehend an webmaster@gruene-jugend.de') . "\r\n\r\n";
 		$message .= __('Bei technischen Problemen oder Schwierigkeiten, schreibe bitte KEINE Mail, sondern öffne ein Ticket unter https://support.gruene-jugend.de.') . "\r\n\r\n";
 		$message .= __('Liebe Grüße,') . "\r\n";

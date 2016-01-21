@@ -29,12 +29,14 @@
 	
 	//Registrierung und Login
 	add_action('init',											'io_init');
+	add_filter('login_redirect',								'io_login_redirect', 10, 3 );
 	
 	add_action('register_form',									array('io_user', 'register_form'));
 	add_action('user_new_form',									array('io_user', 'new_user_form'));
     add_filter('registration_errors',							array('io_user', 'register_error'), 10, 3);
 	add_filter('wp_login_errors',								array('io_user', 'user_register_msg'), 10, 2);
     add_action('user_register',									array('io_user', 'user_register'));
+	add_action('password_reset',								array('io_user', 'password_reset'), 10, 2);
 	
 	add_filter('manage_users_columns',							array('io_user', 'user_column'));
 	add_action('manage_users_custom_column',					array('io_user', 'user_column_value'), 10, 3);

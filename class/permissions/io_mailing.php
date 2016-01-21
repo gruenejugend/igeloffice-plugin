@@ -40,6 +40,7 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 
 ?></b><br><hr>
 
+<?php if(self::mailForwardIsPermitted() || self::mailPostboxIsPermitted()) { ?>
 <form action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post">
 			<?php
 			
@@ -51,9 +52,12 @@ Deine E-Mail-Adresse der GRÜNEN JUGEND lautet:<br><br>
 				self::mailBox(self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')) ? " checked" : "");
 			}
 			
+			if(!isset($_POST['io_mail_submit'])) {
 			?>
 	<input type="submit" name="io_mail_submit" value="Bestätigen">
+		<?php } ?>
 </form>	
+		<?php } ?>
 
 <script type="text/javascript">
 	$(".chb").each(function() {
@@ -188,14 +192,16 @@ Um E-Mails von <?php echo(io_case_mail_change(wp_get_current_user()->user_firstn
 				//TODO: Abhänging der LDAP-Änderung, Hinzufügen des Attributs
 				$ldapConn->delUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail);
 			} else {
-				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]);
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0], "replace", $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')[0]);
 			}
 			
 			?><b>Dein Postfach wurde gelöscht.</b><?php
 		}
 		
 		if(isset($_POST['io_mail_box']) && $_POST['io_mail_box'] == true && !self::isGJMail($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail'))) {
-			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')[0]);
+			if($ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')[0] != $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress')[0]) {
+				$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mailAlternateAddress', $ldapConn->getUserAttribute(wp_get_current_user()->user_login, 'mail')[0]);
+			}
 			
 			//TODO: LDAP Änderung, hier: Veränderung des Attributes
 			$ldapConn->setUserAttribute(wp_get_current_user()->user_login, 'mail', self::$mail, "replace", $ldapConn->getUserAttribute(wp_get_current_user()->user_login, "mailAlternateAddress")[0]);

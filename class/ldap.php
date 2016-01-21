@@ -163,7 +163,7 @@ class LDAP {
 	 * @return bool         successfull or not
 	 */
 	protected function delAttribute($dn, $values) {
-		if(!ldap_mod_dell($this->res, $dn, $values)) {
+		if(!ldap_mod_del($this->res, $dn, $values)) {
 			$this->error();
 		}
 		return true;

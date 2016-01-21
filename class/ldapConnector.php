@@ -152,7 +152,7 @@ class ldapConnector extends LDAP {
 			$user = 'cn='.$user.','.LDAP_USER_BASE;
 		});
 		
-		if(!ldap_mod_replace($this->res, $this->groupDN($group), array(
+		if(!ldap_mod_add($this->res, $this->groupDN($group), array(
 			'member' => $users
 		))) {
 			return $this->error();
@@ -169,7 +169,7 @@ class ldapConnector extends LDAP {
 	 */
 	private function setUserPassword($user, $password) {
 		if(!ldap_mod_replace($this->res, $this->userDN($user), array(
-			'userPassword' => hash('ssha', $password),
+			'userPassword' => "{SHA}" . base64_encode(pack( "H*", sha1($password))),
 			'qmailGID' => intval(time() / 86400) //last password change - days since 01.01.1970
 		))) {
 			return $this->error();
@@ -455,7 +455,7 @@ class ldapConnector extends LDAP {
 	 * @return bool            successfull or not
 	 */
 	private function delUserAttribute($user, $attribute, $value) {
-		return $this->delAttribute($this->userDN($user), array($attribute => $vale));
+		return $this->delAttribute($this->userDN($user), array($attribute => $value));
 	}
 
 	//TODO: Array bei Value

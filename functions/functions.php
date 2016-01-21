@@ -81,4 +81,17 @@
 		return count(io_groups::getLeaderGroups()) != 0;
 	}
 	
+	function io_login_redirect($redirect_to, $request, $user) {
+		global $user;
+		if(isset($user->roles) && is_array($user->roles)) {
+			if (in_array('administrator', $user->roles)) {
+				return $redirect_to;
+			} else {
+				return home_url();
+			}
+		} else {
+			return $redirect_to;
+		}
+	}
+	
 ?>
