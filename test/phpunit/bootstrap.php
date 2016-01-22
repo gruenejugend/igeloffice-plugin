@@ -12,9 +12,7 @@ if ( ! file_exists( $test_lib_bootstrap_file ) ) {
 $GLOBALS[ 'wp_tests_options' ] = array(
         'active_plugins' => array(
                 'fraggruene/fraggruene.php'
-        ),
-        'fg_frage_freigabe' => false,
-        'fg_antwort_freigabe' => false
+        )
 );
 
 // call test-lib's bootstrap.php
