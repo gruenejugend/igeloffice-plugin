@@ -5,8 +5,9 @@
  *
  * @author KWM
  */
-class test_ldap_user extends PHPUnit_Framework_TestCase {
+class test_ldap_permission extends PHPUnit_Framework_TestCase {
 	public static $permission_ids = array();
+	public static $ldap;
 
 	public static function setUpBeforeClass() {
 		self::$permission_ids[0] = Permission_Control::create("Test1", "TestOben1", "TestUnten1");

@@ -18,7 +18,7 @@ class Group {
 	public function __construct($id) {
 		$this->id = $id;
 		
-		$post = get_post(array('ID' => $id));
+		$post = get_post($id);
 		$this->name = $post->post_title;
 	}
 	
@@ -35,28 +35,48 @@ class Group {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {
 				$owners = $ldapConnector->getGroupAttribute($this->name, "owner");
-				foreach($owners AS $owner) {
-					array_push($this->owner, new User(get_user_by('login', explode(",ou", substr($owner, 3))[0])->ID));
+				unset($owners['count']);
+				if(count($owners) > 0) {
+					$this->owner = array();
+					foreach($owners AS $owner) {
+						array_push($this->owner, new User(get_user_by('login', explode(",ou", substr($owner, 3))[0])->ID));
+					}
+					return $this->owner;
 				}
-				return $this->owner;
+				return array();
 			} else if($name == 'users') {
 				$members = $ldapConnector->getAllGroupMembers($this->name);
-				foreach($members AS $member) {
-					array_push($this->users, new User(get_user_by("login", $member)->ID));
+				unset($members['count']);
+				if(count($members) > 0) {
+					$this->users = array();
+					foreach($members AS $member) {
+						array_push($this->users, new User(get_user_by("login", $member)->ID));
+					}
+					return $this->users;
 				}
-				return $this->users;
+				return array();
 			} else if($name == 'groups') {
 				$groups = $ldapConnector->getAllGroupGroups($this->name);
-				foreach($groups AS $group) {
-					array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Control::POST_TYPE)->ID));
+				unset($groups['count']);
+				if(count($groups) > 0) {
+					$this->groups = array();
+					foreach($groups AS $group) {
+						array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Control::POST_TYPE)->ID));
+					}
+					return $this->groups;
 				}
-				return $this->groups;
+				return array();
 			} else if($name == 'permissions') {
 				$permissions = $ldapConnector->getGroupPermissions($this->name);
-				foreach($permissions AS $permission) {
-					array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+				unset($permissions['count']);
+				if(count($permissions) > 0) {
+					$this->permissions = array();
+					foreach($permissions AS $permission) {
+						array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+					}
+					return $this->permissions;
 				}
-				return $this->permissions;
+				return array();
 			}
 		}
 	}

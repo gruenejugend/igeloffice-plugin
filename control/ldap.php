@@ -119,13 +119,22 @@ class LDAP {
 	}
 
 	protected function DNexists($dn) {
-		$read = ldap_read($this->res, $dn, '(objectclass=*)', array());
-		if($read === false) {
-			return false;
-		}
-		$count = ldap_count_entries($this->res, $read);
-		if($count !== false || $count > 0) {
-			return true;
+		try {
+			$read = ldap_read($this->res, $dn, '(objectclass=*)', array());
+			if($read === false) {
+				return false;
+			}
+			
+			$count = ldap_count_entries($this->res, $read);
+			if($count !== false || $count > 0) {
+				return true;
+			}
+		} catch(Exception $ex) {
+			if(substr($ex->getMessage(), 0, 35) == 'ldap_read(): Search: No such object') {
+				return false;
+			}
+			echo $ex->getTraceAsString();
+			die;
 		}
 		return false;
 	}

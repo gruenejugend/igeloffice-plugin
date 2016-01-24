@@ -14,8 +14,15 @@ class User_Control {
 			'last_name'		=> $last_name
 		));
 		
-		add_post_meta($id, 'io_user_art', 'User');
-		add_post_meta($id, 'io_user_aktiv', false);
+		add_user_meta($id, 'io_user_art', 'User');
+		add_user_meta($id, 'io_user_aktiv', 'false');
+		
+		if($id instanceof WP_Error) {
+			echo $id->get_error_message();
+			die;
+		}
+		
+		return $id;
 	}
 	
 	public static function createLandesverband($landesverband, $mail) {
@@ -24,8 +31,15 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		add_post_meta($id, 'io_user_art', 'Landesverband');
-		add_post_meta($id, 'io_user_aktiv', false);
+		add_user_meta($id, 'io_user_art', 'Landesverband');
+		add_user_meta($id, 'io_user_aktiv', 'false');
+		
+		if($id instanceof WP_Error) {
+			print_r($id->error_data);
+			die;
+		}
+		
+		return $id;
 	}
 	
 	public static function createBasisgruppe($ort, $landesverband, $mail) {
@@ -34,9 +48,16 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		add_post_meta($id, 'io_user_art', 'Basisgruppe');
-		add_post_meta($id, 'io_user_lv', $landesverband);
-		add_post_meta($id, 'io_user_aktiv', false);
+		add_user_meta($id, 'io_user_art', 'Basisgruppe');
+		add_user_meta($id, 'io_user_lv', $landesverband);
+		add_user_meta($id, 'io_user_aktiv', 'false');
+		
+		if($id instanceof WP_Error) {
+			print_r($id->error_data);
+			die;
+		}
+		
+		return $id;
 	}
 	
 	public static function createOrgauser($name, $mail) {
@@ -45,20 +66,27 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		add_post_meta($id, 'io_user_art', 'Orgauser');
-		add_post_meta($id, 'io_user_aktiv', false);
+		add_user_meta($id, 'io_user_art', 'Orgauser');
+		add_user_meta($id, 'io_user_aktiv', 'false');
+		
+		if($id instanceof WP_Error) {
+			print_r($id->error_data);
+			die;
+		}
+		
+		return $id;
 	}
 	
 	public static function delete($id) {
 		$ldapConnector = ldapConnector::get();
-		if($ldapConnector->DNexists($ldapConnector->userDN((new User($id))->user_login))) {
+		if($ldapConnector->DNexists('cn='.(new User($id))->user_login.',ou=users,dc=gruene-jugend,dc=de')) {
 			$ldapConnector->delUser((new User($id))->user_login);
 		}
 		wp_delete_user($id);
 	}
 	
 	public static function aktivieren($id) {
-		update_post_meta($id, 'io_user_aktiv', true);
+		update_user_meta($id, 'io_user_aktiv', "true");
 		$user = new User($id);
 		
 		$ldapConnector = ldapConnector::get();
@@ -81,7 +109,7 @@ class User_Control {
 	
 	public static function addToGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addUserToGroup((new User($id))->user_login, (new Group($group_id))->name);
+		$ldapConnector->addUsersToGroup(array((new User($id))->user_login), (new Group($group_id))->name);
 	}
 	
 	public static function delToGroup($id, $group_id) {
@@ -89,7 +117,7 @@ class User_Control {
 		$ldapConnector->delUserFromGroup((new User($id))->user_login, (new Group($group_id))->name);
 	}
 	
-	public static function authentifizieruzng($user, $username, $password) {
+	public static function authentifizierung($user, $username, $password) {
 		if($username == '' || $password == '') {
 			return;
 		}
@@ -110,14 +138,14 @@ class User_Control {
 		
 		if($ldapConn->bind($username, $password)) {
 			//save password hash in database and key in cookie
-			require_once IGELOFFICE_PATH.'class/php-encryption/Crypto.php';
+			require_once IGELOFFICE_PATH.'control/php-encryption/Crypto.php';
 			$key = Crypto::createNewRandomKey();
 			$hash = base64_encode(Crypto::encrypt($password, $key));
-			setcookie(hash('sha256', $user_name), base64_encode($key));
+			setcookie(hash('sha256', $username), base64_encode($key));
 			unset($key, $password);
 			update_user_meta($user_id, '_ldap_pass', $hash);
 		}
-		elseif($user_name != null) {
+		elseif($username != null) {
 			return new WP_Error('ldap_login_failed', 'Deine Zugangsdaten sind nicht korrekt.');
 		}
 		

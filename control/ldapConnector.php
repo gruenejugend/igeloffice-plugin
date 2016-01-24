@@ -372,7 +372,8 @@ class ldapConnector extends LDAP {
 	private function addPermission($permission) {
 		if(!ldap_add($this->res, $this->permissionDN($permission), array(
 			'cn' => $permission,
-			'objectClass' => 'groupOfNames'
+			'objectClass' => 'groupOfNames',
+			'member' => ''
 		))) {
 			return $this->error();
 		}

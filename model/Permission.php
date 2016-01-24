@@ -16,7 +16,7 @@ class Permission {
 	public function __construct($id) {
 		$this->id = $id;
 		
-		$post = get_post(array('ID' => $id));
+		$post = get_post($id);
 		$this->name = $post->post_title;
 	}
 	

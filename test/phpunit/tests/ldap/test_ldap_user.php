@@ -15,10 +15,10 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 	public static $ldap;
 
 	public static function setUpBeforeClass() {
-		self::$user_ids[0] = User_Control::createUser("Test1", "Tester1", "test1@test1.de");
-		self::$user_ids[1] = User_Control::createLandesverband("NRW", "test2@test2.de");
-		self::$user_ids[2] = User_Control::createBasisgruppe("Testgruppe1", "NRW", "test3@test3.de");
-		self::$user_ids[3] = User_Control::createOrgauser("Test2", "test4@test4.de");
+		self::$user_ids[0] = User_Control::createUser("AATest1", "Tester1", "test1@test1.de");
+		self::$user_ids[1] = User_Control::createLandesverband("AANRW", "test2@test2.de");
+		self::$user_ids[2] = User_Control::createBasisgruppe("AATestgruppe1", "NRW", "test3@test3.de");
+		self::$user_ids[3] = User_Control::createOrgauser("AATest2", "test4@test4.de");
 		
 		self::$user[0] = new User(self::$user_ids[0]);
 		self::$user[1] = new User(self::$user_ids[1]);
@@ -49,10 +49,10 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_create() {
-		$this->asserFalse(self::$ldap->DNexists("cn=Test1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=NRW,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=Testgruppe1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=Test2,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->DNexists("cn=ATest1,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->DNexists("cn=AANRW,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->DNexists("cn=AATestgruppe1,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->DNexists("cn=AATest2,ou=users,dc=gruene-jugend,dc=de"));
 	}
 	
 	/*
@@ -64,20 +64,15 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::aktivieren(self::$user_ids[2]);
 		User_Control::aktivieren(self::$user_ids[3]);
 		
-		$this->asserTrue(self::$ldap->DNexists("cn=Test1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserTrue(self::$ldap->DNexists("cn=NRW,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserTrue(self::$ldap->DNexists("cn=Testgruppe1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserTrue(self::$ldap->DNexists("cn=Test2,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertEquals('true', self::$user[0]->aktiv);
+		$this->assertEquals('true', self::$user[1]->aktiv);
+		$this->assertEquals('true', self::$user[2]->aktiv);
+		$this->assertEquals('true', self::$user[2]->aktiv);
 		
-		$this->assertTrue(get_user_meta(self::$user_ids[0], "io_user_aktiv",		true));
-		$this->assertTrue(get_user_meta(self::$user_ids[1], "io_user_aktiv",		true));
-		$this->assertTrue(get_user_meta(self::$user_ids[2], "io_user_aktiv",		true));
-		$this->assertTrue(get_user_meta(self::$user_ids[3], "io_user_aktiv",		true));
-		
-		$this->assertTrue(self::$user[0]->aktiv);
-		$this->assertTrue(self::$user[1]->aktiv);
-		$this->assertTrue(self::$user[2]->aktiv);
-		$this->assertTrue(self::$user[2]->aktiv);
+		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
 	}
 	
 	public function test_add_permission() {
@@ -86,10 +81,11 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::addPermission(self::$user_ids[0], self::$permission_ids[2]);
 		User_Control::addPermission(self::$user_ids[1], self::$permission_ids[3]);
 		
-		foreach(self::$user[0]->permissions AS $permission) {
+		$permissions = self::$user[0]->permissions;
+		foreach($permissions AS $permission) {
 			$this->assertTrue($permission->name == self::$permission[0]->name || $permission->name == self::$permission[1]->name || $permission->name == self::$permission[2]->name);
 		}
-		$this->assertEquals(count(self::$user[0]->permissions), 3);
+		$this->assertEquals(count($permissions), 3);
 		
 		$this->assertTrue(self::$user[1]->permissions[0]->name == self::$permission[3]->name);
 	}
@@ -98,10 +94,11 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::delPermission(self::$user_ids[0], self::$permission_ids[0]);
 		User_Control::delPermission(self::$user_ids[1], self::$permission_ids[3]);
 		
-		foreach(self::$user[0]->permissions AS $permission) {
+		$permissions = self::$user[0]->permissions;
+		foreach($permissions AS $permission) {
 			$this->assertTrue($permission->name != self::$permission[0]->name && ($permission->name == self::$permission[1]->name || $permission->name == self::$permission[2]->name));
 		}
-		$this->assertEquals(count(self::$user[0]->permissions), 2);
+		$this->assertEquals(count($permissions), 2);
 		
 		$this->assertEquals(self::$user[1]->permissions, array());
 	}
@@ -112,36 +109,26 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::addToGroup(self::$user_ids[0], self::$group_ids[2]);
 		User_Control::addToGroup(self::$user_ids[1], self::$group_ids[3]);
 		
-		foreach(self::$user[0]->groups AS $group) {
+		$groups = self::$user[0]->groups;
+		foreach($groups AS $group) {
 			$this->assertTrue($group->name == self::$group[0]->name || $group->name == self::$group[1]->name || $group->name == self::$group[2]->name);
 		}
-		$this->assertEquals(count(self::$user[0]->groups), 3);
+		$this->assertEquals(count($groups), 3);
 		
 		$this->assertTrue(self::$user[1]->groups[0]->name == self::$group[3]->name);
 	}
 	
 	public function test_del_group() {
-		User_Control::delPermission(self::$user_ids[0], self::$group_ids[0]);
-		User_Control::delPermission(self::$user_ids[1], self::$group_ids[3]);
+		User_Control::delToGroup(self::$user_ids[0], self::$group_ids[0]);
+		User_Control::delToGroup(self::$user_ids[1], self::$group_ids[3]);
 		
-		foreach(self::$user[0]->groups AS $group) {
+		$groups = self::$user[0]->groups;
+		foreach($groups AS $group) {
 			$this->assertTrue($group->name != self::$group[0]->name && ($group->name == self::$group[1]->name || $group->name == self::$group[2]->name));
 		}
-		$this->assertEquals(count(self::$user[0]->groups), 2);
+		$this->assertEquals(count($groups), 2);
 		
 		$this->assertEquals(self::$user[1]->groups, array());
-	}
-	
-	public function test_authentifizierung() {
-		self::$ldap->setUserPassword(self::$user[0]->user_login, "Test123");
-		self::$ldap->setUserPassword(self::$user[1]->user_login, "Test123");
-		self::$ldap->setUserPassword(self::$user[2]->user_login, "Test123");
-		self::$ldap->setUserPassword(self::$user[3]->user_login, "Test123");
-		
-		$this->sssertTrue(User_Control::authentifizierung(self::$user[0], self::$user[0]->user_login, "Test123")->user_login == self::$user[0]->user_login);
-		$this->sssertTrue(User_Control::authentifizierung(self::$user[1], self::$user[1]->user_login, "Test123")->user_login == self::$user[1]->user_login);
-		$this->sssertTrue(User_Control::authentifizierung(self::$user[2], self::$user[2]->user_login, "Test123")->user_login == self::$user[2]->user_login);
-		$this->sssertTrue(User_Control::authentifizierung(self::$user[3], self::$user[3]->user_login, "Test123")->user_login == self::$user[3]->user_login);
 	}
 	
 	public function test_delete() {
@@ -150,10 +137,10 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::delete(self::$user_ids[2]);
 		User_Control::delete(self::$user_ids[3]);
 		
-		$this->asserFalse(self::$ldap->DNexists("cn=Test1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=NRW,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=Testgruppe1,ou=users,dc=gruene-jugend,dc=de"));
-		$this->asserFalse(self::$ldap->DNexists("cn=Test2,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertFalse(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertFalse(self::$ldap->isLDAPUser(self::$user[0]->user_login));
+		$this->assertFalse(self::$ldap->isLDAPUser(self::$user[0]->user_login));
 	}
 	
 	public static function tearDownAfterClass() {

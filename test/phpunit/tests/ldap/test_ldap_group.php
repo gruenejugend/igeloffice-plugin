@@ -61,15 +61,16 @@ class test_ldap_group extends PHPUnit_Framework_TestCase {
 		Group_Control::addOwner(self::$group_ids[1], self::$user_ids[2]);
 		Group_Control::addOwner(self::$group_ids[2], self::$user_ids[3]);
 		
-		foreach(self::$group[0]->owner AS $owner) {
+		$owners = self::$group[0]->owner;
+		foreach($owners AS $owner) {
 			$this->assertTrue($owner->user_login == self::$user[0]->user_login || $owner->user_login == self::$user[1]->user_login);
 		}
-		$this->assertEquals(count(self::$group[0]), 2);
+		$this->assertEquals(count(self::$group[0]->owner), 2);
 		
-		$this->assertTrue(self::$group[1]->owner[0]->user_login == elf::$user[2]->user_login);
-		$this->assertEquals(count(self::$group[1]), 1);
-		$this->assertTrue(self::$group[2]->owner[0]->user_login == elf::$user[3]->user_login);
-		$this->assertEquals(count(self::$group[2]), 1);
+		$this->assertTrue(self::$group[1]->owner[0]->user_login == self::$user[2]->user_login);
+		$this->assertEquals(count(self::$group[1]->owner), 1);
+		$this->assertTrue(self::$group[2]->owner[0]->user_login == self::$user[3]->user_login);
+		$this->assertEquals(count(self::$group[2]->owner), 1);
 	}
 	
 	public function test_delOwner() {
@@ -77,34 +78,35 @@ class test_ldap_group extends PHPUnit_Framework_TestCase {
 		Group_Control::delOwner(self::$group_ids[1], self::$user_ids[2]);
 		Group_Control::delOwner(self::$group_ids[2], self::$user_ids[3]);
 		
-		$this->assertTrue(self::$group[1]->owner[0]->user_login != self::$user[0]->user_login && self::$group[1]->owner[0]->user_login == self::$user[1]->user_login);
-		$this->assertEquals(count(self::$group[0]), 1);
-		$this->assertFalse(self::$group[1]->owner[0]->user_login == elf::$user[2]->user_login);
-		$this->assertEquals(count(self::$group[1]), 0);
-		$this->assertFalse(self::$group[2]->owner[0]->user_login == elf::$user[3]->user_login);
-		$this->assertEquals(count(self::$group[2]), 0);
+		$this->assertTrue(self::$group[0]->owner[0]->user_login != self::$user[0]->user_login && self::$group[0]->owner[0]->user_login == self::$user[1]->user_login);
+		$this->assertEquals(count(self::$group[0]->owner), 1);
+		$this->assertFalse(self::$group[1]->owner[0]->user_login == self::$user[2]->user_login);
+		$this->assertEquals(count(self::$group[1]->owner), 0);
+		$this->assertFalse(self::$group[2]->owner[0]->user_login == self::$user[3]->user_login);
+		$this->assertEquals(count(self::$group[2]->owner), 0);
 	}
 	
 	/*
-	 * Bei addGroupToGroup muss darauf geachtet werden, dass eine Gruppe nicht bei sich selbst Mitglied wird
+	 * Bei addGroup muss darauf geachtet werden, dass eine Gruppe nicht bei sich selbst Mitglied wird
 	 * Auch nicht über mehrere Gruppen hinweg. In diesem Beispiel darf 0 nicht mehr Mitglied bei 1, 2 oder 3 werden
 	 */
 	public function test_addToGroup() {
-		Group_Control::addGroupToGroup(self::$group_ids[0], self::$group_ids[1]);
-		Group_Control::addGroupToGroup(self::$group_ids[0], self::$group_ids[2]);
-		Group_Control::addGroupToGroup(self::$group_ids[0], self::$group_ids[3]);
+		Group_Control::addGroup(self::$group_ids[0], self::$group_ids[1]);
+		Group_Control::addGroup(self::$group_ids[0], self::$group_ids[2]);
+		Group_Control::addGroup(self::$group_ids[0], self::$group_ids[3]);
 		
-		foreach(self::$group[0]->groups AS $group) {
-			$this->assertTrue($group->name == self::$group[0]->name || $group->name == self::$group[1]->name || $group->name == self::$group[2]->name);
+		$groups = self::$group[0]->groups;
+		foreach($groups AS $group) {
+			$this->assertTrue($group->name == self::$group[1]->name || $group->name == self::$group[2]->name || $group->name == self::$group[3]->name);
 		}
-		$this->assertEquals(count(self::$group[0]->groups), 3);
+		$this->assertEquals(count($groups), 3);
 	}
 	
 	public function test_delToGroup() {
-		Group_Control::delGroupToGroup(self::$group_ids[0], self::$group_ids[2]);
-		Group_Control::delGroupToGroup(self::$group_ids[0], self::$group_ids[3]);
+		Group_Control::delGroup(self::$group_ids[0], self::$group_ids[2]);
+		Group_Control::delGroup(self::$group_ids[0], self::$group_ids[3]);
 		
-		$this->assertTrue(self::$group[0]->groups[0]->name == self::$group[0]->name && self::$group[0]->groups[0]->name != self::$group[1]->name && self::$group[0]->groups[0]->name != self::$group[2]->name);
+		$this->assertTrue(self::$group[0]->groups[0]->name == self::$group[1]->name && self::$group[0]->groups[0]->name != self::$group[2]->name && self::$group[0]->groups[0]->name != self::$group[3]->name);
 		$this->assertEquals(count(self::$group[0]->groups), 1);
 	}
 	
@@ -114,12 +116,13 @@ class test_ldap_group extends PHPUnit_Framework_TestCase {
 		Group_Control::addPermission(self::$group_ids[0], self::$permission_ids[2]);
 		Group_Control::addPermission(self::$group_ids[1], self::$permission_ids[3]);
 		
-		foreach(self::$group[0]->permissions AS $permission) {
+		$permissions = self::$group[0]->permissions;
+		foreach($permissions AS $permission) {
 			$this->assertTrue($permission->name == self::$permission[0]->name || $permission->name == self::$permission[1]->name || $permission->name == self::$permission[2]->name);
 		}
-		$this->assertEquals(count(self::$group[0]->permissions), 3);
+		$this->assertEquals(count($permissions), 3);
 		$this->assertTrue(self::$group[1]->permissions[0]->name == self::$permission[3]->name);
-		$this->assertEquals(count(self::$group[3]->permissions), 1);
+		$this->assertEquals(count(self::$group[1]->permissions), 1);
 	}
 	
 	public function test_delPermission() {

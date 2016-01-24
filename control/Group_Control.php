@@ -54,22 +54,22 @@ class Group_Control {
 	
 	public static function addOwner($id, $user_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->setGroupAttribute((new Group($id))->name, 'owner',  $ldapConnector->userDN((new User($user_id))->user_login));
+		$ldapConnector->setGroupAttribute((new Group($id))->name, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
 	}
 	
 	public static function delOwner($id, $user_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroupAttribute((new Group($id))->name, 'owner',  $ldapConnector->userDN((new User($user_id))->user_login));
+		$ldapConnector->delGroupAttribute((new Group($id))->name, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
 	}
 	
 	public static function addGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addGroupToGroup((new Group($id))->name, (new Group($group_id))->name);
+		$ldapConnector->addGroupToGroup((new Group($group_id))->name, (new Group($id))->name);
 	}
 	
 	public static function delGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroupFromGroup((new Group($id))->name, (new Group($group_id))->name);
+		$ldapConnector->delGroupFromGroup((new Group($group_id))->name, (new Group($id))->name);
 	}
 	
 	public static function addPermission($id, $permission_id) {

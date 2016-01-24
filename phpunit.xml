@@ -1,0 +1,9 @@
+<phpunit bootstrap="test/phpunit/bootstrap.php" backupGlobals="false"
+        colors="false" convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true" convertWarningsToExceptions="true">
+        <testsuites>
+                <testsuite name="basis">
+                        <file>test/phpunit/tests/test-all.php</file>
+                </testsuite>
+        </testsuites>
+</phpunit>

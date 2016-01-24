@@ -5,15 +5,23 @@
  *
  * @author KWM
  */
-class User extends WP_User {
+class User {
 	private $art;
 	private $aktiv;
 	private $landesverband;
 	private $permissions = array();
 	private $groups = array();
+	private $wp_user;
+	private $ID;
+	private $first_name;
+	private $last_name;
+	private $user_login;
+	private $user_email;
+	private $user_url;
 	
 	public function __construct($id) {
-		parent::__construct($id);
+		$this->wp_user = get_user_by('ID', $id);
+		$this->ID = $id;
 	}
 	
 	public function __get($name) {
@@ -25,20 +33,37 @@ class User extends WP_User {
 			return get_user_meta($this->ID, "io_user_lv", true);
 		} else if($name == 'permissions') {
 			$ldapConnector = ldapConnector::get();
-			$permissions = $ldapConnector->getUserPermissions($this->user_login);
-			foreach($permissions AS $permission) {
-				$permission = explode(",", substr($permissions, 3))[0];
-				array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+			$this->permissions = array();
+			$permissions = $ldapConnector->getUserPermissions($this->wp_user->user_login);
+			if(count($permissions) > 0) {
+				foreach($permissions AS $permission) {
+					array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+				}
+				return $this->permissions;
 			}
+			return array();
 		} else if($name == 'groups') {
 			$ldapConnector = ldapConnector::get();
-			$groups = $ldapConnector->getUserGroups($this->user_login);
-			foreach($groups AS $group) {
-				$group = explode(",", substr($group, 3))[0];
-				array_push($this->groups, new Group(get_page_by_title($group, OBJECT, 'io_group')->ID));
+			$this->groups = array();
+			$groups = $ldapConnector->getUserGroups($this->wp_user->user_login);
+			if(count($groups) > 0) {
+				foreach($groups AS $group) {
+					array_push($this->groups, new Group(get_page_by_title($group, OBJECT, 'io_group')->ID));
+				}
+				return $this->groups;
 			}
-		} else {
-			return parent::__get($name);
-		}
+			return array();
+		} else if($name == "first_name") {
+			return $this->wp_user->first_name;
+		} else if($name == "last_name") {
+			return $this->wp_user->last_name;
+		} else if($name == "user_login") {
+			return $this->wp_user->user_login;
+		} else if($name == "user_email") {
+			return $this->wp_user->user_email;
+		} else if($name == "user_url") {
+			return $this->wp_user->user_url;
+		} 
+		return null;
 	}
 }
