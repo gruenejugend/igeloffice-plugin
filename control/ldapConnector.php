@@ -54,7 +54,7 @@ class ldapConnector extends LDAP {
 			if(empty($pass_hash) || empty($key)) {
 				return false;
 			}
-			require_once IGELOFFICE_PATH.'class/php-encryption/Crypto.php';
+			require_once IGELOFFICE_PATH.'control/php-encryption/Crypto.php';
 			$pass = Crypto::decrypt($pass_hash, $key);
 		}
 		return parent::bind($this->userDN($user), $pass);

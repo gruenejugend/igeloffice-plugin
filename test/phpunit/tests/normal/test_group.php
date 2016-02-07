@@ -127,4 +127,94 @@ class test_group extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$group_ids[3]);
 		$this->assertNull($post);
 	}
+	
+	public function test_get_values() {
+		self::$group_ids[0] = Group_Control::create("AATest01", "TestOK1", "TestUK1");
+		self::$group_ids[1] = Group_Control::create("AATest02", "TestOK1", "TestUK1");
+		self::$group_ids[2] = Group_Control::create("AATest03", "TestOK1");
+		self::$group_ids[3] = Group_Control::create("AATest04", "TestOK1");
+		self::$group_ids[4] = Group_Control::create("AATest05", "TestOK2", "TestUK2");
+		self::$group_ids[5] = Group_Control::create("AATest06", "TestOK2", "TestUK2");
+		self::$group_ids[6] = Group_Control::create("AATest07", "TestOK2", "TestUK3");
+		self::$group_ids[7] = Group_Control::create("AATest08", "TestOK2", "TestUK3");
+		self::$group_ids[8] = Group_Control::create("AATest09", "TestOK3", "TestUK4");
+		self::$group_ids[9] = Group_Control::create("AATest10", "TestOK3", "TestUK5");
+		self::$group_ids[10] = Group_Control::create("AATest11", "TestOK3", "TestUK6");
+		self::$group_ids[11] = Group_Control::create("AATest12", "TestOK3", "TestUK7");
+		self::$group_ids[12] = Group_Control::create("AATest13", "TestOK4");
+		self::$group_ids[13] = Group_Control::create("AATest14", "TestOK4");
+		self::$group_ids[14] = Group_Control::create("AATest15");
+		self::$group_ids[15] = Group_Control::create("AATest16");
+		
+		$values = array(
+			//Oberkategorie Ebene
+				//Unterkategorie Ebene
+					//Gruppenebene
+			'TestOK1' => array(
+				'TestUK1' => array(
+					self::$group_ids[0],
+					self::$group_ids[1]
+				),
+				'Nicht Kategorisiert' => array(
+					self::$group_ids[2],
+					self::$group_ids[3]
+				)
+			),
+			'TestOK2' => array(
+				'TestUK2' => array(
+					self::$group_ids[4],
+					self::$group_ids[5]
+				),
+				'TestUK3' => array(
+					self::$group_ids[6],
+					self::$group_ids[7]
+				)
+			),
+			'TestOK3' => array(
+				'TestUK4' => array(
+					self::$group_ids[8]
+				),
+				'TestUK5' => array(
+					self::$group_ids[9]
+				),
+				'TestUK6' => array(
+					self::$group_ids[10]
+				),
+				'TestUK7' => array(
+					self::$group_ids[11]
+				)
+			),
+			'TestOK4' => array(
+				'Nicht Kategorisiert' => array(
+					self::$group_ids[12],
+					self::$group_ids[13]
+				)
+			),
+			'Nicht Kategorisiert' => array(
+				self::$group_ids[14],
+				self::$group_ids[15]
+			)
+		);
+		
+		$this->assertEquals(Group_Control::getValues(), $values);
+	}
+	
+	public function test_delete_get_values() {
+		Group_Control::delete(self::$group_ids[0]);
+		Group_Control::delete(self::$group_ids[1]);
+		Group_Control::delete(self::$group_ids[2]);
+		Group_Control::delete(self::$group_ids[3]);
+		Group_Control::delete(self::$group_ids[4]);
+		Group_Control::delete(self::$group_ids[5]);
+		Group_Control::delete(self::$group_ids[6]);
+		Group_Control::delete(self::$group_ids[7]);
+		Group_Control::delete(self::$group_ids[8]);
+		Group_Control::delete(self::$group_ids[9]);
+		Group_Control::delete(self::$group_ids[10]);
+		Group_Control::delete(self::$group_ids[11]);
+		Group_Control::delete(self::$group_ids[12]);
+		Group_Control::delete(self::$group_ids[13]);
+		Group_Control::delete(self::$group_ids[14]);
+		Group_Control::delete(self::$group_ids[15]);
+	}
 }

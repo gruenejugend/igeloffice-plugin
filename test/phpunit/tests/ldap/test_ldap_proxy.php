@@ -14,7 +14,7 @@ class test_ldap_proxy extends PHPUnit_Framework_TestCase {
 		self::$user[0] = new User(self::$user_ids[0]);
 	}
 	
-	public static function test_isLDAPUser() {
+	public function test_isLDAPUser() {
 		$this->assertFalse(LDAP_Proxy::isLDAPUser(self::$user[0]->user_login));
 		User_Control::aktivieren(self::$user_ids[0]);
 		$this->assertTrue(LDAP_Proxy::isLDAPUser(self::$user[0]->user_login));

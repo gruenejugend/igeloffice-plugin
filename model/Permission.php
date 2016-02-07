@@ -10,8 +10,8 @@ class Permission {
 	private $name;
 	private $oberkategorie;
 	private $unterkategorie;
-	private $users;
-	private $groups;
+	private $users = array();
+	private $groups = array();
 	
 	public function __construct($id) {
 		$this->id = $id;
@@ -33,6 +33,8 @@ class Permission {
 			$ldapConnector = ldapConnector::get();
 			
 			$berechtigte = $ldapConnector->getPermissionAttribute($this->name, "member");
+			$this->users = array();
+			$this->groups = array();
 			foreach($berechtigte AS $berechtigter) {
 				$explode = explode(",", substr($berechtigter, 3));
 				$ou = substr($explode[1], 3);

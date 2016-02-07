@@ -31,3 +31,6 @@ define('LDAP_USER_BASE', 'ou=users,'.LDAP_DN_BASE);
 define('LDAP_GROUP_BASE', 'ou=groups,'.LDAP_DN_BASE);
 define('LDAP_PERMISSION_BASE', 'ou=permissions,'.LDAP_DN_BASE);
 define('LDAP_DOMAIN_BASE', 'ou=domains'.LDAP_DN_BASE);
+
+define('LDAP_PROXY_USER', 'cn=LDAPTest,ou=users,dc=gruene-jugend,dc=de');
+define('LDAP_PROXY_PW', 'LDAPTest2');

@@ -63,7 +63,9 @@ class User {
 			return $this->wp_user->user_email;
 		} else if($name == "user_url") {
 			return $this->wp_user->user_url;
-		} 
+		} else if($name == "ID") {
+			return $this->ID;
+		}
 		return null;
 	}
 }

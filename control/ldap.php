@@ -14,7 +14,7 @@ class LDAP {
 	 */
 	protected $bind = false;
 
-	protected function __construct($host, $post = 389) {
+	protected function __construct() {
 		$this->res = ldap_connect(LDAP_HOST, LDAP_PORT);
 		if($this->res === false) {
 			$this->error();

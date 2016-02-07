@@ -22,8 +22,8 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name,															"Tester1");
 		$this->assertEquals($user->user_login,															"Test1 Tester1");
 		$this->assertEquals($user->user_email,															"test1@test1.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_art",		true),				"User");
-		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_aktiv",		true),				"false");
+		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_art",		true),				"user");
+		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_aktiv",		true),				0);
 		
 		
 		/*
@@ -34,8 +34,8 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"NRW");
 		$this->assertEquals($user->user_email,															"test2@test2.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_art",		true),				"Landesverband");
-		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_aktiv",		true),				"false");
+		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_art",		true),				"landesverband");
+		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_aktiv",		true),				0);
 		
 		/*
 		 * Test User 3
@@ -45,8 +45,8 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"Testgruppe1");
 		$this->assertEquals($user->user_email,															"test3@test3.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_art",		true),				"Basisgruppe");
-		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_aktiv",		true),				"false");
+		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_art",		true),				"basisgruppe");
+		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_aktiv",		true),				0);
 		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_lv",			true),				"NRW");
 		
 		/*
@@ -57,8 +57,8 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"Test2");
 		$this->assertEquals($user->user_email,															"test4@test4.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_art",		true),				"Orgauser");
-		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_aktiv",		true),				"false");
+		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_art",		true),				"organisatorisch");
+		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_aktiv",		true),				0);
 	}
 	
 	public function test_model() {
@@ -70,29 +70,29 @@ class test_user extends PHPUnit_Framework_TestCase {
 		/*
 		 * Test User 1
 		 */
-		$this->assertEquals($user[0]->art,				"User");
-		$this->assertEquals($user[0]->aktiv,			"false");
+		$this->assertEquals($user[0]->art,				"user");
+		$this->assertEquals($user[0]->aktiv,			0);
 		$this->assertEquals($user[0]->landesverband,	"");
 		
 		/*
 		 * Test User 2
 		 */
-		$this->assertEquals($user[1]->art,				"Landesverband");
-		$this->assertEquals($user[1]->aktiv,			"false");
+		$this->assertEquals($user[1]->art,				"landesverband");
+		$this->assertEquals($user[1]->aktiv,			0);
 		$this->assertEquals($user[1]->landesverband,	"");
 		
 		/*
 		 * Test User 3
 		 */
-		$this->assertEquals($user[2]->art,				"Basisgruppe");
-		$this->assertEquals($user[2]->aktiv,			"false");
+		$this->assertEquals($user[2]->art,				"basisgruppe");
+		$this->assertEquals($user[2]->aktiv,			0);
 		$this->assertEquals($user[2]->landesverband,	"NRW");
 		
 		/*
 		 * Test User 4
 		 */
-		$this->assertEquals($user[3]->art,				"Orgauser");
-		$this->assertEquals($user[3]->aktiv,			"false");
+		$this->assertEquals($user[3]->art,				"organisatorisch");
+		$this->assertEquals($user[3]->aktiv,			0);
 		$this->assertEquals($user[3]->landesverband,	"");
 	}
 	

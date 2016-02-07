@@ -39,7 +39,9 @@ class Group {
 				if(count($owners) > 0) {
 					$this->owner = array();
 					foreach($owners AS $owner) {
-						array_push($this->owner, new User(get_user_by('login', explode(",ou", substr($owner, 3))[0])->ID));
+						if(io_in_wp(explode(",ou", substr($owner, 3))[0])) {
+							array_push($this->owner, new User(get_user_by('login', explode(",ou", substr($owner, 3))[0])->ID));
+						}
 					}
 					return $this->owner;
 				}
@@ -50,7 +52,9 @@ class Group {
 				if(count($members) > 0) {
 					$this->users = array();
 					foreach($members AS $member) {
-						array_push($this->users, new User(get_user_by("login", $member)->ID));
+						if(io_in_wp($member)) {
+							array_push($this->users, new User(get_user_by("login", $member)->ID));
+						}
 					}
 					return $this->users;
 				}
@@ -61,7 +65,9 @@ class Group {
 				if(count($groups) > 0) {
 					$this->groups = array();
 					foreach($groups AS $group) {
-						array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Control::POST_TYPE)->ID));
+						if(io_in_wp($group, false, Group_Control::POST_TYPE)) {
+							array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Control::POST_TYPE)->ID));
+						}
 					}
 					return $this->groups;
 				}
@@ -72,7 +78,9 @@ class Group {
 				if(count($permissions) > 0) {
 					$this->permissions = array();
 					foreach($permissions AS $permission) {
-						array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+						if(io_in_wp($permission, false, Permission_Control::POST_TYPE)) {
+							array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+						}
 					}
 					return $this->permissions;
 				}

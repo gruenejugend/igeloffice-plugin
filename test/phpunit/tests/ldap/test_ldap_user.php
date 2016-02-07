@@ -64,10 +64,10 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		User_Control::aktivieren(self::$user_ids[2]);
 		User_Control::aktivieren(self::$user_ids[3]);
 		
-		$this->assertEquals('true', self::$user[0]->aktiv);
-		$this->assertEquals('true', self::$user[1]->aktiv);
-		$this->assertEquals('true', self::$user[2]->aktiv);
-		$this->assertEquals('true', self::$user[2]->aktiv);
+		$this->assertEquals(1, self::$user[0]->aktiv);
+		$this->assertEquals(1, self::$user[1]->aktiv);
+		$this->assertEquals(1, self::$user[2]->aktiv);
+		$this->assertEquals(1, self::$user[2]->aktiv);
 		
 		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
 		$this->assertTrue(self::$ldap->isLDAPUser(self::$user[0]->user_login));
