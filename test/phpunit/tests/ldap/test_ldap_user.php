@@ -90,6 +90,13 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(self::$user[1]->permissions[0]->name == self::$permission[3]->name);
 	}
 	
+	public function test_is_permitted() {
+		$this->assertTrue(User_Control::isPermitted(self::$user_ids[0], self::$permission_ids[0]));
+		$this->assertTrue(User_Control::isPermitted(self::$user_ids[0], self::$permission_ids[1]));
+		$this->assertTrue(User_Control::isPermitted(self::$user_ids[0], self::$permission_ids[2]));
+		$this->assertTrue(User_Control::isPermitted(self::$user_ids[1], self::$permission_ids[3]));
+	}
+	
 	public function test_del_permission() {
 		User_Control::delPermission(self::$user_ids[0], self::$permission_ids[0]);
 		User_Control::delPermission(self::$user_ids[1], self::$permission_ids[3]);

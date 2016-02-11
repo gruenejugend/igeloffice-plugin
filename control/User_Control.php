@@ -246,6 +246,18 @@ class User_Control {
 		$ldapConnector->delUserFromGroup((new User($id))->user_login, (new Group($group_id))->name);
 	}
 	
+	public static function isPermitted($id, $permission_id) {
+		$user = new User($id);
+		$permission_to_check = new Permission($permission_id);
+		
+		foreach($user->permission AS $permission) {
+			if($permission->name == $permission_to_check->name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static function getValues() {
 		$query = new WP_User_Query(array(
 			'meta_key'		=> 'io_user_aktiv',
