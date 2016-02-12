@@ -49,7 +49,7 @@ class test_ldap_user extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_create() {
-		$this->assertFalse(self::$ldap->DNexists("cn=ATest1,ou=users,dc=gruene-jugend,dc=de"));
+		$this->assertFalse(self::$ldap->DNexists("cn=AATest1 Tester1,ou=users,dc=gruene-jugend,dc=de"));
 		$this->assertFalse(self::$ldap->DNexists("cn=AANRW,ou=users,dc=gruene-jugend,dc=de"));
 		$this->assertFalse(self::$ldap->DNexists("cn=AATestgruppe1,ou=users,dc=gruene-jugend,dc=de"));
 		$this->assertFalse(self::$ldap->DNexists("cn=AATest2,ou=users,dc=gruene-jugend,dc=de"));
