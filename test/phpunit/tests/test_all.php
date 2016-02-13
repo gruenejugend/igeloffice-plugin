@@ -27,6 +27,7 @@ class test_all extends PHPUnit_Framework_TestSuite {
 			
 			$suite->addTestFile('test/phpunit/tests/permission/test_mailStandard.php');
 			$suite->addTestFile('test/phpunit/tests/permission/test_cloud.php');
+			$suite->addTestFile('test/phpunit/tests/permission/test_mailinglisten.php');
 		}
 		
 		return $suite;
