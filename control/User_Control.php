@@ -115,7 +115,11 @@ class User_Control {
 			self::userLDAPAdd($id);
 		} elseif($add && LDAP_Proxy::isLDAPUser(get_userdata($id)->user_login)) {
 			$ldapConnector = ldapConnector::get();
-			$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mail", get_userdata($id)->user_email, "replace", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]);
+			
+			if(str_replace("@gruene-jugend.de", "", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]) == $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]) {
+				$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mail", get_userdata($id)->user_email, "replace", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]);
+			}
+			
 			if($ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress") == "") {
 				$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress", get_userdata($id)->user_email);
 			} else {
