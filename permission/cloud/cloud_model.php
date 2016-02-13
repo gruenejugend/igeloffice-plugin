@@ -16,7 +16,7 @@ class cloud_model extends User {
 		}
 		
 		if($name == "isPermitted") {
-			return User_Control::isPermitted($this->ID, cloud_control::getMailPermission()->id);
+			return User_Control::isPermitted($this->ID, cloud_control::getPermission()->id);
 		}
 	}
 }
