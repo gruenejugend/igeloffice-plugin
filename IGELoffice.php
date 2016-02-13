@@ -98,3 +98,9 @@
 	require_once 'permission/mailStandard/mailStandard_view.php';
 	
 	add_shortcode("io_mailStandard", array("mailStandard_view", "maskHandler"));
+	
+	require_once 'permission/cloud/cloud_model.php';
+	require_once 'permission/cloud/cloud_Control.php';
+	require_once 'permission/cloud/cloud_view.php';
+	
+	add_shortcode("io_cloud", array("cloud_view", "maskHandler"));

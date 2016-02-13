@@ -16,16 +16,17 @@ class test_all extends PHPUnit_Framework_TestSuite {
 		if(!$ldapConn->bind("LDAPTest", "LDAPTest2")) {
 			echo 'Fehler';
 		} else {
-			$suite->addTestFile('test/phpunit/tests/normal/test_group.php');
-			$suite->addTestFile('test/phpunit/tests/normal/test_permission.php');
-			$suite->addTestFile('test/phpunit/tests/normal/test_user.php');
-		
-			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_group.php');
-			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_permission.php');
-			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_proxy.php');
-			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_user.php');
-			
-			$suite->addTestFile('test/phpunit/tests/permission/test_mailStandard.php');
+//			$suite->addTestFile('test/phpunit/tests/normal/test_group.php');
+//			$suite->addTestFile('test/phpunit/tests/normal/test_permission.php');
+//			$suite->addTestFile('test/phpunit/tests/normal/test_user.php');
+//		
+//			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_group.php');
+//			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_permission.php');
+//			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_proxy.php');
+//			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_user.php');
+//			
+//			$suite->addTestFile('test/phpunit/tests/permission/test_mailStandard.php');
+			$suite->addTestFile('test/phpunit/tests/permission/test_cloud.php');
 		}
 		
 		return $suite;
