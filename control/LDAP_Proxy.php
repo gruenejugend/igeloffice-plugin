@@ -85,7 +85,7 @@ final class LDAP_Proxy {
 			'qmailGID' => intval(time() / 86400) //last password change - days since 01.01.1970
 		))) {
 			self::logout($res);
-			return $this->error();
+			return LDAP::error();
 		}
 		self::logout($res);
 		return true;
