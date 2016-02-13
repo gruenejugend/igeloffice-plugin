@@ -89,3 +89,12 @@
 			return;
 		}
 	}
+	
+	/*
+	 * Permissions
+	 */
+	require_once 'permission/mailStandard/mailStandard_model.php';
+	require_once 'permission/mailStandard/mailStandard_Control.php';
+	require_once 'permission/mailStandard/mailStandard_view.php';
+	
+	add_shortcode("io_mailStandard", array("mailStandard_view", "maskHandler"));

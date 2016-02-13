@@ -24,6 +24,8 @@ class test_all extends PHPUnit_Framework_TestSuite {
 			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_permission.php');
 			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_proxy.php');
 			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_user.php');
+			
+			$suite->addTestFile('test/phpunit/tests/permission/test_mailStandard.php');
 		}
 		
 		return $suite;
