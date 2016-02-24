@@ -35,7 +35,7 @@ class backend_permission {
 		if(get_post_meta($post->ID, "io_permission_aktiv", true) != "") {
 			$permission = new Permission($post->ID);
 			
-			$users = io_get_ids($permission->users, true);
+			$users = io_get_ids($permission->users, true, true);
 			$groups = io_get_ids($permission->groups, true);
 		}
 		

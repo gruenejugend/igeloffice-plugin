@@ -47,6 +47,7 @@ function io_get_ids($array, $obj = false, $user = false) {
 	$values = array();
 	if(!empty($array)) {
 		foreach($array AS $value) {
+			$temp = "";
 			if($obj && $user) {
 				$temp = $value->ID;
 			} elseif($obj) {
