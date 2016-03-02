@@ -252,16 +252,9 @@ class User_Control {
 	
 	public static function isPermitted($id, $permission_id) {
 		$user = new User($id);
-		$permission_to_check = new Permission($permission_id);
-		$permissions = $user->permissions;
-		if(!empty($permissions)) {
-			foreach($permissions AS $permission) {
-				if($permission->name == $permission_to_check->name) {
-					return true;
-				}
-			}
-		}
-		return false;
+		$permission = new Permission($permission_id);
+		$ldapConnector = ldapConnector::get();
+		return $ldapConnector->isQualified($user->user_login, $permission->name);
 	}
 	
 	public static function getValues() {

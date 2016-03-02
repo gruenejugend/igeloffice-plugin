@@ -11,36 +11,36 @@ class mailStandard_view {
 	public static function maskHandler() {
 		self::$user = new mailStandard_model(get_current_user_id());
 		
-		if(!self::$user->isMailPermitted() && !self::$user->isMailForwardPermitted()) {
+		if(!self::$user->isMailPermitted && !self::$user->isMailForwardPermitted) {
 			return;
 		}
 		
-		include '../wp-content/plugins/igeloffice/permission/mailStandard/templates/header.php';
+		include 'wp-content/plugins/igeloffice/permission/mailStandard/templates/header.php';
 		
 		wp_nonce_field('io_mailStandard', 'io_mailStandard_nonce');
 		
-		if(self::$user->isMailPermitted()) {
+		if(self::$user->isMailPermitted) {
 			self::maskMail();
 		}
 		
-		if(self::$user->isMailForwardPermitted()) {
+		if(self::$user->isMailForwardPermitted) {
 			self::maskMailForward();
 		}
-		include '../wp-content/plugins/igeloffice/permission/mailStandard/templates/footer.php';
+		include 'wp-content/plugins/igeloffice/permission/mailStandard/templates/footer.php';
 	}
 	
 	public static function maskMail() {
 		if(isset($_POST['io_mailForward_submit'])) {
 			self::mailExecution();
 		}
-		include '../wp-content/plugins/igeloffice/permission/mailStandard/templates/mail.php';
+		include 'wp-content/plugins/igeloffice/permission/mailStandard/templates/mail.php';
 	}
 	
 	public static function maskMailForward() {
 		if(isset($_POST['io_mailForward_submit'])) {
 			self::mailForwardExecution();
 		}
-		include '../wp-content/plugins/igeloffice/permission/mailStandard/templates/mailForward.php';
+		include 'wp-content/plugins/igeloffice/permission/mailStandard/templates/mailForward.php';
 	}
 	
 	public static function mailExecution() {

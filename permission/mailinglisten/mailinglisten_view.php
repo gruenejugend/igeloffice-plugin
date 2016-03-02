@@ -7,6 +7,6 @@
  */
 class mailinglisten_view {
 	public static function maskHandler() {
-		include '../wp-content/plugins/igeloffice/permission/mailinglisten/templates/mailinglisten.php';
+		include 'wp-content/plugins/igeloffice/permission/mailinglisten/templates/mailinglisten.php';
 	}
 }
