@@ -1,0 +1,1 @@
+<textarea name="io_remember_user" id="io_remember_user" cols="20" rows="10"><?php echo implode(", ", Remember_Control::get()); ?></textarea>

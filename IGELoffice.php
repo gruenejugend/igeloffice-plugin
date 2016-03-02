@@ -31,6 +31,7 @@
 	require_once 'control/LDAP_Proxy.php';
 	require_once 'control/Permission_Control.php';
 	require_once 'control/User_Control.php';
+	require_once 'control/Remember_Control.php';
 	
 	require_once 'view/backend_permission.php';
 	require_once 'view/backend_groups.php';
@@ -39,6 +40,7 @@
 	require_once 'view/backend_auth.php';
 	require_once 'view/frontend_register.php';
 	require_once 'view/viewHelper.php';
+	require_once 'view/backend_remember.php';
 	
 	add_action('user_new_form',														array('backend_register', 'maskHandler'));
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
@@ -83,6 +85,9 @@
 	add_filter('request',															array('backend_permission', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
+	
+	add_action("admin_menu",														array('backend_remember', 'menu'));
+	add_action("admin_init",														array('backend_remember', 'registerSettings'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

@@ -1,0 +1,1 @@
+<textarea name="io_remember_text" id="io_remember_text" cols="20" rows="10"><?php echo get_option("io_remember_text"); ?></textarea>
