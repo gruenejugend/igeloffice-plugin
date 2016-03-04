@@ -65,6 +65,10 @@
 	
 	add_filter('authenticate',														array('backend_auth', 'authentifizierung'), 10, 3);
 	remove_action('authenticate',													'wp_authenticate_username_password', 20);
+	add_filter('login_message',														function() {
+		global $errors;
+		$errors->remove('authentication_failed');
+	}, 5, 0);
 	
 	add_action('add_meta_boxes',													array('backend_groups', 'maskHandler'));
 	add_action('save_post',															array('backend_groups', 'maskSave'));

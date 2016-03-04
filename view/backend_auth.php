@@ -7,7 +7,7 @@
  */
 class backend_auth {
 	public static function authentifizierung($user, $user_name, $password) {
-		if($user_name == '' || $password == '') {
+		if(empty($user_name) || empty($password)) {
 			return;
 		}
 		
