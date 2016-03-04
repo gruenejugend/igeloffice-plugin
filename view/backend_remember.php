@@ -76,4 +76,12 @@ class backend_remember {
 
 		remove_action('admin_notices', array('backend_remember', 'oldMailFail'));
 	}
+	
+	public static function schedule() {
+		wp_schedule_event(1457193600, "hourly", array("backend_remember", "scheduleHook"));
+	}
+	
+	public static function scheduleExec() {
+		Remember_Control::remember();
+	}
 }

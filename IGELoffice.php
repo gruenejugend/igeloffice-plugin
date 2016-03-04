@@ -92,6 +92,8 @@
 	
 	add_action("admin_menu",														array('backend_remember', 'menu'));
 	add_action("admin_init",														array('backend_remember', 'registerSettings'));
+	register_activation_hook('view/backend_remember.php',							array('backend_remember', 'schedule'));
+	add_action("scheduleHook",														array('backend_remember', 'scheduleExec'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {
