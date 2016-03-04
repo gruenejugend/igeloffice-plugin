@@ -7,20 +7,21 @@
  */
 class Remember_Control {
 	public static function prepare($data) {
-		return explode("<br>", str_replace(array("\n", ", ", ",", "\r\n"), "<br>", $data));
+		return explode("<br />", str_replace(array(", ", "\r\n", "\n\r", "\n", "\r"), array("<br />", "", "", "", ""), nl2br($data)));
 	}
 	
 	public static function preUpdateCheck($data) {
-		$error = array();
-		
 		foreach($data AS $key => $mail) {
 			if(!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-				$error[] = $mail;
 				unset($data[$key]);
 			}
 		}
 		
-		return array($error, array_values($data));
+		return $data;
+	}
+	
+	public static function sanitizeSetting($data) {
+		return maybe_serialize(self::preUpdateCheck(self::prepare($data)));
 	}
 	
 	public static function update($data) {
@@ -30,8 +31,7 @@ class Remember_Control {
 	}
 	
 	public static function get() {
-		$var = maybe_unserialize(get_option("io_remember", array()));
-		return is_array($var) ? $var : array($var);
+		return maybe_unserialize(get_option("io_remember_user", array()));
 	}
 	
 	public static function check() {

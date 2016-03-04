@@ -11,7 +11,7 @@ class backend_remember {
 	}
 	
 	public static function menu() {
-		add_submenu_page('options-general.php', 'Erinnerungen', 'Erinnerungseinstellungen', 'manage_options', 'io_remember', array('backend_remembet', 'maskHandler'));
+		add_submenu_page('options-general.php', 'Erinnerungen', 'Erinnerungseinstellungen', 'manage_options', 'io_remember', array('backend_remember', 'maskHandler'));
 	}
 	
 	public static function subjectElement() {
@@ -31,16 +31,16 @@ class backend_remember {
 	}
 	
 	public static function registerSettings() {
-		add_settings_section("io-remember", "Erinnerungseinstellungen", null, "io_remember");
+		add_settings_section("io_remember", "Erinnerungseinstellungen", null, "io_remember");
 		
-		add_settings_field("io_remember_subject", "Betreff der Erinnerungsmail", array("backend_remember", "subjectElement"), "io_remember", "io-remember");
-		add_settings_field("io_remember_text", "Text der Erinnerungsmail", array("backend_remember", "textElement"), "io_remember", "io-remember");
-		add_settings_field("io_remember_text_hint", null, array("backend_remember", "textHintElement"), "io_remember", "io-remember");
-		add_settings_field("io_remember_user", "Zu erinnernde", array("backend_remember", "userElement"), "io_remember", "io-remember");
+		add_settings_field("io_remember_subject", "Betreff der Erinnerungsmail", array("backend_remember", "subjectElement"), "io_remember", "io_remember");
+		add_settings_field("io_remember_text", "Text der Erinnerungsmail", array("backend_remember", "textElement"), "io_remember", "io_remember");
+		add_settings_field("io_remember_text_hint", null, array("backend_remember", "textHintElement"), "io_remember", "io_remember");
+		add_settings_field("io_remember_user", "Zu erinnernde", array("backend_remember", "userElement"), "io_remember", "io_remember");
 		
-		register_setting("io-remember", "io_remember_subject");
-		register_setting("io-remember", "io_remember_text");
-		register_setting("io-remember", "io_remember_user");
+		register_setting("io_remember", "io_remember_subject");
+		register_setting("io_remember", "io_remember_text");
+		register_setting("io_remember", "io_remember_user", array("Remember_Control", "sanitizeSetting"));
 	}
 	
 	public static function otherMail($user) {
