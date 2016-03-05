@@ -121,3 +121,9 @@
 	require_once 'permission/mailinglisten/mailinglisten_view.php';
 	
 	add_shortcode("io_mailinglisten", array("mailinglisten_view", "maskHandler"));
+	
+	require_once 'permission/menu_dependencies.php';
+	add_filter('if_menu_conditions',												array('menu_dependencies', 'cloudMenu'));
+	add_filter('if_menu_conditions',												array('menu_dependencies', 'mailMenu'));
+	add_filter('if_menu_conditions',												array('menu_dependencies', 'listMenu'));
+	add_filter('if_menu_conditions',												array('menu_dependencies', 'diensteMenu'));
