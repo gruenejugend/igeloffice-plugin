@@ -11,7 +11,7 @@ class menu_dependencies {
 			'name'			=> 'CloudPermitted',
 			'condition'		=> function() {
 				$owncloud_model = new cloud_model(get_current_user_id());
-				return $owncloud_model->isPermitted;
+				return get_current_user_id() != 0 && $owncloud_model->isPermitted;
 			}
 		);
 		
@@ -23,7 +23,7 @@ class menu_dependencies {
 			'name'			=> 'MailPermitted',
 			'condition'		=> function() {
 				$mailStandard_model = new mailStandard_model(get_current_user_id());
-				return $mailStandard_model->isMailPermitted || $mailStandard_model->isMailForwardPermitted;
+				return get_current_user_id() != 0 && ($mailStandard_model->isMailPermitted || $mailStandard_model->isMailForwardPermitted);
 			}
 		);
 		
@@ -35,7 +35,7 @@ class menu_dependencies {
 			'name'			=> 'ListPermitted',
 			'condition'		=> function() {
 				$mailinglisten_model = new mailinglisten_model(get_current_user_id());
-				return $mailinglisten_model->isPermitted;
+				return get_current_user_id() != 0 && $mailinglisten_model->isPermitted;
 			}
 		);
 		
@@ -49,7 +49,7 @@ class menu_dependencies {
 				$mailinglisten_model = new mailinglisten_model(get_current_user_id());
 				$mailStandard_model = new mailStandard_model(get_current_user_id());
 				$owncloud_model = new cloud_model(get_current_user_id());
-				return $mailinglisten_model->isPermitted || $mailStandard_model->isMailPermitted || $mailStandard_model->isMailForwardPermitted || $owncloud_model->isPermitted;
+				return get_current_user_id() != 0 && ($mailinglisten_model->isPermitted || $mailStandard_model->isMailPermitted || $mailStandard_model->isMailForwardPermitted || $owncloud_model->isPermitted);
 			}
 		);
 		
