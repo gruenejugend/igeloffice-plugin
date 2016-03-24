@@ -111,20 +111,35 @@ class User_Control {
 	
 	public static function aktivieren($id, $add = true) {
 		update_user_meta($id, 'io_user_aktiv', 1);
-		if($add && !LDAP_Proxy::isLDAPUser(get_userdata($id)->user_login)) {
+		$user = get_userdata($id);
+		if($add && !LDAP_Proxy::isLDAPUser($user->user_login)) {
 			self::userLDAPAdd($id);
-		} elseif($add && LDAP_Proxy::isLDAPUser(get_userdata($id)->user_login)) {
+		} elseif($add && LDAP_Proxy::isLDAPUser($user->user_login)) {
 			$ldapConnector = ldapConnector::get();
 			
-			if(str_replace("@gruene-jugend.de", "", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]) == $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]) {
-				$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mail", get_userdata($id)->user_email, "replace", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mail")[0]);
+			if(str_replace("@gruene-jugend.de", "", $ldapConnector->getUserAttribute($user->user_login, "mail")[0]) == $ldapConnector->getUserAttribute($user->user_login, "mail")[0]) {
+				$ldapConnector->setUserAttribute($user->user_login, "mail", $user->user_email, "replace", $ldapConnector->getUserAttribute($user->user_login, "mail")[0]);
 			}
 			
-			if($ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress") == "") {
-				$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress", get_userdata($id)->user_email);
+			if($ldapConnector->getUserAttribute($user->user_login, "mailAlternateAddress") == "") {
+				$ldapConnector->setUserAttribute($user->user_login, "mailAlternateAddress", $user->user_email);
 			} else {
-				$ldapConnector->setUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress", get_userdata($id)->user_email, "replace", $ldapConnector->getUserAttribute(get_userdata($id)->user_login, "mailAlternateAddress")[0]);
+				$ldapConnector->setUserAttribute($user->user_login, "mailAlternateAddress", $user->user_email, "replace", $ldapConnector->getUserAttribute($user->user_login, "mailAlternateAddress")[0]);
 			}
+		
+			$message = __('Hallo,') . "\r\n\r\n";
+			$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";
+			$message .= sprintf(__('Dein Benutzer*innenname lautet: %s'), $user->user_login) . "\r\n\r\n";
+			$message .= __('Dein Passwort hat sich nicht geändert, weil du bereits in unserem System registriert bist. Wenn du dein Passwort nicht weißt, nutze bitte die Passwort-Vergessen-Funktion.') . "\r\n\r\n";
+			$message .= __('Wenn du dich nicht registriert hast, melde dich bitte umgehend an webmaster@gruene-jugend.de') . "\r\n\r\n";
+			$message .= __('Bei technischen Problemen oder Schwierigkeiten, schreibe bitte KEINE Mail, sondern öffne ein Ticket unter https://support.gruene-jugend.de.') . "\r\n\r\n";
+			$message .= __('Liebe Grüße,') . "\r\n";
+			$message .= __('Dein IGELoffice') . "\r\n";
+			
+			$title = sprintf( __('[%s] Aktivierung deiner Registrierung'), wp_specialchars_decode(get_option('blogname'), ENT_QUOTES));
+			$title = apply_filters( 'retrieve_password_title', $title);
+			
+			wp_mail($user->user_email, wp_specialchars_decode($title), $message);
 		}
 	}
 	
