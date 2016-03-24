@@ -100,7 +100,7 @@ function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 }
 
 function io_filter($query, $names, $posttype) {
-	if(is_admin()) {
+	if(is_admin() && function_exists(get_current_screen)) {
 		$screen = get_current_screen();
 		if($screen->post_type == $posttype && $screen->id == "edit-" . $posttype && isset($_POST['filter_action'])) {
 			$query->query_vars['meta_query'] = array();
