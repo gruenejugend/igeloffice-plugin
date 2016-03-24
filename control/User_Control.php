@@ -112,6 +112,7 @@ class User_Control {
 	public static function aktivieren($id, $add = true) {
 		update_user_meta($id, 'io_user_aktiv', 1);
 		$user = get_userdata($id);
+		$sendmail = false;
 		if($add && !LDAP_Proxy::isLDAPUser($user->user_login)) {
 			self::userLDAPAdd($id);
 		} elseif($add && LDAP_Proxy::isLDAPUser($user->user_login)) {
@@ -126,7 +127,11 @@ class User_Control {
 			} else {
 				$ldapConnector->setUserAttribute($user->user_login, "mailAlternateAddress", $user->user_email, "replace", $ldapConnector->getUserAttribute($user->user_login, "mailAlternateAddress")[0]);
 			}
+			
+			$sendmail = true;
+		}
 		
+		if(!$add || $sendmail) {
 			$message = __('Hallo,') . "\r\n\r\n";
 			$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";
 			$message .= sprintf(__('Dein Benutzer*innenname lautet: %s'), $user->user_login) . "\r\n\r\n";
