@@ -65,10 +65,12 @@
 	
 	add_filter('authenticate',														array('backend_auth', 'authentifizierung'), 10, 3);
 	remove_action('authenticate',													'wp_authenticate_username_password', 20);
-	add_filter('login_message',														function() {
+	add_filter('login_message',														function($message) {
 		global $errors;
 		$errors->remove('authentication_failed');
-	}, 5, 0);
+		
+		return $message;
+	}, 5, 1);
 	
 	add_action('add_meta_boxes',													array('backend_groups', 'maskHandler'));
 	add_action('save_post',															array('backend_groups', 'maskSave'));
@@ -92,8 +94,9 @@
 	
 	add_action("admin_menu",														array('backend_remember', 'menu'));
 	add_action("admin_init",														array('backend_remember', 'registerSettings'));
-	register_activation_hook('view/backend_remember.php',							array('backend_remember', 'schedule'));
-	add_action("scheduleHook",														array('backend_remember', 'scheduleExec'));
+	add_action("init",																'io_schedule');
+	add_action("rememberSchedule",													'io_scheduleExec');
+	add_action("admin_notices",														array('backend_remember', 'otherMail'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

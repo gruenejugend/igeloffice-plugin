@@ -43,45 +43,29 @@ class backend_remember {
 		register_setting("io_remember", "io_remember_user", array("Remember_Control", "sanitizeSetting"));
 	}
 	
-	public static function otherMail($user) {
-		if(!empty($_GET['old_mail'])) {
-			if(filter_var($_GET['old_mail'], FILTER_VALIDATE_EMAIL) && Remember_Control::delete(sanitize_text_field($_GET['old_mail']), $user->user_email, $user->user_login)) {
-				add_action('admin_notices', array('backend_remember', 'oldMailDelete'));
+	public static function otherMail() {
+		$user = get_userdata(get_current_user_id());
+		if(!empty($_GET['old_mail']) && get_current_user_id() != 0 && function_exists("get_current_screen") && get_current_screen()->parent_file == 'users.php') {
+			$mail = str_replace("%40", "@", $_GET['old_mail']);
+			if(filter_var($mail, FILTER_VALIDATE_EMAIL) && Remember_Control::delete(sanitize_text_field($mail), $user->user_email, $user->user_login)) {
+				echo self::oldMailDelete();
 			} else {
-				add_action('admin_notices', array('backend_remember', 'oldMailFail'));
+				echo self::oldMailFail();
 			}
 		}
 	}
 	
 	public static function oldMailDelete() {
-		?>
-		
-	<div class="updated">
+		return '	<div class="updated">
 		<p>E-Mail wurde aus der Erinnerungssteuerung gel&ouml;scht.</p>
-	</div>	
-		 
-		<?php
-
-		remove_action('admin_notices', array('backend_remember', 'oldMailDelete'));
+	</div>
+';
 	}
 	
 	public static function oldMailFail() {
-		?>
-		
-	<div class="error">
+		return '	<div class="error">
 		<p>Es besteht ein Problem. Entweder war die angegebene Mail-Adresse falsch oder sie stand nicht auf der Erinnerungsliste.</p>
-	</div>	
-		 
-		<?php
-
-		remove_action('admin_notices', array('backend_remember', 'oldMailFail'));
-	}
-	
-	public static function schedule() {
-		wp_schedule_event(1457193600, "hourly", array("backend_remember", "scheduleHook"));
-	}
-	
-	public static function scheduleExec() {
-		Remember_Control::remember();
+	</div>
+';
 	}
 }

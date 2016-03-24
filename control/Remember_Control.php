@@ -21,13 +21,14 @@ class Remember_Control {
 	}
 	
 	public static function sanitizeSetting($data) {
-		return maybe_serialize(self::preUpdateCheck(self::prepare($data)));
+		if(!is_array($data)) {
+			$data = self::preUpdateCheck(self::prepare($data));
+		}
+		return maybe_serialize($data);
 	}
 	
 	public static function update($data) {
-		$serialize = maybe_serialize($data);
-		
-		update_option("io_remember", $serialize);
+		update_option("io_remember_user", $data);
 	}
 	
 	public static function get() {
@@ -70,7 +71,7 @@ class Remember_Control {
 			
 			if($check) {
 				self::update(array_values($mails));
-
+				
 				return true;
 			}
 		}

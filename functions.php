@@ -89,7 +89,7 @@
 	function io_toLoginMsg($message) {
 		if(!empty($_GET['password']) && $_GET['password'] == 1) {
 			$message = '<p class="message">Dein Passwort wurde ge&auml;ndert. Bitte logge dich neu ein.</p><br />';
-		}
+		} 
 		return $message;
 	}
 			
@@ -98,4 +98,15 @@
 			$errors->add('gj_mail', '<b>FEHLER:</b> Eine nachtr&auml;gliche Speicherung einer GR&Uuml;NE-JUGEND-Mail-Adresse ist hier aus Sicherheitsgr&uuml;nden nicht möglich. Wende dich bitte an webmaster@gruene-jugend.de.');
 		}
 		return $errors;
+	}
+	
+	function io_schedule() {
+		if( !wp_next_scheduled("rememberSchedule")) {
+			wp_schedule_event(time(), "daily", "rememberSchedule");
+		}
+	}
+	
+	function io_scheduleExec() {
+		wp_mail("mail@kay-wilhelm.de", "Send2!", "Test");
+		Remember_Control::remember();
 	}
