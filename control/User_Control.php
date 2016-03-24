@@ -178,7 +178,7 @@ class User_Control {
 		$key = wp_generate_password( 10, true, false );
 
 		wp_set_password($key, $user_id);
-		LDAP_Proxy::changePW($user_login, $key);
+		LDAP_Proxy::changePW($user, $key);
 		
 		$message = __('Hallo,') . "\r\n\r\n";
 		$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";

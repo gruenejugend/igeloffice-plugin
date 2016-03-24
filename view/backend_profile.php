@@ -74,7 +74,7 @@ class backend_profile {
 		}
 		
 		if(LDAP_Proxy::isLDAPUser($user->user_login) && isset($_POST['pass1-text']) && $_POST['pass1-text'] != "") {
-			LDAP_Proxy::changePW($user->user_login, sanitize_text_field($_POST['pass1-text']));
+			LDAP_Proxy::changePW($user, sanitize_text_field($_POST['pass1-text']));
 			if($user->user_login == get_userdata(get_current_user_id())->user_login) {
 				function toLogin(){
 					remove_action('wp_logout', 'toLogin');

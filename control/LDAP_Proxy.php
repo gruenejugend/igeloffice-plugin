@@ -78,7 +78,7 @@ final class LDAP_Proxy {
 	public static final function changePW($user, $password) {
 		$res = self::login();
 		
-		$dn = 'cn=' . $user . ',ou=users,dc=gruene-jugend,dc=de';
+		$dn = 'cn=' . $user->user_login . ',ou=users,dc=gruene-jugend,dc=de';
 		
 		if(!ldap_mod_replace($res, $dn, array(
 			'userPassword' => "{SHA}" . base64_encode(pack( "H*", sha1($password))),
