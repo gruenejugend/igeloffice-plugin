@@ -28,7 +28,7 @@
 				<?php io_form_select($permissions, $permissions_values); ?>
 			</select>
 		</td>
-	</tr><?php if(is_admin()) {
+	</tr><?php if(current_user_can('administrator')) {
 ?>
 	<tr class="form-field" id="io_user_aktiv">
 		<th scope="row"><label for="user_aktiv">User Aktiv</label></th>

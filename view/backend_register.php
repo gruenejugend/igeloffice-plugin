@@ -84,7 +84,7 @@ class backend_register {
 	}
 	
 	public static function maskExecution($user_id) {
-		if(is_admin()) {
+		if(current_user_can('administrator')) {
 			if( !isset($_POST['io_users_nonce']) || 
 				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {

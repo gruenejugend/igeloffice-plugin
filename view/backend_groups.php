@@ -130,7 +130,7 @@ class backend_groups {
 	}
 	
 	public static function maskSave($post_id) {
-		if(is_admin()) {
+		if(current_user_can('administrator')) {
 			if( !isset($_POST['io_groups_info_nonce']) || 
 				!wp_verify_nonce($_POST['io_groups_info_nonce'], 'io_groups_info') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -166,7 +166,7 @@ class backend_groups {
 	}
 	
 	public static function maskDelete($post_id) {
-		if(is_admin() && get_post_meta($post_id, "io_group_aktiv", true) != "") {
+		if(current_user_can('administrator') && get_post_meta($post_id, "io_group_aktiv", true) != "") {
 			Group_Control::delete($post_id);
 		}
 	}

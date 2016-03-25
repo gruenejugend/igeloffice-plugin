@@ -3,7 +3,7 @@
 	document.addEventListener("DOMContentLoaded", function() { 
 		$("#user_art").prop('readonly', true);
 		$("#landesverband").prop('readonly', true);
-<?php if(!is_admin()) {
+<?php if(!current_user_can('administrator')) {
 ?>
 		$("#groups").prop('readonly', true);
 		$("#permissions").prop('readonly', true);

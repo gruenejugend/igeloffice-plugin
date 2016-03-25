@@ -9,7 +9,7 @@ class backend_profile {
 	public static function maskHandler($wp_user) {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		if($_GET['user_aktiv'] == "true" && is_admin()) {
+		if($_GET['user_aktiv'] == "true" && current_user_can('administrator')) {
 			User_Control::aktivieren($wp_user->ID);
 			
 			add_action('admin_notices', array('backend_profile', 'userActive'));
@@ -40,7 +40,6 @@ class backend_profile {
 	
 	public static function maskExecution($user_id, $old_user) {
 		if(str_replace("@gruene-jugend.de", "", get_userdata($user_id)->user_email) != get_userdata($user_id)->user_email && get_userdata($user_id)->user_email != $old_user->user_email) {
-			echo 'Test1';
 			wp_update_user(array(
 				'ID'			=> $user_id,
 				'user_email'	=> $old_user->user_email
@@ -57,7 +56,8 @@ class backend_profile {
 			update_user_meta($user_id, "io_user_email_alt", get_userdata($user_id)->user_email);
 		}
 		
-		if(is_admin()) {
+		if(current_user_can('administrator')) {
+			echo 'Drin';
 			if( !isset($_POST['io_users_nonce']) || 
 				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -126,7 +126,7 @@ class backend_profile {
 	}
 	
 	public static function menu() {
-		if(is_admin()) {
+		if(current_user_can('administrator')) {
 			$users = get_users(array(
 				'meta_key'		=> 'io_user_aktiv',
 				'meta_value'	=> 0

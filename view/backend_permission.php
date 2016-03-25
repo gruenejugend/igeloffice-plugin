@@ -63,7 +63,7 @@ class backend_permission {
 	}
 	
 	public static function maskDelete($post_id) {
-		if(is_admin() && get_post_meta($post_id, "io_permission_aktiv", true) != "") {
+		if(current_user_can('administrator') && get_post_meta($post_id, "io_permission_aktiv", true) != "") {
 			Permission_Control::delete($post_id);
 		}
 	}
@@ -119,7 +119,7 @@ class backend_permission {
 	}
 	
 	public static function maskSave($post_id) {
-		if(is_admin()) {
+		if(current_user_can('administrator')) {
 			if( !isset($_POST['io_permissions_info_nonce']) || 
 				!wp_verify_nonce($_POST['io_permissions_info_nonce'], 'io_permissions_info') || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {

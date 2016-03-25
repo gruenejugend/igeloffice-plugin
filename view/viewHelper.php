@@ -21,7 +21,7 @@ function io_form_select($values, $selected = array(), $notto = "", $user = false
 }
 
 function io_save_kategorie($post_id, $obj, $type) {
-	if(is_admin()) {		
+	if(current_user_can('administrator')) {		
 		if(isset($_POST['oberkategorie_txt']) && $_POST['oberkategorie_txt'] != "") {
 			update_post_meta($post_id, "io_" . $type . "_ok", sanitize_text_field($_POST['oberkategorie_txt']));
 		} else if(isset($_POST['oberkategorie_sel']) && $_POST['oberkategorie_sel'] != -1) {
@@ -100,7 +100,7 @@ function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 }
 
 function io_filter($query, $names, $posttype) {
-	if(is_admin() && function_exists(get_current_screen)) {
+	if(current_user_can('administrator') && function_exists(get_current_screen)) {
 		$screen = get_current_screen();
 		if($screen->post_type == $posttype && $screen->id == "edit-" . $posttype && isset($_POST['filter_action'])) {
 			$query->query_vars['meta_query'] = array();
