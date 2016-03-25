@@ -42,13 +42,13 @@ function io_save_kategorie($post_id, $obj, $type) {
 
 function io_get_ids($array, $obj = false, $user = false) {
 	if(!is_array($array)) {
-		return array();
+		return;
 	}
 	$values = array();
 	if(!empty($array)) {
 		foreach($array AS $value) {
 			$temp = "";
-			if($obj && $user) {
+			if($obj && $user && $value->ID) {
 				$temp = $value->ID;
 			} elseif($obj) {
 				$temp = $value->id;
