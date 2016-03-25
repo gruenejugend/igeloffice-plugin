@@ -7,7 +7,7 @@
  */
 class Remember_Control {
 	public static function prepare($data) {
-		return explode("<br />", str_replace(array(", ", "\r\n", "\n\r", "\n", "\r"), array("<br />", "", "", "", ""), nl2br($data)));
+		return explode("<br />", str_replace(array(", ", ",", "\r\n", "\n\r", "\n", "\r"), array("<br />", "<br />", "", "", "", ""), nl2br($data)));
 	}
 	
 	public static function preUpdateCheck($data) {
