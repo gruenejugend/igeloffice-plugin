@@ -45,7 +45,7 @@ class mailStandard_view {
 	
 	public static function mailExecution() {
 		if( !isset($_POST['io_mailStandard_nonce']) || 
-			!wp_verify_nonce($_POST['io_mailStandard_nonce'], 'io_groups_member') || 
+			!wp_verify_nonce($_POST['io_mailStandard_nonce'], 'io_mailStandard') || 
 			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 			return;
 		}
@@ -61,7 +61,7 @@ class mailStandard_view {
 	
 	public static function mailForwardExecution() {
 		if( !isset($_POST['io_mailStandard_nonce']) || 
-			!wp_verify_nonce($_POST['io_mailStandard_nonce'], 'io_groups_member') || 
+			!wp_verify_nonce($_POST['io_mailStandard_nonce'], 'io_mailStandard') || 
 			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 			return;
 		}
