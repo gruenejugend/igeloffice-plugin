@@ -101,7 +101,7 @@ class frontend_register {
 			}
 		}
 		
-		if($_POST['user_art'] == "basisgruppe" && (empty($_POST['name']) || $_POST['land'] == 0)) {
+		if($_POST['user_art'] == "basisgruppe" && (empty($_POST['name']) || $_POST['land'] == '0')) {
 			if(empty($_POST['name'])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
@@ -111,7 +111,7 @@ class frontend_register {
 			}
 		}
 		
-		if($_POST['user_art'] == "landesverband" && $_POST['land'] == 0) {
+		if($_POST['user_art'] == "landesverband" && $_POST['land'] == '0') {
 			$errors->add('land_error', '<strong>FEHLER:</strong> Du musst ein Bundesland angeben!');
 		}
 		
