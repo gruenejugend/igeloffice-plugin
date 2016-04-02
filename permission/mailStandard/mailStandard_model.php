@@ -50,10 +50,10 @@ class mailStandard_model extends User {
 			}
 			
 			if($this->art == "user") {
-				return $this->first_name . "." . $this->last_name . "@gruene-jugend.de";
+				return strtolower(io_umlaute($this->first_name)) . "." . strtolower(io_umlaute($this->last_name)) . "@gruene-jugend.de";
 			}
 			
-			return $this->user_login . "@gruene-jugend.de";
+			return strtolower(io_umlaute($this->user_login)) . "@gruene-jugend.de";
 		} 
 	}
 }

@@ -110,3 +110,10 @@
 		wp_mail("mail@kay-wilhelm.de", "Send2!", "Test");
 		Remember_Control::remember();
 	}
+	
+	function io_umlaute($input) {
+		$suche =	array("ä",		"ö",	"ü",	"ß",	"Ä",	"Ö",	"Ü",	"é",	"á",	"ó");
+		$ersetzen =	array("ae",		"oe",	"ue",	"ss",	"Ae",	"Oe",	"Ue",	"e",	"a",	"o");
+		
+		return str_replace($suche, $ersetzen, $input);
+	}
