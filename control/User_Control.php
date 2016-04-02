@@ -262,12 +262,12 @@ class User_Control {
 	
 	public static function addToGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addUsersToGroup(array((new User($id))->user_login), (new Group($group_id))->name);
+		$ldapConnector->addUsersToGroup(array((new User($id))->user_login), (new Group($group_id))->ldapName);
 	}
 	
 	public static function delToGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delUserFromGroup((new User($id))->user_login, (new Group($group_id))->name);
+		$ldapConnector->delUserFromGroup((new User($id))->user_login, (new Group($group_id))->ldapName);
 	}
 	
 	public static function isPermitted($id, $permission_id) {

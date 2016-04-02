@@ -7,6 +7,7 @@
  */
 class Group_Control {
 	const POST_TYPE = 'io_group';
+	const LDAP_ESCAPE_IGNORE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ ";
 	
 	public static function create($name, $oberkategorie = null, $unterkategorie = null) {
 		$id = wp_insert_post(array(
@@ -30,7 +31,7 @@ class Group_Control {
 		}
 		
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addGroup($name);
+		$ldapConnector->addGroup(ldap_escape($name, self::LDAP_ESCAPE_IGNORE));
 	}
 	
 	public static function update($id, $key, $value) {
@@ -51,39 +52,39 @@ class Group_Control {
 	
 	public static function delete($id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroup((new Group($id))->name);
+		$ldapConnector->delGroup((new Group($id))->ldapName);
 		
 		wp_delete_post($id);
 	}
 	
 	public static function addOwner($id, $user_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->setGroupAttribute((new Group($id))->name, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
+		$ldapConnector->setGroupAttribute((new Group($id))->ldapName, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
 	}
 	
 	public static function delOwner($id, $user_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroupAttribute((new Group($id))->name, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
+		$ldapConnector->delGroupAttribute((new Group($id))->ldapName, 'owner', $ldapConnector->userDN((new User($user_id))->user_login));
 	}
 	
 	public static function addGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addGroupToGroup((new Group($group_id))->name, (new Group($id))->name);
+		$ldapConnector->addGroupToGroup((new Group($group_id))->ldapName, (new Group($id))->ldapName);
 	}
 	
 	public static function delGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroupFromGroup((new Group($group_id))->name, (new Group($id))->name);
+		$ldapConnector->delGroupFromGroup((new Group($group_id))->ldapName, (new Group($id))->ldapName);
 	}
 	
 	public static function addPermission($id, $permission_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->addGroupPermission((new Group($id))->name, (new Permission($permission_id))->name);
+		$ldapConnector->addGroupPermission((new Group($id))->ldapName, (new Permission($permission_id))->name);
 	}
 	
 	public static function delPermission($id, $permission_id) {
 		$ldapConnector = ldapConnector::get();
-		$ldapConnector->delGroupPermission((new Group($id))->name, (new Permission($permission_id))->name);
+		$ldapConnector->delGroupPermission((new Group($id))->ldapName, (new Permission($permission_id))->name);
 	}
 	
 	public static function getValues() {
