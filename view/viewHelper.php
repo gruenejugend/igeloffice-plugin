@@ -71,7 +71,7 @@ function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 	
 	$to_del = array_diff($old, $new);
 	$to_add = array_diff($new, $old);
-
+	
 	if($switch) {
 		if(!empty($to_del)) {
 			foreach($to_del AS $user) {

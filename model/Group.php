@@ -22,7 +22,7 @@ class Group {
 		$this->name = $post->post_title;
 	}
 	
-	private function ldapName($name) {
+	private function ldapNameFunc($name) {
 		return ldap_escape($name, Group_Control::LDAP_ESCAPE_IGNORE);
 	}
 	
@@ -32,7 +32,7 @@ class Group {
 		} else if($name == 'name') {
 			return $this->name; 
 		} else if($name == 'ldapName') {
-			return $this->ldapName($this->name); 
+			return $this->ldapNameFunc($this->name); 
 		} else if($name == 'oberkategorie') {
 			return get_post_meta($this->id, 'io_group_ok', true);
 		} else if($name == 'unterkategorie') {
@@ -40,7 +40,7 @@ class Group {
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {
-				$owners = $ldapConnector->getGroupAttribute($this->ldapName($this->name), "owner");
+				$owners = $ldapConnector->getGroupAttribute($this->ldapNameFunc($this->name), "owner");
 				unset($owners['count']);
 				if(count($owners) > 0) {
 					$this->owner = array();
@@ -53,7 +53,7 @@ class Group {
 				}
 				return array();
 			} else if($name == 'users') {
-				$members = $ldapConnector->getAllGroupMembers($this->ldapName($this->name));
+				$members = $ldapConnector->getAllGroupMembers($this->ldapNameFunc($this->name));
 				unset($members['count']);
 				if(count($members) > 0) {
 					$this->users = array();
@@ -66,7 +66,7 @@ class Group {
 				}
 				return array();
 			} else if($name == 'groups') {
-				$groups = $ldapConnector->getAllGroupGroups($this->ldapName($this->name));
+				$groups = $ldapConnector->getAllGroupGroups($this->ldapNameFunc($this->name));
 				unset($groups['count']);
 				if(count($groups) > 0) {
 					$this->groups = array();
@@ -79,7 +79,7 @@ class Group {
 				}
 				return array();
 			} else if($name == 'permissions') {
-				$permissions = $ldapConnector->getGroupPermissions($this->ldapName($this->name));
+				$permissions = $ldapConnector->getGroupPermissions($this->ldapNameFunc($this->name));
 				unset($permissions['count']);
 				if(count($permissions) > 0) {
 					$this->permissions = array();

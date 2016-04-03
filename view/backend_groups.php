@@ -160,7 +160,7 @@ class backend_groups {
 			
 			io_add_del($_POST['owner'], $group->owner, $post_id, "Group_Control", "Owner");
 			io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
-			io_add_del($_POST['groups'], $group->group, $post_id, "Group_Control", "Group");
+			io_add_del($_POST['groups'], $group->groups, $post_id, "Group_Control", "Group");
 			io_add_del($_POST['permissions'], $group->permissions, $post_id, "Group_Control", "Permission");
 		}
 	}
