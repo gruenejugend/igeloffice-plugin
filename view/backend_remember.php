@@ -45,7 +45,7 @@ class backend_remember {
 	
 	public static function otherMail() {
 		$user = get_userdata(get_current_user_id());
-		if(!empty($_GET['old_mail']) && get_current_user_id() != 0 && function_exists("get_current_screen") && get_current_screen()->parent_file == 'users.php') {
+		if(!empty($_GET['old_mail']) && get_current_user_id() != 0 && function_exists("get_current_screen") && (get_current_screen()->parent_file == 'users.php' || get_current_screen()->parent_file == 'profile.php')) {
 			$mail = str_replace("%40", "@", $_GET['old_mail']);
 			if(filter_var($mail, FILTER_VALIDATE_EMAIL) && Remember_Control::delete(sanitize_text_field($mail), $user->user_email, $user->user_login)) {
 				echo self::oldMailDelete();
