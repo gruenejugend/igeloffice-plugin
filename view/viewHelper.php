@@ -62,6 +62,9 @@ function io_get_ids($array, $obj = false, $user = false) {
 }
 
 function io_add_del($new, $old, $id, $class, $method, $switch = false) {
+	$new = $new == null ? array() : $new;
+	$old = $old == null ? array() : $old;
+	
 	if($class == "User_Control") {
 		$old = io_get_ids($old, true, true);
 	} else {
