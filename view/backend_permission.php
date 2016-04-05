@@ -53,9 +53,9 @@ class backend_permission {
 	}
 	
 	public static function orderby($vars) {
-		if($vars['orderby'] == 'io_permission_ok' || $vars['orderby'] == 'io_permission_uk') {
+		if($vars['post_type'] == Permission_Control::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
-				'meta_key'	=> $vars['orderby'],
+				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_permission_ok' : 'io_permission_uk',
 				'orderby'	=> 'meta_value'
 			));
 		}

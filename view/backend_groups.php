@@ -70,9 +70,9 @@ class backend_groups {
 	}
 	
 	public static function orderby($vars) {
-		if($vars['orderby'] == 'io_group_ok' || $vars['orderby'] == 'io_group_uk') {
+		if($vars['post_type'] == Group_Control::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
-				'meta_key'	=> $vars['orderby'],
+				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_group_ok' : 'io_group_uk',
 				'orderby'	=> 'meta_value'
 			));
 		}

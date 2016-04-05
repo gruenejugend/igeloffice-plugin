@@ -99,13 +99,17 @@ class backend_profile {
 	}
 	
 	public static function orderby($query) {
-		if($query->query_vars['orderby'] == "io_user_aktiv") {
-			global $wpdb;
+		global $wpdb;
+		
+		if(!is_admin()) {
+			return;
+		}
+		
+		if($query->query_vars['orderby'] == "Aktiv") {
 			$query->query_from .= " LEFT OUTER JOIN $wpdb->usermeta AS um ON $wpdb->users.ID = um.user_id ";
-			$query->query_where .= " AND um.meta_key = 'io_user_aktiv' AND um.meta_value = 1 ";
+			$query->query_where .= " AND um.meta_key = 'io_user_aktiv' AND um.meta_value = ".($query->query_vars["order"] == "ASC" ? "0 " : "1 ");
 			$query->query_orderby = " ORDER BY um.meta_value ".($query->query_vars["order"] == "ASC" ? "asc " : "desc ");
-		} else if($query->query_vars['orderby'] == "io_user_art") {
-			global $wpdb;
+		} else if($query->query_vars['orderby'] == "Art") {
 			$query->query_from .= " LEFT OUTER JOIN $wpdb->usermeta AS um ON $wpdb->users.ID = um.user_id ";
 			$query->query_where .= " AND um.meta_key = 'io_user_art' ";
 			$query->query_orderby = " ORDER BY um.meta_value ".($query->query_vars["order"] == "ASC" ? "asc " : "desc ");
