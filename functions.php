@@ -29,7 +29,7 @@
 	function io_register_permission() {
 		$labels = array(
 			'name'					=> "Berechtigungen",
-			'singular_name'			=> "Berechtigumg",
+			'singular_name'			=> "Berechtigung",
 			'name_admin_bar'		=> "Neue Berechtigung",
 			'add_new'				=> "Neue Berechtigungen",
 			'add_new_item'			=> "Neue Berechtigung",
@@ -52,9 +52,36 @@
 		register_post_type(Permission_Control::POST_TYPE, $args);
 	}
 	
+	function io_register_request() {
+		$labels = array(
+			'name'					=> "Anträge",
+			'singular_name'			=> "Antrag",
+			'name_admin_bar'		=> "Neuer Antrag",
+			'add_new'				=> "Neue Anträge",
+			'add_new_item'			=> "Neuer Antrag",
+			'edit_item'				=> "Antrag bearbeiten",
+			'new_item'				=> "Neuer Antrag",
+			'view_item'				=> "Antrag anzeigen",
+			'search_items'			=> "Antrag suchen",
+			'not_found'				=> "Kein Antrag gefunden",
+			'not_found_in_trash'	=> "Kein Antrag im Papierkorb gefunden"
+		);
+		
+		$args = array(
+			'labels'				=> $labels,
+			'public'				=> true,
+			'publicly_queryable'	=> false,
+			'show_in_nav_menus'		=> false,
+			'supports'				=> array("title")
+		);
+		
+		register_post_type(Request_Control::POST_TYPE, $args);
+	}
+	
 	function io_register_posttype() {
 		io_register_group();
 		io_register_permission();
+		io_register_request();
 	}
 	
 	add_action('init', 'io_register_posttype');

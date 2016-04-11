@@ -18,6 +18,7 @@ class test_all extends PHPUnit_Framework_TestSuite {
 		} else {
 			$suite->addTestFile('test/phpunit/tests/normal/test_group.php');
 			$suite->addTestFile('test/phpunit/tests/normal/test_permission.php');
+			$suite->addTestFile('test/phpunit/tests/normal/test_request.php');
 			$suite->addTestFile('test/phpunit/tests/normal/test_user.php');
 		
 			$suite->addTestFile('test/phpunit/tests/ldap/test_ldap_group.php');

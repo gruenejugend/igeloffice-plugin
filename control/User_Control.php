@@ -90,6 +90,8 @@ class User_Control {
 			
 			if(LDAP_Proxy::isLDAPUser(get_userdata($user_id)->user_login, get_userdata($user_id)->user_email) === true) {
 				User_Control::aktivieren($user_id, false);
+			} else {
+				Request_Control::create($user_id, "User");
 			}
 			
 			if($_POST['user_art'] == "user") {

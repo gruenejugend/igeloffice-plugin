@@ -26,18 +26,6 @@ class backend_profile {
 		include '../wp-content/plugins/igeloffice/templates/backend/profile.php';
 	}
 	
-	public static function userActive() {
-		?>
-		
-	<div class="updated">
-		<p>User erfolgreich aktiviert.</p>
-	</div>	
-		 
-		<?php
-
-		remove_action('admin_notices', 'errorMessageVerteiler');
-	}
-	
 	public static function maskExecution($user_id, $old_user) {
 		if(str_replace("@gruene-jugend.de", "", get_userdata($user_id)->user_email) != get_userdata($user_id)->user_email && get_userdata($user_id)->user_email != $old_user->user_email) {
 			wp_update_user(array(
@@ -66,10 +54,80 @@ class backend_profile {
 			$user = new User($user_id);
 			if(isset($_POST['user_aktiv']) && $_POST['user_aktiv'] == 'true' && $user->aktiv == 0) {
 				User_Control::aktivieren($user_id);
+				
+				Request_Control::approve(get_post(array(
+					'post_type'			=> Request_Control::POST_TYPE,
+					'meta_query'		=> array(
+						'relation'			=> 'AND',
+						array(
+							'key'				=> 'io_request_art',
+							'value'				=> Request_User::art(),
+							'compare'			=> '='
+						),
+						array(
+							'key'				=> 'io_request_steller_in',
+							'value'				=> $user_id,
+							'compare'			=> '='
+						),
+						array(
+							'key'				=> 'io_request_status',
+							'value'				=> 'Gestellt',
+							'compare'			=> '='
+						)
+					)
+				))->ID);
 			}
 			
 			io_add_del($_POST['permissions'], $user->permissions, $user_id, "User_Control", "Permission");
 			io_add_del($_POST['groups'], $user->groups, $user_id, "User_Control", "ToGroup");
+		} else {
+			if( !isset($_POST['io_users_nonce']) || 
+				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
+			
+			$user = new User($user_id);
+			
+			$_POST['permissions'] = $_POST['permissions'] == null ? array() : $_POST['permissions'];
+			$user->permissions = $user->permissions == null ? array() : $user->permissions;
+			
+			$_POST['permissions'] = io_get_ids($_POST['permissions']);
+			$user->permissions = io_get_ids($user->permissions);
+			
+			$to_del_permission = array_diff($user->permissions, $_POST['permissions']);
+			$to_add_permission = array_diff($_POST['permissions'], $user->permissions);
+			
+			if(count($to_del_permission) > 0) {
+				add_action('admin_notices', array('backend_profile', 'msg_request_permission_fail'));
+			}
+			
+			if(count($to_add_permission) > 0) {
+				foreach($to_add_permission AS $permission) {
+					Request_Control::create($user_id, "Permission", $permission);
+				}
+				add_action('admin_notices', array('backend_profile', 'msg_request_permission_start'));
+			}
+			
+			$_POST['groups'] = $_POST['groups'] == null ? array() : $_POST['groups'];
+			$user->groups = $user->groups == null ? array() : $user->groups;
+			
+			$_POST['groups'] = io_get_ids($_POST['groups']);
+			$user->groups = io_get_ids($user->groups);
+
+			$to_del_group = array_diff($user->groups, $_POST['groups']);
+			$to_add_group = array_diff($_POST['groups'], $user->groups);
+
+			if(count($to_del_group) > 0) {
+				add_action('admin_notices', array('backend_profile', 'msg_request_group_fail'));
+			}
+			
+			if(count($to_add_group) > 0) {
+				foreach($to_add_group AS $group) {
+					Request_Control::create($user_id, "Group", $group);
+				}
+				add_action('admin_notices', array('backend_profile', 'msg_request_group_start'));
+			}
 		}
 		
 		if(LDAP_Proxy::isLDAPUser($user->user_login) && isset($_POST['pass1-text']) && $_POST['pass1-text'] != "") {
@@ -146,5 +204,68 @@ class backend_profile {
 			}
 		}
 		return;
+	}
+	
+	/*
+	 * Messages
+	 */
+	public static function userActive() {
+		?>
+		
+	<div class="updated">
+		<p>User erfolgreich aktiviert.</p>
+	</div>	
+		 
+		<?php
+
+		remove_action('admin_notices', array('backend_profile', 'userActive'));
+	}
+	
+	public static function msg_request_group_start() {
+		?>
+		
+	<div class="updated">
+		<p>Antrag zur Gruppen-Mitgliedschaft wurde gestellt.</p>
+	</div>	
+		 
+		<?php
+		
+		remove_action('admin_notices', array('backend_profile', 'msg_request_group_start'));
+	}
+	
+	public static function msg_request_group_fail() {
+		?>
+		
+	<div class="error">
+		<p>Du kannst keinen Antrag stellen, aus einer Gruppe auszutreten. Bitte melde dich beim Webmaster oder bei der Gruppen-Leitung.</p>
+	</div>	
+		 
+		<?php
+		
+		remove_action('admin_notices', array('backend_profile', 'msg_request_group_fail'));
+	}
+	
+	public static function msg_request_permission_start() {
+		?>
+		
+	<div class="updated">
+		<p>Antrag zur Berechtigung wurde gestellt.</p>
+	</div>	
+		 
+		<?php
+		
+		remove_action('admin_notices', array('backend_profile', 'msg_request_permission_start'));
+	}
+	
+	public static function msg_request_permission_fail() {
+		?>
+		
+	<div class="error">
+		<p>Du kannst keinen Antrag stellen, eine Berechtigung zu verlieren. Bitte melde dich beim Webmaster.</p>
+	</div>	
+		 
+		<?php
+		
+		remove_action('admin_notices', array('backend_profile', 'msg_request_permission_fail'));
 	}
 }

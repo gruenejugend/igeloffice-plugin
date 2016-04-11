@@ -25,6 +25,7 @@
 	
 	require_once 'model/Group.php';
 	require_once 'model/Permission.php';
+	require_once 'model/Request.php';
 	require_once 'model/User.php';
 	
 	require_once 'control/Group_Control.php';
@@ -32,6 +33,12 @@
 	require_once 'control/Permission_Control.php';
 	require_once 'control/User_Control.php';
 	require_once 'control/Remember_Control.php';
+	require_once 'control/request/Request_Strategy.php';
+	require_once 'control/request/Request_Control.php';
+	require_once 'control/request/Request_Factory.php';
+	require_once 'control/request/Request_Group.php';
+	require_once 'control/request/Request_Permission.php';
+	require_once 'control/request/Request_User.php';
 	
 	require_once 'view/backend_permission.php';
 	require_once 'view/backend_groups.php';
