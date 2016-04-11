@@ -90,13 +90,13 @@ class backend_profile {
 			$user = new User($user_id);
 			
 			$_POST['permissions'] = $_POST['permissions'] == null ? array() : $_POST['permissions'];
-			$user->permissions = $user->permissions == null ? array() : $user->permissions;
+			$user_permissions = $user->permissions == null ? array() : $user->permissions;
 			
 			$_POST['permissions'] = io_get_ids($_POST['permissions']);
-			$user->permissions = io_get_ids($user->permissions);
+			$user_permissions = io_get_ids($user_permissions);
 			
-			$to_del_permission = array_diff($user->permissions, $_POST['permissions']);
-			$to_add_permission = array_diff($_POST['permissions'], $user->permissions);
+			$to_del_permission = array_diff($user_permissions, $_POST['permissions']);
+			$to_add_permission = array_diff($_POST['permissions'], $user_permissions);
 			
 			if(count($to_del_permission) > 0) {
 				add_action('admin_notices', array('backend_profile', 'msg_request_permission_fail'));
@@ -110,13 +110,13 @@ class backend_profile {
 			}
 			
 			$_POST['groups'] = $_POST['groups'] == null ? array() : $_POST['groups'];
-			$user->groups = $user->groups == null ? array() : $user->groups;
+			$user_groups = $user->groups == null ? array() : $user->groups;
 			
 			$_POST['groups'] = io_get_ids($_POST['groups']);
-			$user->groups = io_get_ids($user->groups);
+			$user_groups = io_get_ids($user_groups);
 
-			$to_del_group = array_diff($user->groups, $_POST['groups']);
-			$to_add_group = array_diff($_POST['groups'], $user->groups);
+			$to_del_group = array_diff($user_groups, $_POST['groups']);
+			$to_add_group = array_diff($_POST['groups'], $user_groups);
 
 			if(count($to_del_group) > 0) {
 				add_action('admin_notices', array('backend_profile', 'msg_request_group_fail'));
