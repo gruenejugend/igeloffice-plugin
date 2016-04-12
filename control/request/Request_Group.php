@@ -3,7 +3,7 @@
 /**
  * Description of Request_Group
  *
- * @author deb139e
+ * @author KWM
  */
 class Request_Group implements Request_Strategy {
 	public static function art() {
@@ -30,5 +30,9 @@ class Request_Group implements Request_Strategy {
 
 	public function reject($id) {
 		return;
+	}
+	
+	public function getObject() {
+		return new Group($this->request->requested_id);
 	}
 }

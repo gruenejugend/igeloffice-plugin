@@ -3,7 +3,7 @@
 /**
  * Description of Request_Permission
  *
- * @author deb139e
+ * @author KWM
  */
 class Request_Permission implements Request_Strategy {
 	public static function art() {
@@ -30,5 +30,9 @@ class Request_Permission implements Request_Strategy {
 
 	public function reject($id) {
 		return;
+	}
+	
+	public function getObject() {
+		return new Permission($this->request->requested_id);
 	}
 }

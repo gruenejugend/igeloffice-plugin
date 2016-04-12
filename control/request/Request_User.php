@@ -3,7 +3,7 @@
 /**
  * Description of Request_User
  *
- * @author deb139e
+ * @author KWM
  */
 class Request_User implements Request_Strategy {
 	public static function art() {
@@ -40,5 +40,9 @@ class Request_User implements Request_Strategy {
 		if($user->aktiv == 0) {
 			User_Control::delete($this->request->steller_in);
 		}
+	}
+	
+	public function getObject() {
+		return new User($this->request->steller_in);
 	}
 }

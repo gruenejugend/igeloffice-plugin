@@ -15,4 +15,6 @@ interface Request_Strategy {
 	
 	function approve($id);
 	function reject($id);
+	
+	function getObject();
 }
