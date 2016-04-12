@@ -48,6 +48,7 @@
 	require_once 'view/frontend_register.php';
 	require_once 'view/viewHelper.php';
 	require_once 'view/backend_remember.php';
+	require_once 'view/backend_request.php';
 	
 	add_action('user_new_form',														array('backend_register', 'maskHandler'));
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
@@ -98,6 +99,16 @@
 	add_filter('request',															array('backend_permission', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
+	
+	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'));
+	add_action('save_post',															array('backend_request', 'maskSave'));
+	add_filter('manage_' .Request_Control::POST_TYPE. '_posts_columns',				array('backend_request', 'column'), 10, 2);
+	add_filter('manage_' .Request_Control::POST_TYPE. '_posts_custom_column',		array('backend_request', 'maskColumn'), 10, 2);
+	add_filter('manage_edit-' .Request_Control::POST_TYPE. '_sortable_columns',		array('backend_request', 'column'), 10, 2);
+	add_filter('request',															array('backend_request', 'orderby'), 10, 2);
+	add_action('restrict_manage_posts',												array('backend_request', 'maskFiltering'));
+	add_filter('parse_query',														array('backend_request', 'filtering'));
+	add_action('admin_menu',														array('backend_request', 'menu'));
 	
 	add_action("admin_menu",														array('backend_remember', 'menu'));
 	add_action("admin_init",														array('backend_remember', 'registerSettings'));
