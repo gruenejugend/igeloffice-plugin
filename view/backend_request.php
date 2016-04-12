@@ -148,7 +148,7 @@ class backend_request {
 		<td>
 <?php		
 			$title = "Gruppen";
-			$values = $groups;
+			$values = self::prepareOptions($groups);
 			$name = "io_request_requested_id_groups";
 			$selected = array();
 			if(isset($_POST['io_request_requested_id_groups'])) {
@@ -160,7 +160,7 @@ class backend_request {
 		<td>
 <?php		
 			$title = "Berechtigungen";
-			$values = $permissions;
+			$values = self::prepareOptions($permissions);
 			$name = "io_request_requested_id_permissions";
 			$selected = array();
 			if(isset($_POST['io_request_requested_id_permissions'])) {
@@ -172,7 +172,7 @@ class backend_request {
 		<td>
 <?php		
 			$title = "Steller*in";
-			$values = $users;
+			$values = self::prepareOptions($users, true);
 			$name = "io_request_steller_in";
 			$selected = array();
 			if(isset($_POST['io_request_steller_in'])) {
@@ -187,18 +187,42 @@ class backend_request {
 		}
 	}
 	
+	private static function prepareOptions($values, $user = false) {
+		$new_values = array();
+		if(!empty($values)) {
+			foreach($values AS $key1 => $value1) {
+				foreach($value1 AS $key2 => $value2) {
+					if(!is_array($value2)) {
+						$new_values[$key1][$user ? get_userdata($value2)->user_login : get_post($value2)->post_title] = $key2;
+					} else {
+						foreach($value2 AS $key3 => $value3) {
+							$new_values[$key1][$key2][$user ? get_userdata($value3)->user_login : get_post($value3)->post_title] = $key3;
+						}
+					}
+				}
+			}
+		}
+		return $new_values;
+	}
+	
 	public static function filtering($query) {
-		$_POST['io_request_requested_id'] = array();
-		
-		foreach($_POST['io_request_requested_id_groups'] AS $group) {
-			$_POST['io_request_requested_id'][] = $group;
+		if(current_user_can('administrator') && function_exists(get_current_screen)) {
+			$screen = get_current_screen();
+			if($screen->post_type == $posttype && $screen->id == "edit-" . $posttype && isset($_POST['filter_action'])) {
+				$_POST['io_request_requested_id'] = array();
+
+				foreach($_POST['io_request_requested_id_groups'] AS $group) {
+					$_POST['io_request_requested_id'][] = $group;
+				}
+
+				foreach($_POST['io_request_requested_id_permissions'] AS $permission) {
+					$_POST['io_request_requested_id'][] = $permission;
+				}
+
+				$names = array('io_request_art', 'io_request_status', 'io_request_requested_id', 'io_request_steller_in');
+				return io_filter($query, $names, Request_Control::POST_TYPE);
+			}
 		}
-		
-		foreach($_POST['io_request_requested_id_permissions'] AS $permission) {
-			$_POST['io_request_requested_id'][] = $permission;
-		}
-		
-		$names = array('io_request_art', 'io_request_status', 'io_request_requested_id', 'io_request_steller_in');
-		return io_filter($query, $names, Request_Control::POST_TYPE);
+		return null;
 	}
 }

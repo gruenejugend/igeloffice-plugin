@@ -80,16 +80,6 @@ class Request_Control {
 	}
 	
 	public static function count() {
-		print_r(get_posts(array(
-			'post_type'				=> self::POST_TYPE,
-			'posts_per_page'		=> -1,
-			'meta_query'			=> array(
-				array(
-					'key' => 'io_request_status',
-					'value' => "Gestellt"
-				)
-			))));
-		
 		return count(get_posts(array(
 			'post_type'				=> self::POST_TYPE,
 			'posts_per_page'		=> -1,
