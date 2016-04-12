@@ -11,8 +11,13 @@ class Request_Control {
 	public static function create($user_id, $art, $requested_id = null) {
 		$request = Request_Factory::getRequest($art, null);
 		
+		$checkExist = self::checkExist($user_id, $request, $requested_id);
+		if($checkExist) {
+			return $checkExist;
+		}
+		
 		$id = wp_insert_post(array(
-			'post_title'		=> $request->getArt() . " " . get_userdata($user_id)->user_login . $request->getArtSuffix($requested_id),
+			'post_title'		=> self::createTitle($request, $user_id, $requested_id),
 			'post_type'			=> self::POST_TYPE,
 			'post_status'		=> 'publish'
 		));
@@ -31,6 +36,47 @@ class Request_Control {
 			update_post_meta($id, "io_request_requested_id",	$requested_id);
 		}
 		update_post_meta($id, "io_request_status",				"Gestellt");
+	}
+	
+	private static function createTitle($request, $user_id, $requested_id) {
+		return $request->getArt() . " " . get_userdata($user_id)->user_login . $request->getArtSuffix($requested_id);
+	}
+	
+	private static function checkExist($user_id, $request, $requested_id = null) {
+		$args = array(
+			'post_type'			=> self::POST_TYPE,
+			'meta_query'		=> array(
+				'relation'			=> 'AND',
+				array(
+					'key'				=> 'io_request_art',
+					'value'				=> $request->getArt()
+				),
+				array(
+					'key'				=> 'io_request_steller_in',
+					'value'				=> $user_id
+				),
+				array(
+					'key'				=> 'io_request_status',
+					'value'				=> 'Gestellt'
+				)
+			)
+		);
+		
+		if($requested_id) {
+			$args['meta_query'][3] = array(
+				'key'				=> 'io_request_requested_id',
+				'value'				=> $requested_id
+			);
+		}
+		
+		$posts = get_posts($args);
+		foreach($posts AS $post) {
+			if($post->post_title == self::createTitle($request, $user_id, $requested_id)) {
+				return $post->ID;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static function count() {
