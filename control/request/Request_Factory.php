@@ -3,7 +3,7 @@
 /**
  * Description of Request_Factory
  *
- * @author deb139e
+ * @author KWM
  */
 class Request_Factory {
 	public static function getRequest($art, $id = null) {
@@ -18,5 +18,13 @@ class Request_Factory {
 			case Request_User::art():
 				return new Request_User($id);
 		}
+	}
+	
+	public static function getValues() {
+		return array(
+			'Group'				=> Request_Group::art(),
+			'Permission'		=> Request_Permission::art(),
+			'User'				=> Request_User::art()
+		);
 	}
 }
