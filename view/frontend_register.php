@@ -121,4 +121,8 @@ class frontend_register {
 		
 		return $errors;
 	}
+	
+	public static function loginLabel() {
+		include 'wp-content/plugins/igeloffice/templates/frontend/js/loginlabel.php';
+	}
 }

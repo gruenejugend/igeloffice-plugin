@@ -57,6 +57,7 @@
 	add_action('user_register',														array('backend_register', 'maskExecution'));
 	add_filter('wp_login_errors',													array('backend_register', 'registerMsg'), 10, 2);
 	add_filter('login_message',														'io_toLoginMsg', 5, 2);
+	add_action('login_footer',														array('frontend_register', 'loginLabel'));
 	
 	add_filter('manage_users_columns',												array('backend_profile', 'column'), 10, 2);
 	add_action('manage_users_custom_column',										array('backend_profile', 'maskColumn'), 10, 3);
