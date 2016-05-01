@@ -16,7 +16,7 @@
 	<tr class="form-field" id="io_groups">
 		<th scope="row"><label for="groups">Gruppenmitgliedschaften </label></th>
 		<td>
-			<select name="groups[]" id="groups" multiple>
+			<select name="groups[]" id="groups" size="10" multiple>
 				<?php io_form_select($groups, $groups_values); ?>
 			</select>
 		</td>
@@ -24,7 +24,7 @@
 	<tr class="form-field" id="io_permissions">
 		<th scope="row"><label for="permissions">Berechtigungen </label></th>
 		<td>
-			<select name="permissions[]" id="permissions" multiple>
+			<select name="permissions[]" id="permissions" size="10" multiple>
 				<?php io_form_select($permissions, $permissions_values); ?>
 			</select>
 		</td>

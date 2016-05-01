@@ -2,7 +2,7 @@
 	<tr>
 		<th width="30%">Mitglieder</th>
 		<td width="70%">
-			<select name="users[]" id="owner" multiple>
+			<select name="users[]" id="owner" size="10" multiple>
 				<?php io_form_select(User_Control::getValues(), $users, "", true); ?>
 			</select>
 		</td>
@@ -10,7 +10,7 @@
 	<tr>
 		<th width="30%">Gruppen</th>
 		<td width="70%">
-			<select name="groups[]" id="owner" multiple>
+			<select name="groups[]" id="owner" size="10" multiple>
 				<?php io_form_select(Group_Control::getValues(), $groups); ?>
 			</select>
 		</td>

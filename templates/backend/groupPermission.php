@@ -2,7 +2,7 @@
 	<tr>
 		<th width="30%">Berechtigungen</th>
 		<td width="70%">
-			<select name="permissions[]" id="permissions" multiple>
+			<select name="permissions[]" id="permissions" size="10" multiple>
 				<?php io_form_select(Permission_Control::getValues(), $permissions); ?>
 			</select>
 		</td>
