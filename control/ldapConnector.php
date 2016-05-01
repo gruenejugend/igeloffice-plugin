@@ -320,6 +320,18 @@ class ldapConnector extends LDAP {
 		return $this->getCNList($this->groupDN($group), 'owner');
 	}
 	
+	private function getGroupsOfLeader($leader) {
+		$search = $this->search(LDAP_GROUP_BASE, "(owner=" . $this->userDN($leader) . ")", array('cn'));
+		if($search) {
+			$array = array();
+			foreach($search AS $result) {
+				$array[] = $result['cn'][0];
+			}
+			return $array ;
+		}
+		return false;
+	}
+	
 	private function getGroupPermissions($group) {
 		return $this->getMemberOfList($this->groupDN($group), 'permissions');
 	}
