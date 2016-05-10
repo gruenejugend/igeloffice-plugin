@@ -58,7 +58,7 @@ class User {
 			$ldapConnector = ldapConnector::get();
 			$this->leading_groups = array();
 			$groups = $ldapConnector->getGroupsOfLeader($this->wp_user->user_login);
-			if(count($groups) > 0) {
+			if($groups && count($groups) > 0) {
 				foreach($groups AS $group) {
 					array_push($this->leading_groups, new Group(get_page_by_title($group, OBJECT, 'io_group')->ID));
 				}

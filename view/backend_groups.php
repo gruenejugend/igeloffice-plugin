@@ -6,10 +6,24 @@
  * @author KWM
  */
 class backend_groups {
-	public static function maskHandler() {
-		add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Control::POST_TYPE, "normal", "default");
-		add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Control::POST_TYPE, "normal", "default");
-		add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Control::POST_TYPE, "normal", "default");
+	public static function maskHandler($post_type, $post) {
+		$user = new User(get_current_user_id());
+		
+		$pruef = false;
+		foreach($user->leading_groups AS $group) {
+			if($group->name == $post->post_title) {
+				$pruef = true;
+				break;
+			}
+		}
+		
+		if(current_user_can('administrator')) {
+			add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Control::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Control::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Control::POST_TYPE, "normal", "default");
+		} else if($pruef) {
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Control::POST_TYPE, "normal", "default");
+		}
 	}
 	
 	public static function metaInfo($post) {
@@ -45,6 +59,21 @@ class backend_groups {
 		$post_id = $post->ID;
 		
 		include '../wp-content/plugins/igeloffice/templates/backend/groupMember.php';
+	}
+	
+	public static function metaLeaderMember($post) {
+		wp_nonce_field('io_groups_leader_member', 'io_groups_leader_member_nonce');
+		
+		$users = array();
+		if(get_post_meta($post->ID, "io_group_aktiv", true) == 1) {
+			$group = new Group($post->ID);
+			
+			$users = io_get_ids($group->users, true, true);
+		}
+		
+		$post_id = $post->ID;
+		
+		include '../wp-content/plugins/igeloffice/templates/backend/groupLeadingMember.php';
 	}
 	
 	public static function metaPermission($post) {
@@ -129,6 +158,26 @@ class backend_groups {
 		return io_filter($query, $names, Group_Control::POST_TYPE);
 	}
 	
+	public static function leadingFilter($query) {
+		if(function_exists(get_current_screen)) {
+			$screen = get_current_screen();
+			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Group_Control::POST_TYPE) {
+				$user = new User(get_current_user_id());
+
+				$leadingGroups = $user->leading_groups;
+				$leadingGroupsID = array();
+				if(!empty($leadingGroups)) {
+					foreach($leadingGroups AS $group) {
+						$leadingGroupsID[] = $group->id;
+					}
+
+					$query->query_vars['post__in'] = $leadingGroupsID;
+				}
+			}
+		}
+		return $query;
+	}
+	
 	public static function maskSave($post_id) {
 		if(current_user_can('administrator')) {
 			if( !isset($_POST['io_groups_info_nonce']) || 
@@ -162,6 +211,131 @@ class backend_groups {
 			io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
 			io_add_del($_POST['groups'], $group->groups, $post_id, "Group_Control", "Group");
 			io_add_del($_POST['permissions'], $group->permissions, $post_id, "Group_Control", "Permission");
+		} else {
+			if( !isset($_POST['io_groups_leader_member_nonce']) || 
+				!wp_verify_nonce($_POST['io_groups_leader_member_nonce'], 'io_groups_leader_member') || 
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
+			
+			$user = new User(get_current_user_id());
+			$pruef = false;
+			foreach($user->leading_groups AS $group) {
+				if($group->id == $post_id) {
+					$pruef = true;
+					break;
+				}
+			}
+			
+			if($pruef) {
+				/*
+				 * Gruppenmitglieder entfernen
+				 */
+				$group = new Group($post_id);
+				
+				$fehler = false;
+				if(!empty($group->users)) {
+					$_POST['users'] = $_POST['users'] == null ? array() : $_POST['users'];
+					if(!empty(array_diff(io_get_ids($_POST['users']), $group->users))) {
+						$fehler = true;
+					}
+				} elseif(empty($group->users) && !empty($_POST['users'])) {
+					$fehler = true;
+				}
+				
+				if(!$fehler) {
+					io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
+				}
+				
+				/*
+				 * Gruppenmitglieder mit E-Mail hinzufügen
+				 */
+				$added_user = array();
+				$fail = array();
+				if(!empty($_POST['new_mails'])) {
+					$new_mails = explode(", ", $_POST['new_mails']);
+					foreach($new_mails AS $mail) {
+						$mail_to_add = sanitize_text_field($mail);
+						
+						$user = get_user_by("email", $mail_to_add);
+						if($user) {
+							User_Control::addToGroup($user->ID, $post_id);
+							$added_user[] = $user->user_login;
+						} else {
+							$fail[] = $mail_to_add;
+						}
+					}
+				}
+				
+				/*
+				 * Gruppenmitglieder mit Namen hinzufügen
+				 */
+				if(!empty($_POST['new_names'])) {
+					$new_names = explode(", ", $_POST['new_names']);
+					foreach($new_names AS $name) {
+						$name_to_add = sanitize_text_field($name);
+						
+						$user = get_user_by("user_login", $name_to_add);
+						if($user) {
+							User_Control::addToGroup($user->ID, $post_id);
+							$added_user[] = $user->user_login;
+						} else {
+							$fail[] = $name_to_add;
+						}
+					}
+				}
+				
+				set_transient("added_user", $added_user, 1);
+				set_transient("failed_user", $fail, 1);
+			}
+		}
+	}
+					
+	public function userAddedLeaderUserMsg() {
+		$added_user = get_transient("added_user");
+		
+		if(!empty($added_user)) {
+		?>
+
+		<div class="updated notice">
+			<p>Folgende User wurden hinzugef&uuml;gt:</p>
+			<b><ul>
+				<?php
+
+				foreach($added_user AS $add) {
+					?>						<li>&bull; &nbsp; <?php echo $add; ?></li>
+<?php
+				}
+
+				?>
+				</ul></b>
+		</div>
+
+		<?php
+		}
+	}
+					
+	public function userFailedLeaderUserMsg() {
+		$fail = get_transient("failed_user");
+		
+		if(!empty($fail)) {
+		?>
+
+		<div class="error notice">
+			<p>Folgende User wurden nicht gefunden:</p>
+			<b><ul>
+				<?php
+
+				foreach($fail AS $failed) {
+					?>						<li>&bull; &nbsp; <?php echo $failed; ?></li>
+<?php
+				}
+
+				?>
+			</ul></b>
+		</div>
+
+		<?php
 		}
 	}
 	

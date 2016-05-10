@@ -81,7 +81,7 @@
 		return $message;
 	}, 5, 1);
 	
-	add_action('add_meta_boxes',													array('backend_groups', 'maskHandler'));
+	add_action('add_meta_boxes',													array('backend_groups', 'maskHandler'), 10, 2);
 	add_action('save_post',															array('backend_groups', 'maskSave'));
 	add_action('delete_post',														array('backend_groups', 'maskDelete'));
 	add_filter('manage_' .Group_Control::POST_TYPE. '_posts_columns',				array('backend_groups', 'column'), 10, 2);
@@ -90,6 +90,9 @@
 	add_filter('request',															array('backend_groups', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_groups', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_groups', 'filtering'));
+	add_filter('parse_query',														array('backend_groups', 'leadingFilter'));
+	add_action("admin_notices",														array("backend_groups", "userAddedLeaderUserMsg"));
+	add_action("admin_notices",														array("backend_groups", "userFailedLeaderUserMsg"));
 	
 	add_action('add_meta_boxes',													array('backend_permission', 'maskHandler'));
 	add_action('save_post',															array('backend_permission', 'maskSave'));

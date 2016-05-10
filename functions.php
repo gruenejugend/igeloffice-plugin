@@ -20,11 +20,33 @@
 			'public'				=> true,
 			'publicly_queryable'	=> false,
 			'show_in_nav_menus'		=> false,
-			'supports'				=> array("title")
+			'show_ui'				=> true,
+			'supports'				=> array("title"),
+			'capabilities'			=> array(
+				'edit_post'				=> 'edit_group', 
+				'read_post'				=> 'read_group', 
+				'edit_posts'			=> 'edit_groups', 
+				'edit_others_posts'		=> 'edit_others_groups'
+			)
 		);
 		
 		register_post_type(Group_Control::POST_TYPE, $args);
 	}
+	
+	function groupLeaderCap() {
+		$role = get_role('subscriber');
+		$role->add_cap('read_group'); 
+		$role->add_cap('edit_group'); 
+		$role->add_cap('edit_groups'); 
+		$role->add_cap('edit_others_groups'); 
+		
+		$role = get_role('administrator');
+		$role->add_cap('read_group'); 
+		$role->add_cap('edit_group'); 
+		$role->add_cap('edit_groups'); 
+		$role->add_cap('edit_others_groups'); 
+	}
+	add_action('admin_init', 'groupLeaderCap');
 	
 	function io_register_permission() {
 		$labels = array(
