@@ -1,1 +1,0 @@
-<input type="text" name="io_remember_subject" id="io_remember_subject" value="<?php echo get_option("io_remember_subject"); ?>">
