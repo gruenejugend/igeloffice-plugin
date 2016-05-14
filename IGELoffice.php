@@ -66,6 +66,11 @@
 	add_filter('user_row_actions',													array('backend_profile', 'row'), 10, 2);
 	add_action('admin_menu',														array('backend_profile', 'menu'));
 	add_action('password_reset',													array('LDAP_Proxy', 'changePW'), 10, 2);
+	add_action('admin_notices',														array('backend_profile', 'userActive'));
+	add_action('admin_notices',														array('backend_profile', 'msg_request_permission_fail'));
+	add_action('admin_notices',														array('backend_profile', 'msg_request_permission_start'));
+	add_action('admin_notices',														array('backend_profile', 'msg_request_group_fail'));
+	add_action('admin_notices',														array('backend_profile', 'msg_request_group_start'));
 	
 	add_action('show_user_profile',													array('backend_profile', 'maskHandler'));
 	add_action('edit_user_profile',													array('backend_profile', 'maskHandler'));

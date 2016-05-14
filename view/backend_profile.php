@@ -12,7 +12,7 @@ class backend_profile {
 		if($_GET['user_aktiv'] == "true" && current_user_can('administrator')) {
 			User_Control::aktivieren($wp_user->ID);
 			
-			add_action('admin_notices', array('backend_profile', 'userActive'));
+			set_transient("user_aktiv", true, 3);
 		}
 		
 		$user = new User($wp_user->ID);
@@ -93,40 +93,40 @@ class backend_profile {
 			$user_permissions = $user->permissions == null ? array() : $user->permissions;
 			
 			$_POST['permissions'] = io_get_ids($_POST['permissions']);
-			$user_permissions = io_get_ids($user_permissions);
+			$user_permissions = io_get_ids($user_permissions, true);
 			
 			$to_del_permission = array_diff($user_permissions, $_POST['permissions']);
 			$to_add_permission = array_diff($_POST['permissions'], $user_permissions);
 			
 			if(count($to_del_permission) > 0) {
-				add_action('admin_notices', array('backend_profile', 'msg_request_permission_fail'));
+				set_transient("permission_fail", true, 3);
 			}
 			
 			if(count($to_add_permission) > 0) {
 				foreach($to_add_permission AS $permission) {
 					Request_Control::create($user_id, "Permission", $permission);
 				}
-				add_action('admin_notices', array('backend_profile', 'msg_request_permission_start'));
+				set_transient("permission_start", true, 3);
 			}
 			
 			$_POST['groups'] = $_POST['groups'] == null ? array() : $_POST['groups'];
 			$user_groups = $user->groups == null ? array() : $user->groups;
 			
 			$_POST['groups'] = io_get_ids($_POST['groups']);
-			$user_groups = io_get_ids($user_groups);
+			$user_groups = io_get_ids($user_groups, true);
 
 			$to_del_group = array_diff($user_groups, $_POST['groups']);
 			$to_add_group = array_diff($_POST['groups'], $user_groups);
 
 			if(count($to_del_group) > 0) {
-				add_action('admin_notices', array('backend_profile', 'msg_request_group_fail'));
+				set_transient("group_fail", true, 3);
 			}
 			
 			if(count($to_add_group) > 0) {
 				foreach($to_add_group AS $group) {
 					Request_Control::create($user_id, "Group", $group);
 				}
-				add_action('admin_notices', array('backend_profile', 'msg_request_group_start'));
+				set_transient("group_start", true, 3);
 			}
 		}
 		
@@ -210,6 +210,9 @@ class backend_profile {
 	 * Messages
 	 */
 	public static function userActive() {
+		$check = get_transient("user_active");
+		
+		if(!empty($check)) {
 		?>
 		
 	<div class="updated">
@@ -217,11 +220,13 @@ class backend_profile {
 	</div>	
 		 
 		<?php
-
-		remove_action('admin_notices', array('backend_profile', 'userActive'));
+		}
 	}
 	
 	public static function msg_request_group_start() {
+		$check = get_transient("group_start");
+		
+		if(!empty($check)) {
 		?>
 		
 	<div class="updated">
@@ -229,11 +234,13 @@ class backend_profile {
 	</div>	
 		 
 		<?php
-		
-		remove_action('admin_notices', array('backend_profile', 'msg_request_group_start'));
+		}
 	}
 	
 	public static function msg_request_group_fail() {
+		$check = get_transient("group_fail");
+		
+		if(!empty($check)) {
 		?>
 		
 	<div class="error">
@@ -241,11 +248,13 @@ class backend_profile {
 	</div>	
 		 
 		<?php
-		
-		remove_action('admin_notices', array('backend_profile', 'msg_request_group_fail'));
+		}
 	}
 	
 	public static function msg_request_permission_start() {
+		$check = get_transient("permission_start");
+		
+		if(!empty($check)) {
 		?>
 		
 	<div class="updated">
@@ -253,11 +262,13 @@ class backend_profile {
 	</div>	
 		 
 		<?php
-		
-		remove_action('admin_notices', array('backend_profile', 'msg_request_permission_start'));
+		}
 	}
 	
 	public static function msg_request_permission_fail() {
+		$check = get_transient("permission_fail");
+		
+		if(!empty($check)) {
 		?>
 		
 	<div class="error">
@@ -265,7 +276,6 @@ class backend_profile {
 	</div>	
 		 
 		<?php
-		
-		remove_action('admin_notices', array('backend_profile', 'msg_request_permission_fail'));
+		}
 	}
 }
