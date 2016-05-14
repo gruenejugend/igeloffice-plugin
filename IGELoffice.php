@@ -112,6 +112,7 @@
 	add_filter('request',															array('backend_request', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_request', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_request', 'filtering'));
+	add_filter('parse_query',														array('backend_request', 'leadingFilter'));
 	add_action('admin_menu',														array('backend_request', 'menu'));
 	
 	add_action("admin_menu",														array('backend_remember', 'menu'));

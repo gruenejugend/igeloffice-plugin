@@ -7,8 +7,8 @@
  */
 class backend_request {
 	public static function maskHandler() {
-		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "metaInfo"), Request_Control::POST_TYPE, "normal", "default");
-		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "metaAction"), Request_Control::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "maskInfo"), Request_Control::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "maskAction"), Request_Control::POST_TYPE, "normal", "default");
 	}
 	
 	public static function maskInfo($post) {
@@ -57,23 +57,33 @@ class backend_request {
 	}
 	
 	public static function maskSave($post_id) {
+		if( !isset($_POST['io_request_action_nonce']) || 
+			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') || 
+			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
+			empty($_POST['io_request_status'])) {
+			return;
+		}
+		
+		$request = new Request($post_id);
+		$pruef = false;
 		if(current_user_can('administrator')) {
-			if( !isset($_POST['io_request_action_nonce']) || 
-				!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') || 
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
-				empty($_POST['io_request_status'])) {
-				return;
+			$pruef = true;
+		} else if($request->art == Request_Group::art()) {
+			$user = new User(get_current_user_id());
+			foreach($user->leading_groups AS $group) {
+				if($group->id == $request->requested_id) {
+					$pruef = true;
+					break;
+				}
 			}
-			
+		}
+		
+		if($pruef) {
 			if($_POST['io_request_status'] == "annahme") {
 				Request_Control::approve($post_id);
 			} else if($_POST['io_request_status'] == "ablehnung") {
 				Request_Control::reject($post_id);
 			}
-			
-			/*
-			 * TODO: SAVE NACHRICHT!!!
-			 */
 		}
 	}
 	
@@ -224,5 +234,27 @@ class backend_request {
 			}
 		}
 		return null;
+	}
+	
+	public static function leadingFilter($query) {
+		if(function_exists(get_current_screen)) {
+			$screen = get_current_screen();
+			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Request_Control::POST_TYPE) {
+				$user = new User(get_current_user_id());
+
+				$leadingGroups = $user->leading_groups;
+				if(!empty($leadingGroups)) {
+					foreach($leadingGroups AS $group) {
+						$query->query_vars['meta_query'][] = array(
+							'key'		=> 'io_request_requested_id',
+							'value'		=> $group->id,
+							'compare'	=> '='
+						);
+					}
+					$query->query_vars['meta_query']['relation'] = 'OR';
+				}
+			}
+		}
+		return $query;
 	}
 }

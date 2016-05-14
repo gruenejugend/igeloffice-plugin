@@ -94,11 +94,32 @@
 			'public'				=> true,
 			'publicly_queryable'	=> false,
 			'show_in_nav_menus'		=> false,
-			'supports'				=> array("title")
+			'supports'				=> array("title"),
+			'capabilities'			=> array(
+				'edit_post'				=> 'edit_request', 
+				'read_post'				=> 'read_request', 
+				'edit_posts'			=> 'edit_requests', 
+				'edit_others_posts'		=> 'edit_others_requests'
+			)
 		);
 		
 		register_post_type(Request_Control::POST_TYPE, $args);
 	}
+	
+	function requestLeaderCap() {
+		$role = get_role('subscriber');
+		$role->add_cap('read_request'); 
+		$role->add_cap('edit_request'); 
+		$role->add_cap('edit_requests'); 
+		$role->add_cap('edit_others_requests'); 
+		
+		$role = get_role('administrator');
+		$role->add_cap('read_request'); 
+		$role->add_cap('edit_request'); 
+		$role->add_cap('edit_requests'); 
+		$role->add_cap('edit_others_requests'); 
+	}
+	add_action('admin_init', 'requestLeaderCap');
 	
 	function io_register_posttype() {
 		io_register_group();
