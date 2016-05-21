@@ -90,4 +90,153 @@ final class LDAP_Proxy {
 		self::logout($res);
 		return true;
 	}
+	
+	/*
+	 * CODE: description
+	 * NEWSLETTER ART: deliveryMode
+	 * ZEITPUNKT: qmailGID
+	 * ANFRAGE ART: o
+	 */
+	
+	public static final function isSherpaMember($mail) {
+		$res = self::login();
+		
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(mail=" . $mail . ")", array("givenName", "cn"));
+		
+		return $search && ldap_count_entries($res, $search) > 0;
+	}
+	
+	public static final function setSherpaMemberCode($mail, $art) {
+		$res = self::login();
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(mail=" . $mail . ")", array("description", "qmailGID", "o"));
+		$entries = ldap_get_entries($res, $search);
+		unset($entries["count"]);
+		
+		$dn = $entries[0]["dn"];
+		
+		$key = wp_generate_password( 10, false, false );
+		if(!empty($entries[0]["description"][0])) {
+			ldap_mod_del($res, $dn, array("description" => $entries[0]["description"][0]));
+		}
+		ldap_mod_add($res, $dn, array("description" => $key));
+		
+		$time = (time()-(time()%86400)) / 86400;
+		if(!empty($entries[0]["qmailgid"][0])) {
+			ldap_mod_del($res, $dn, array("qmailGID" => $entries[0]["qmailgid"][0]));
+		}
+		ldap_mod_add($res, $dn, array("qmailGID" => $time));
+		
+		if(!empty($entries[0]["o"][0])) {
+			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
+		}
+		ldap_mod_add($res, $dn, array("o" => $art));
+		
+		return $key;
+	}
+	
+	public static final function isSherpaKey($key) {
+		$res = self::login();
+		
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("cn", "o", "qmailGID"));
+		
+		if(!$search || ldap_count_entries($res, $search) == 0) {
+			return false;
+		}
+		
+		$entries = ldap_get_entries($res, $search);
+		
+		if(((time()-(time()%86400)) / 86400) > ($entries[0]["qmailgid"][0]+3)) {
+			return false;
+		}
+		return $entries[0]["o"][0];
+	}
+	
+	private static final function setSherpa($key) {
+		$res = self::login();
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("description", "qmailGID", "deliveryMode", "o"));
+		$entries = ldap_get_entries($res, $search);
+		
+		$dn = $entries[0]["dn"];
+		if(!empty($entries[0]["description"][0])) {
+			ldap_mod_del($res, $dn, array("description" => $entries[0]["description"][0]));
+		}
+		if(!empty($entries[0]["qmailgid"][0])) {
+			ldap_mod_del($res, $dn, array("qmailGID" => $entries[0]["qmailgid"][0]));
+		}
+		if(!empty($entries[0]["deliverymode"][0])) {
+			ldap_mod_del($res, $dn, array("deliveryMode" => $entries[0]["deliverymode"][0]));
+		}
+		if(!empty($entries[0]["o"][0])) {
+			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
+		}
+		return array($res, $dn);
+	}
+	
+	public static final function setSherpaLoeschen($key) {
+		$args = self::setSherpa($key);
+		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "N"));
+	}
+	
+	public static final function setSherpaEintragen($key) {
+		$args = self::setSherpa($key);
+		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "J"));
+	}
+	
+	public static final function setSherpaChange($key, $alt, $neu) {
+		$res = self::login();
+		
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("description", "qmailgid", "o", "mail"));
+		$entries = ldap_get_entries($res, $search);
+		
+		$dn = $entries[0]["dn"];
+		if($entries[0]["mail"][0] != $alt) {
+			return false;
+		}
+		
+		ldap_mod_add($res, $dn, array("mailAlternateAddress" => $neu));
+		
+		$key = wp_generate_password( 10, false, false );
+		if(!empty($entries[0]["description"][0])) {
+			ldap_mod_del($res, $dn, array("description" => $entries[0]["description"][0]));
+		}
+		ldap_mod_add($res, $dn, array("description" => $key));
+		
+		$time = (time()-(time()%86400)) / 86400;
+		if(!empty($entries[0]["qmailgid"][0])) {
+			ldap_mod_del($res, $dn, array("qmailGID" => $entries[0]["qmailgid"][0]));
+		}
+		ldap_mod_add($res, $dn, array("qmailGID" => $time));
+		
+		if(!empty($entries[0]["o"][0])) {
+			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
+		}
+		ldap_mod_add($res, $dn, array("o" => "c"));
+		
+		return $key;
+	}
+	
+	public static final function setSherpaChangeFinal($key) {
+		$res = self::login();
+		
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("description", "qmailgid", "o", "mail", "mailAlternateAddress"));
+		$entries = ldap_get_entries($res, $search);
+		
+		$dn = $entries[0]["dn"];
+		if(!empty($entries[0]["description"][0])) {
+			ldap_mod_del($res, $dn, array("description" => $entries[0]["description"][0]));
+		}
+		if(!empty($entries[0]["qmailgid"][0])) {
+			ldap_mod_del($res, $dn, array("qmailGID" => $entries[0]["qmailgid"][0]));
+		}
+		if(!empty($entries[0]["o"][0])) {
+			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
+		}
+		ldap_mod_add($res, $dn, array("mail" => $entries[0]["mailalternateaddress"][0]));
+		if(!empty($entries[0]["mail"][0])) {
+			ldap_mod_del($res, $dn, array("mail" => $entries[0]["mail"][0]));
+		}
+		if(!empty($entries[0]["mailalternateaddress"][0])) {
+			ldap_mod_del($res, $dn, array("mailAlternateAddress" => $entries[0]["mailalternateaddress"][0]));
+		}
+	}
 }

@@ -47,6 +47,7 @@
 	require_once 'view/frontend_register.php';
 	require_once 'view/viewHelper.php';
 	require_once 'view/backend_request.php';
+	require_once 'view/frontend_newsletter.php';
 	
 	add_action('user_new_form',														array('backend_register', 'maskHandler'));
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
@@ -117,6 +118,8 @@
 	add_filter('parse_query',														array('backend_request', 'filtering'));
 	add_filter('parse_query',														array('backend_request', 'leadingFilter'));
 	add_action('admin_menu',														array('backend_request', 'menu'));
+	
+	add_shortcode('newsletter_dialog',												array('frontend_newsletter', 'maskHandler'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {
