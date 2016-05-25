@@ -1,19 +1,19 @@
 	<p>
 		<label for="user_art">Nutzungsart:<br>
 			<label for="user_art_user">Normale*r Benutzer*in
-				<input type="radio" name="user_art" id="user_art_user" class="input" value="user"<?php echo $userArtValue[0]; ?>>
+				<input type="radio" name="user_art" id="user_art_user" class="input" value="User"<?php echo $userArtValue[0]; ?>>
 			</label>
 			<label for="user_art_landesverband">Landesverband
-				<input type="radio" name="user_art" id="user_art_landesverband" class="input" value="landesverband"<?php echo $userArtValue[1]; ?>>
+				<input type="radio" name="user_art" id="user_art_landesverband" class="input" value="Landesverband"<?php echo $userArtValue[1]; ?>>
 			</label>
 			<label for="user_art_basisgruppe">Basisgruppe
-				<input type="radio" name="user_art" id="user_art_basisgruppe" class="input" value="basisgruppe"<?php echo $userArtValue[2]; ?>>
+				<input type="radio" name="user_art" id="user_art_basisgruppe" class="input" value="Basisgruppe"<?php echo $userArtValue[2]; ?>>
 			</label>
 			<?php
 				if($_GET['erweitert'] == 1) {
 			?>
 			<label for="user_art_basisgruppe">Organisatorische*r Benutzer*in
-				<input type="radio" name="user_art" id="user_art_organisatorisch" class="input" value="organisatorisch"<?php echo $userArtValue[3]; ?>>
+				<input type="radio" name="user_art" id="user_art_organisatorisch" class="input" value="Organisatorisch"<?php echo $userArtValue[3]; ?>>
 			</label>
 			<?php
 				}

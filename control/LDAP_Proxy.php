@@ -91,6 +91,30 @@ final class LDAP_Proxy {
 		return true;
 	}
 	
+	public static final function addUser($firstname, $surname, $mail) {
+		$res = self::login();
+		if(empty($firstname) || empty($surname) || empty($mail)) {
+			return new WP_Error('ldap_add_user_nodata', 'Der User benötigt einen Vornamen, Nachnamen und eine gültige E-Mail-Adresse.');
+		}
+		if(!ldap_add($res, 'cn='.$firstname.' '.$surname.','.LDAP_USER_BASE, array(
+			'cn' => $firstname.' '.$surname,
+			'sn' => $surname,
+			'mail' => $mail,
+			'mailAlternateAddress' => $mail,
+			'objectClass' => array(
+				'top',
+				'person',
+				'inetOrgPerson',
+				'qmailUser'
+			)
+		))) {
+			self::logout($res);
+			return false;
+		}
+		self::logout($res);
+		return true;
+	}
+	
 	/*
 	 * CODE: description
 	 * NEWSLETTER ART: deliveryMode
@@ -103,6 +127,7 @@ final class LDAP_Proxy {
 		
 		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(mail=" . $mail . ")", array("givenName", "cn"));
 		
+		self::logout($res);
 		return $search && ldap_count_entries($res, $search) > 0;
 	}
 	
@@ -131,6 +156,7 @@ final class LDAP_Proxy {
 		}
 		ldap_mod_add($res, $dn, array("o" => $art));
 		
+		self::logout($res);
 		return $key;
 	}
 	
@@ -140,14 +166,17 @@ final class LDAP_Proxy {
 		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("cn", "o", "qmailGID"));
 		
 		if(!$search || ldap_count_entries($res, $search) == 0) {
+			self::logout($res);
 			return false;
 		}
 		
 		$entries = ldap_get_entries($res, $search);
 		
 		if(((time()-(time()%86400)) / 86400) > ($entries[0]["qmailgid"][0]+3)) {
+			self::logout($res);
 			return false;
 		}
+		self::logout($res);
 		return $entries[0]["o"][0];
 	}
 	
@@ -169,6 +198,7 @@ final class LDAP_Proxy {
 		if(!empty($entries[0]["o"][0])) {
 			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
 		}
+		self::logout($res);
 		return array($res, $dn);
 	}
 	
@@ -190,6 +220,7 @@ final class LDAP_Proxy {
 		
 		$dn = $entries[0]["dn"];
 		if($entries[0]["mail"][0] != $alt) {
+			self::logout($res);
 			return false;
 		}
 		
@@ -211,6 +242,8 @@ final class LDAP_Proxy {
 			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
 		}
 		ldap_mod_add($res, $dn, array("o" => "c"));
+		
+		self::logout($res);
 		
 		return $key;
 	}
@@ -238,5 +271,20 @@ final class LDAP_Proxy {
 		if(!empty($entries[0]["mailalternateaddress"][0])) {
 			ldap_mod_del($res, $dn, array("mailAlternateAddress" => $entries[0]["mailalternateaddress"][0]));
 		}
+		
+		self::logout($res);
+	}
+	
+	public static final function isMember($vorname, $nachname, $mail) {
+		$res = self::login();
+		
+		echo "(&(givenName=" . $vorname . ")(sn=" . $nachname . ")(mail=" . $mail . "))";
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(&(givenName=" . $vorname . ")(sn=" . $nachname . ")(mail=" . $mail . "))", array("cn"));
+		
+		if(!$search) {
+			return false;
+		}
+		
+		return $search && ldap_count_entries($res, $search) > 0;
 	}
 }
