@@ -7,8 +7,8 @@
  */
 class backend_permission {
 	public static function maskHandler() {
-		add_meta_box("io_permissions_info_mb", "Informationen", array("backend_permission", "metaInfo"), Permission_Control::POST_TYPE, "normal", "default");
-		add_meta_box("io_permissions_member_mb", "Mitgliedschaften", array("backend_permission", "metaMember"), Permission_Control::POST_TYPE, "normal", "default");
+		add_meta_box("io_permissions_info_mb", "Informationen", array("backend_permission", "metaInfo"), Permission_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_permissions_member_mb", "Mitgliedschaften", array("backend_permission", "metaMember"), Permission_Util::POST_TYPE, "normal", "default");
 	}
 	
 	public static function metaInfo($post) {
@@ -53,7 +53,7 @@ class backend_permission {
 	}
 	
 	public static function orderby($vars) {
-		if($vars['post_type'] == Permission_Control::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
+		if($vars['post_type'] == Permission_Util::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
 				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_permission_ok' : 'io_permission_uk',
 				'orderby'	=> 'meta_value'
@@ -70,7 +70,7 @@ class backend_permission {
 	
 	public static function maskFiltering() {
 		$screen = get_current_screen();
-		if($screen->post_type == Permission_Control::POST_TYPE) {
+		if($screen->post_type == Permission_Util::POST_TYPE) {
 			$permissions = Permission_Control::getValues();
 			
 			$oberkategorien = array();
@@ -115,7 +115,7 @@ class backend_permission {
 	
 	public static function filtering($query) {
 		$names = array('io_permission_ok', 'io_permission_uk');
-		return io_filter($query, $names, Permission_Control::POST_TYPE);
+		return io_filter($query, $names, Permission_Util::POST_TYPE);
 	}
 	
 	public static function maskSave($post_id) {

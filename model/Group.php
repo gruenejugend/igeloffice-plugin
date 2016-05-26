@@ -71,8 +71,8 @@ class Group {
 				if(count($groups) > 0) {
 					$this->groups = array();
 					foreach($groups AS $group) {
-						if(io_in_wp($group, false, Group_Control::POST_TYPE)) {
-							array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Control::POST_TYPE)->ID));
+						if(io_in_wp($group, false, Group_Util::POST_TYPE)) {
+							array_push($this->groups, new Group(get_page_by_title($group, OBJECT, Group_Util::POST_TYPE)->ID));
 						}
 					}
 					return $this->groups;
@@ -84,8 +84,8 @@ class Group {
 				if(count($permissions) > 0) {
 					$this->permissions = array();
 					foreach($permissions AS $permission) {
-						if(io_in_wp($permission, false, Permission_Control::POST_TYPE)) {
-							array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+						if(io_in_wp($permission, false, Permission_Util::POST_TYPE)) {
+							array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Util::POST_TYPE)->ID));
 						}
 					}
 					return $this->permissions;

@@ -91,7 +91,7 @@ class frontend_register {
 			$errors->add('user_email_gj_error', '<strong>FEHLER:</strong> Du darfst keine GR&Uuml;NE JUGEND E-Mail-Adresse hier angeben!');
 		}
 		
-		if($_POST['user_art'] == "user" && (empty($_POST['first_name']) || empty($_POST['last_name']))) {
+		if($_POST['user_art'] == User_Util::USER_ART_USER && (empty($_POST['first_name']) || empty($_POST['last_name']))) {
 			if(empty($_POST['first_name'])) {
 				$errors->add('first_name_error', '<strong>FEHLER:</strong> Du musst einen Vornamen angeben!');
 			}
@@ -101,7 +101,7 @@ class frontend_register {
 			}
 		}
 		
-		if($_POST['user_art'] == "basisgruppe" && (empty($_POST['name']) || $_POST['land'] == '0')) {
+		if($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE && (empty($_POST['name']) || $_POST['land'] == '0')) {
 			if(empty($_POST['name'])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
@@ -111,11 +111,11 @@ class frontend_register {
 			}
 		}
 		
-		if($_POST['user_art'] == "landesverband" && $_POST['land'] == '0') {
+		if($_POST['user_art'] == User_Util::USER_ART_LANDESVERBAND && $_POST['land'] == '0') {
 			$errors->add('land_error', '<strong>FEHLER:</strong> Du musst ein Bundesland angeben!');
 		}
 		
-		if($_POST['user_art'] == "organisatorisch" && empty($_POST['orga_name'])) {
+		if($_POST['user_art'] == User_Util::USER_ART_ORGANISATORISCH && empty($_POST['orga_name'])) {
 			$errors->add('orga_error', '<strong>FEHLER:</strong> Du musst einen Namen angeben!');
 		}
 		

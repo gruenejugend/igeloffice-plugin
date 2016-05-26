@@ -1,7 +1,7 @@
 	<p id="name_box">
 		<label for="name">Ort:<br>
 			<input type="text" name="name" id="name" class="input" value="<?php echo esc_attr(wp_unslash($name)); ?>" size="25">
-			<input type="hidden" name="user_art" value="basisgruppe">
+			<input type="hidden" name="user_art" value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>">
 			<?php
 				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
 					?><input type="hidden" name="erweitert" value="1">

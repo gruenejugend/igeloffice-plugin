@@ -7,8 +7,8 @@
  */
 class backend_request {
 	public static function maskHandler() {
-		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "maskInfo"), Request_Control::POST_TYPE, "normal", "default");
-		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "maskAction"), Request_Control::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "maskInfo"), Request_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "maskAction"), Request_Util::POST_TYPE, "normal", "default");
 	}
 	
 	public static function maskInfo($post) {
@@ -113,7 +113,7 @@ class backend_request {
 	}
 	
 	public static function orderby($vars) {
-		if($vars['post_type'] == Request_Control::POST_TYPE && $vars['orderby'] == 'Status') {
+		if($vars['post_type'] == Request_Util::POST_TYPE && $vars['orderby'] == 'Status') {
 			$vars = array_merge($vars, array(
 				'meta_key'	=> 'io_request_status',
 				'orderby'	=> 'meta_value'
@@ -124,7 +124,7 @@ class backend_request {
 	
 	public static function maskFiltering() {
 		$screen = get_current_screen();
-		if($screen->post_type == Request_Control::POST_TYPE) {
+		if($screen->post_type == Request_Util::POST_TYPE) {
 			$groups = Group_Control::getValues();
 			$permissions = Permission_Control::getValues();
 			$users = User_Control::getValues();
@@ -230,7 +230,7 @@ class backend_request {
 				}
 
 				$names = array('io_request_art', 'io_request_status', 'io_request_requested_id', 'io_request_steller_in');
-				return io_filter($query, $names, Request_Control::POST_TYPE);
+				return io_filter($query, $names, Request_Util::POST_TYPE);
 			}
 		}
 		return null;
@@ -239,7 +239,7 @@ class backend_request {
 	public static function leadingFilter($query) {
 		if(function_exists(get_current_screen)) {
 			$screen = get_current_screen();
-			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Request_Control::POST_TYPE) {
+			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Request_Util::POST_TYPE) {
 				$user = new User(get_current_user_id());
 
 				$leadingGroups = $user->leading_groups;

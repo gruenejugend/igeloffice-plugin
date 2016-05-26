@@ -30,7 +30,7 @@
 			)
 		);
 		
-		register_post_type(Group_Control::POST_TYPE, $args);
+		register_post_type(Group_Util::POST_TYPE, $args);
 	}
 	
 	function groupLeaderCap() {
@@ -71,7 +71,7 @@
 			'supports'				=> array("title")
 		);
 		
-		register_post_type(Permission_Control::POST_TYPE, $args);
+		register_post_type(Permission_Util::POST_TYPE, $args);
 	}
 	
 	function io_register_request() {
@@ -103,7 +103,7 @@
 			)
 		);
 		
-		register_post_type(Request_Control::POST_TYPE, $args);
+		register_post_type(Request_Util::POST_TYPE, $args);
 	}
 	
 	function requestLeaderCap() {

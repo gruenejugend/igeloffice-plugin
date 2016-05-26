@@ -15,6 +15,6 @@ class cloud_control {
 	const CLOUD_PERMISSION = 'Cloud';
 	
 	public static function getPermission() {
-		return new Permission(get_page_by_title(self::CLOUD_PERMISSION, OBJECT, Permission_Control::POST_TYPE)->ID);
+		return new Permission(get_page_by_title(self::CLOUD_PERMISSION, OBJECT, Permission_Util::POST_TYPE)->ID);
 	}
 }

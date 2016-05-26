@@ -5,9 +5,7 @@
  *
  * @author KWM
  */
-class Request_Control {
-	const POST_TYPE = 'io_request';
-	
+class Request_Control {	
 	public static function create($user_id, $art, $requested_id = null) {
 		$request = Request_Factory::getRequest($art, null);
 		
@@ -18,7 +16,7 @@ class Request_Control {
 		
 		$id = wp_insert_post(array(
 			'post_title'		=> self::createTitle($request, $user_id, $requested_id),
-			'post_type'			=> self::POST_TYPE,
+			'post_type'			=> Request_Util::POST_TYPE,
 			'post_status'		=> 'publish'
 		));
 		
@@ -44,7 +42,7 @@ class Request_Control {
 	
 	private static function checkExist($user_id, $request, $requested_id = null) {
 		$args = array(
-			'post_type'			=> self::POST_TYPE,
+			'post_type'			=> Request_Util::POST_TYPE,
 			'meta_query'		=> array(
 				'relation'			=> 'AND',
 				array(
@@ -81,7 +79,7 @@ class Request_Control {
 	
 	public static function count() {
 		return count(get_posts(array(
-			'post_type'				=> self::POST_TYPE,
+			'post_type'				=> Request_Util::POST_TYPE,
 			'posts_per_page'		=> -1,
 			'meta_query'			=> array(
 				array(

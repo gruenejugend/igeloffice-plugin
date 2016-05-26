@@ -36,7 +36,7 @@ class test_request extends PHPUnit_Framework_TestCase {
 	
 	public function test_control_create() {
 		self::$request_ids[0] = get_posts(array(
-			'post_type'			=> Request_Control::POST_TYPE,
+			'post_type'			=> Request_Util::POST_TYPE,
 			'meta_query'		=> array(
 				array(
 					'key'				=> 'io_request_steller_in',
@@ -45,7 +45,7 @@ class test_request extends PHPUnit_Framework_TestCase {
 			)
 		))[0]->ID;
 		self::$request_ids[1] = get_posts(array(
-			'post_type'			=> Request_Control::POST_TYPE,
+			'post_type'			=> Request_Util::POST_TYPE,
 			'meta_query'		=> array(
 				array(
 					'key'				=> 'io_request_steller_in',

@@ -18,11 +18,11 @@ class backend_groups {
 		}
 		
 		if(current_user_can('administrator')) {
-			add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Control::POST_TYPE, "normal", "default");
-			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Control::POST_TYPE, "normal", "default");
-			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Control::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Util::POST_TYPE, "normal", "default");
 		} else if($pruef) {
-			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Control::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
 	}
 	
@@ -99,7 +99,7 @@ class backend_groups {
 	}
 	
 	public static function orderby($vars) {
-		if($vars['post_type'] == Group_Control::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
+		if($vars['post_type'] == Group_Util::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
 				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_group_ok' : 'io_group_uk',
 				'orderby'	=> 'meta_value'
@@ -110,7 +110,7 @@ class backend_groups {
 	
 	public static function maskFiltering() {
 		$screen = get_current_screen();
-		if($screen->post_type == Group_Control::POST_TYPE) {
+		if($screen->post_type == Group_Util::POST_TYPE) {
 			$groups = Group_Control::getValues();
 			
 			$oberkategorien = array();
@@ -155,13 +155,13 @@ class backend_groups {
 	
 	public static function filtering($query) {
 		$names = array('io_group_ok', 'io_group_uk');
-		return io_filter($query, $names, Group_Control::POST_TYPE);
+		return io_filter($query, $names, Group_Util::POST_TYPE);
 	}
 	
 	public static function leadingFilter($query) {
 		if(function_exists(get_current_screen)) {
 			$screen = get_current_screen();
-			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Group_Control::POST_TYPE) {
+			if(is_admin() && !current_user_can('administrator') && $screen->post_type == Group_Util::POST_TYPE) {
 				$user = new User(get_current_user_id());
 
 				$leadingGroups = $user->leading_groups;

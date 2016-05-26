@@ -18,6 +18,11 @@
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
 	
+	require_once 'services/util/User_Util.php';
+	require_once 'services/util/Group_Util.php';
+	require_once 'services/util/Permission_Util.php';
+	require_once 'services/util/Request_Util.php';
+	
 	require_once 'control/ldap.php';
 	require_once 'control/ldapConnector.php';
 	
@@ -88,9 +93,9 @@
 	add_action('add_meta_boxes',													array('backend_groups', 'maskHandler'), 10, 2);
 	add_action('save_post',															array('backend_groups', 'maskSave'));
 	add_action('delete_post',														array('backend_groups', 'maskDelete'));
-	add_filter('manage_' .Group_Control::POST_TYPE. '_posts_columns',				array('backend_groups', 'column'), 10, 2);
-	add_filter('manage_' .Group_Control::POST_TYPE. '_posts_custom_column',			array('backend_groups', 'maskColumn'), 10, 2);
-	add_filter('manage_edit-' .Group_Control::POST_TYPE. '_sortable_columns',		array('backend_groups', 'column'), 10, 2);
+	add_filter('manage_' .Group_Util::POST_TYPE. '_posts_columns',					array('backend_groups', 'column'), 10, 2);
+	add_filter('manage_' .Group_Util::POST_TYPE. '_posts_custom_column',			array('backend_groups', 'maskColumn'), 10, 2);
+	add_filter('manage_edit-' .Group_Util::POST_TYPE. '_sortable_columns',			array('backend_groups', 'column'), 10, 2);
 	add_filter('request',															array('backend_groups', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_groups', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_groups', 'filtering'));
@@ -101,18 +106,18 @@
 	add_action('add_meta_boxes',													array('backend_permission', 'maskHandler'));
 	add_action('save_post',															array('backend_permission', 'maskSave'));
 	add_action('delete_post',														array('backend_permission', 'maskDelete'));
-	add_filter('manage_' .Permission_Control::POST_TYPE. '_posts_columns',			array('backend_permission', 'column'), 10, 2);
-	add_filter('manage_' .Permission_Control::POST_TYPE. '_posts_custom_column',	array('backend_permission', 'maskColumn'), 10, 2);
-	add_filter('manage_edit-' .Permission_Control::POST_TYPE. '_sortable_columns',	array('backend_permission', 'column'), 10, 2);
+	add_filter('manage_' .Permission_Util::POST_TYPE. '_posts_columns',				array('backend_permission', 'column'), 10, 2);
+	add_filter('manage_' .Permission_Util::POST_TYPE. '_posts_custom_column',		array('backend_permission', 'maskColumn'), 10, 2);
+	add_filter('manage_edit-' .Permission_Util::POST_TYPE. '_sortable_columns',		array('backend_permission', 'column'), 10, 2);
 	add_filter('request',															array('backend_permission', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
 	
 	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'));
 	add_action('save_post',															array('backend_request', 'maskSave'));
-	add_filter('manage_' .Request_Control::POST_TYPE. '_posts_columns',				array('backend_request', 'column'), 10, 2);
-	add_filter('manage_' .Request_Control::POST_TYPE. '_posts_custom_column',		array('backend_request', 'maskColumn'), 10, 2);
-	add_filter('manage_edit-' .Request_Control::POST_TYPE. '_sortable_columns',		array('backend_request', 'column'), 10, 2);
+	add_filter('manage_' .Request_Util::POST_TYPE. '_posts_columns',				array('backend_request', 'column'), 10, 2);
+	add_filter('manage_' .Request_Util::POST_TYPE. '_posts_custom_column',			array('backend_request', 'maskColumn'), 10, 2);
+	add_filter('manage_edit-' .Request_Util::POST_TYPE. '_sortable_columns',		array('backend_request', 'column'), 10, 2);
 	add_filter('request',															array('backend_request', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_request', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_request', 'filtering'));

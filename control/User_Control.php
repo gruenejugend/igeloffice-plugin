@@ -21,7 +21,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = 'user';
+		$_POST['user_art'] = User_Util::USER_ART_USER;
 		$_POST['first_name'] = $first_name;
 		$_POST['last_name'] = $last_name;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
@@ -38,7 +38,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = 'landesverband';
+		$_POST['user_art'] = User_Util::USER_ART_LANDESVERBAND;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);
@@ -53,7 +53,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = 'basisgruppe';
+		$_POST['user_art'] = User_Util::USER_ART_BASISGRUPPE;
 		$_POST['land'] = $landesverband;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
@@ -69,7 +69,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = 'organisatorisch';
+		$_POST['user_art'] = User_Util::USER_ART_ORGANISATORISCH;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);
@@ -88,16 +88,16 @@ class User_Control {
 			update_user_meta($user_id, "io_user_art", sanitize_text_field($_POST['user_art']));
 			update_user_meta($user_id, "io_user_aktiv", 0);
 			
-			if($_POST['user_art'] == "User") {
+			if($_POST['user_art'] == User_Util::USER_ART_USER) {
 				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
 				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
-			} elseif($_POST['user_art'] == "basisgruppe") {
+			} elseif($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE) {
 				update_user_meta($user_id, "io_user_lv", sanitize_text_field($_POST['land']));
 			}
 			
 			if(LDAP_Proxy::isLDAPUser(get_userdata($user_id)->user_login, get_userdata($user_id)->user_email) === true) {
 				User_Control::aktivieren($user_id, false);
-			} else if($_POST['user_art'] == "User" && LDAP_Proxy::isMember(sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['last_name']), sanitize_text_field($_POST['user_email']))) {
+			} else if($_POST['user_art'] == User_Util::USER_ART_USER && LDAP_Proxy::isMember(sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['last_name']), sanitize_text_field($_POST['user_email']))) {
 				User_Control::aktivieren($user_id);
 			} else {
 				Request_Control::create($user_id, "User");
@@ -156,7 +156,7 @@ class User_Control {
 		$user = new User($user_id);
 		
 		$ldapConnector = ldapConnector::get();
-		if($user->art == 'User') {
+		if($user->art == User_Util::USER_ART_USER) {
 			if(get_current_user_id() != 0) {
 				$ldapConnector->addUser($user->first_name, $user->last_name, $user->user_email);
 			} else {

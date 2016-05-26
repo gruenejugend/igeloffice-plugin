@@ -9,6 +9,6 @@ class mailinglisten_control {
 	const MAILINGLISTEN_PERMISSION = 'ListenAbo';
 	
 	public static function getPermission() {
-		return new Permission(get_page_by_title(self::MAILINGLISTEN_PERMISSION, OBJECT, Permission_Control::POST_TYPE)->ID);
+		return new Permission(get_page_by_title(self::MAILINGLISTEN_PERMISSION, OBJECT, Permission_Util::POST_TYPE)->ID);
 	}
 }

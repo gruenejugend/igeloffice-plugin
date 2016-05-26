@@ -38,7 +38,7 @@ class User {
 			$permissions = $ldapConnector->getUserPermissions($this->wp_user->user_login);
 			if(count($permissions) > 0) {
 				foreach($permissions AS $permission) {
-					array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Control::POST_TYPE)->ID));
+					array_push($this->permissions, new Permission(get_page_by_title($permission, OBJECT, Permission_Util::POST_TYPE)->ID));
 				}
 				return $this->permissions;
 			}

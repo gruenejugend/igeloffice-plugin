@@ -12,11 +12,11 @@ class mailStandard_control {
 	const MAIL_FORWARD_ATTRIBUTE = 'mailForwardingAddress';
 	
 	public static function getMailPermission() {
-		return new Permission(get_page_by_title(mailStandard_control::MAIL_PERMISSION, OBJECT, Permission_Control::POST_TYPE)->ID);
+		return new Permission(get_page_by_title(mailStandard_control::MAIL_PERMISSION, OBJECT, Permission_Util::POST_TYPE)->ID);
 	}
 	
 	public static function getMailForwardPermission() {
-		return new Permission(get_page_by_title(mailStandard_control::MAIL_FORWARD_PERMISSION, OBJECT, Permission_Control::POST_TYPE)->ID);
+		return new Permission(get_page_by_title(mailStandard_control::MAIL_FORWARD_PERMISSION, OBJECT, Permission_Util::POST_TYPE)->ID);
 	}
 	
 	public static function setMail($user_id) {

@@ -22,7 +22,7 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name,															"Tester1");
 		$this->assertEquals($user->user_login,															"Test1 Tester1");
 		$this->assertEquals($user->user_email,															"test1@test1.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_art",		true),				"user");
+		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_art",		true),				User_Util::USER_ART_USER);
 		$this->assertEquals(get_user_meta(self::$user_ids[0], "io_user_aktiv",		true),				0);
 		
 		
@@ -34,7 +34,7 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"NRW");
 		$this->assertEquals($user->user_email,															"test2@test2.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_art",		true),				"landesverband");
+		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_art",		true),				User_Util::USER_ART_LANDESVERBAND);
 		$this->assertEquals(get_user_meta(self::$user_ids[1], "io_user_aktiv",		true),				0);
 		
 		/*
@@ -45,7 +45,7 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"Testgruppe1");
 		$this->assertEquals($user->user_email,															"test3@test3.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_art",		true),				"basisgruppe");
+		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_art",		true),				User_Util::USER_ART_BASISGRUPPE);
 		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_aktiv",		true),				0);
 		$this->assertEquals(get_user_meta(self::$user_ids[2], "io_user_lv",			true),				"NRW");
 		
@@ -57,7 +57,7 @@ class test_user extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($user->last_name, '');
 		$this->assertEquals($user->user_login,															"Test2");
 		$this->assertEquals($user->user_email,															"test4@test4.de");
-		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_art",		true),				"organisatorisch");
+		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_art",		true),				User_Util::USER_ART_ORGANISATORISCH);
 		$this->assertEquals(get_user_meta(self::$user_ids[3], "io_user_aktiv",		true),				0);
 	}
 	

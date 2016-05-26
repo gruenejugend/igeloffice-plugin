@@ -7,7 +7,7 @@
 	<p id="last_name_box">
 		<label for="first_name">Nachname:<br>
 			<input type="text" name="last_name" id="last_name" class="input" value="<?php echo esc_attr(wp_unslash($last_name)); ?>" size="25">
-			<input type="hidden" name="user_art" value="user">
+			<input type="hidden" name="user_art" value="<?php echo User_Util::USER_ART_USER; ?>">
 			<?php
 				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
 					?><input type="hidden" name="erweitert" value="1">

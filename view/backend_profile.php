@@ -56,7 +56,7 @@ class backend_profile {
 				User_Control::aktivieren($user_id);
 				
 				Request_Control::approve(get_post(array(
-					'post_type'			=> Request_Control::POST_TYPE,
+					'post_type'			=> Request_Util::POST_TYPE,
 					'meta_query'		=> array(
 						'relation'			=> 'AND',
 						array(

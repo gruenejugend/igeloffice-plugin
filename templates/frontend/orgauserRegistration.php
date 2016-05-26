@@ -1,7 +1,7 @@
 	<p style="display: block;" id="orga_name_box">
 		<label for="last_name">Name:<br>
 			<input name="orga_name" id="orga_name" class="input" value="" size="25" type="text">
-			<input type="hidden" name="user_art" value="organisatorisch">
+			<input type="hidden" name="user_art" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>">
 			<?php
 				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
 					?><input type="hidden" name="erweitert" value="1">

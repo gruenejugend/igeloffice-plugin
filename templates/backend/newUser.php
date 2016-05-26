@@ -2,10 +2,10 @@
 	<tr class="form-field form-required" id="io_user_art">
 		<th scope="row"><label for="user_art">Nutzungsart <span class="description">(erforderlich)</span></label></th>
 		<td>
-			<input type="radio" name="user_art" id="user_art_user" value="user"<?php echo $userArtValue[0]; ?>> Normale*r Benutzer*in<br>
-			<input type="radio" name="user_art" id="user_art_landesverband" value="landesverband"<?php echo $userArtValue[1]; ?>> Landesverband<br>
-			<input type="radio" name="user_art" id="user_art_basisgruppe" value="basisgruppe"<?php echo $userArtValue[2]; ?>> Basisgruppe<br>
-			<input type="radio" name="user_art" id="user_art_organisatorisch" value="organisatorisch"<?php echo $userArtValue[3]; ?>> Organisatorische*r Benutzer*in
+			<input type="radio" name="user_art" id="user_art_user" value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>> Normale*r Benutzer*in<br>
+			<input type="radio" name="user_art" id="user_art_landesverband" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>"<?php echo $userArtValue[1]; ?>> Landesverband<br>
+			<input type="radio" name="user_art" id="user_art_basisgruppe" value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>"<?php echo $userArtValue[2]; ?>> Basisgruppe<br>
+			<input type="radio" name="user_art" id="user_art_organisatorisch" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>"<?php echo $userArtValue[3]; ?>> Organisatorische*r Benutzer*in
 		</td>
 	</tr>
 	<tr class="form-field form-required" id="io_orga_name">

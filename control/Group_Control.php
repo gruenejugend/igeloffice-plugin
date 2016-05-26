@@ -6,13 +6,12 @@
  * @author KWM
  */
 class Group_Control {
-	const POST_TYPE = 'io_group';
 	const LDAP_ESCAPE_IGNORE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ ";
 	
 	public static function create($name, $oberkategorie = null, $unterkategorie = null) {
 		$id = wp_insert_post(array(
 			'post_title'		=> $name,
-			'post_type'			=> self::POST_TYPE,
+			'post_type'			=> Group_Util::POST_TYPE,
 			'post_status'		=> 'publish'
 		));
 		
@@ -99,7 +98,7 @@ ON p.ID = pm1.post_id
 WHERE pm1.meta_key = 'io_group_ok'
 AND pm2.meta_key = 'io_group_uk'
 AND p.post_status = 'publish'
-AND p.post_type = '" . self::POST_TYPE. "'");
+AND p.post_type = '" . Group_Util::POST_TYPE. "'");
 		
 		$ids = array();
 		$values = array();
@@ -121,7 +120,7 @@ INNER JOIN $wpdb->posts p
 ON p.ID = pm1.post_id
 WHERE pm1.meta_key = 'io_group_ok'
 AND p.post_status = 'publish'
-AND p.post_type = '" . self::POST_TYPE . "'
+AND p.post_type = '" . Group_Util::POST_TYPE . "'
 " . $start . implode(" AND pm1.post_id <> ", $ids) . "
 ");
 		
@@ -140,7 +139,7 @@ AND p.post_type = '" . self::POST_TYPE . "'
 		$results = $wpdb->get_results("SELECT ID
 FROM $wpdb->posts
 WHERE post_status = 'publish'
-AND post_type = '" . self::POST_TYPE . "'
+AND post_type = '" . Group_Util::POST_TYPE . "'
 " . $start . implode(" AND ID <> ", $ids));
 	
 		foreach($results AS $result) {

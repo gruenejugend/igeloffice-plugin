@@ -278,7 +278,6 @@ final class LDAP_Proxy {
 	public static final function isMember($vorname, $nachname, $mail) {
 		$res = self::login();
 		
-		echo "(&(givenName=" . $vorname . ")(sn=" . $nachname . ")(mail=" . $mail . "))";
 		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(&(givenName=" . $vorname . ")(sn=" . $nachname . ")(mail=" . $mail . "))", array("cn"));
 		
 		if(!$search) {
