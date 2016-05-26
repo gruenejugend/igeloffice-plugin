@@ -39,7 +39,7 @@ class test_request extends PHPUnit_Framework_TestCase {
 			'post_type'			=> Request_Util::POST_TYPE,
 			'meta_query'		=> array(
 				array(
-					'key'				=> 'io_request_steller_in',
+					'key'				=> Request_Util::ATTRIBUT_STELLER_IN,
 					'value'				=> self::$user_ids[0]
 				)
 			)
@@ -48,7 +48,7 @@ class test_request extends PHPUnit_Framework_TestCase {
 			'post_type'			=> Request_Util::POST_TYPE,
 			'meta_query'		=> array(
 				array(
-					'key'				=> 'io_request_steller_in',
+					'key'				=> Request_Util::ATTRIBUT_STELLER_IN,
 					'value'				=> self::$user_ids[1]
 				)
 			)
@@ -64,10 +64,10 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[0]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"User-Aktivierung " . self::$users[0]->user_login);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"User-Aktivierung");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[0]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,													"User-Aktivierung " . self::$users[0]->user_login);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),			"User-Aktivierung");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),	self::$user_ids[0]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),		"Gestellt");
 		
 		/*
 		 * Test Request 2
@@ -75,10 +75,10 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[1]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"User-Aktivierung " . self::$users[1]->user_login);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"User-Aktivierung");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[1]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,													"User-Aktivierung " . self::$users[1]->user_login);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),			"User-Aktivierung");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),	self::$user_ids[1]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),		"Gestellt");
 		
 		/*
 		 * Test Request 3
@@ -86,11 +86,11 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[2]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Gruppen-Mitgliedschaft " . self::$users[0]->user_login . " bei " . self::$group[0]->name);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"Gruppen-Mitgliedschaft");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[0]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_requested_id", true),	self::$group_ids[0]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,														"Gruppen-Mitgliedschaft " . self::$users[0]->user_login . " bei " . self::$group[0]->name);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),				"Gruppen-Mitgliedschaft");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),		self::$user_ids[0]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_REQUESTED_ID, true),	self::$group_ids[0]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),			"Gestellt");
 		
 		/*
 		 * Test Request 4
@@ -98,11 +98,11 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[3]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Gruppen-Mitgliedschaft " . self::$users[1]->user_login . " bei " . self::$group[1]->name);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"Gruppen-Mitgliedschaft");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[1]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_requested_id", true),	self::$group_ids[1]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,														"Gruppen-Mitgliedschaft " . self::$users[1]->user_login . " bei " . self::$group[1]->name);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),				"Gruppen-Mitgliedschaft");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),		self::$user_ids[1]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_REQUESTED_ID, true),	self::$group_ids[1]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),			"Gestellt");
 		
 		/*
 		 * Test Request 5
@@ -110,11 +110,11 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[4]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Berechtigungs-Antrag " . self::$users[0]->user_login . " zu " . self::$permission[0]->name);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"Berechtigungs-Antrag");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[0]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_requested_id", true),	self::$permission_ids[0]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,														"Berechtigungs-Antrag " . self::$users[0]->user_login . " zu " . self::$permission[0]->name);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),				"Berechtigungs-Antrag");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),		self::$user_ids[0]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_REQUESTED_ID, true),	self::$permission_ids[0]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),			"Gestellt");
 		
 		/*
 		 * Test Request 6
@@ -122,11 +122,11 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$request_ids[5]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Berechtigungs-Antrag " . self::$users[1]->user_login . " zu " . self::$permission[1]->name);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_art", true),			"Berechtigungs-Antrag");
-		$this->assertEquals(get_post_meta($post->ID, "io_request_steller_in", true),	self::$user_ids[1]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_requested_id", true),	self::$permission_ids[1]);
-		$this->assertEquals(get_post_meta($post->ID, "io_request_status", true),		"Gestellt");
+		$this->assertEquals($post->post_title,														"Berechtigungs-Antrag " . self::$users[1]->user_login . " zu " . self::$permission[1]->name);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_ART, true),				"Berechtigungs-Antrag");
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STELLER_IN, true),		self::$user_ids[1]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_REQUESTED_ID, true),	self::$permission_ids[1]);
+		$this->assertEquals(get_post_meta($post->ID, Request_Util::ATTRIBUT_STATUS, true),			"Gestellt");
 	}
 	
 	public function test_model() {
@@ -184,9 +184,9 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$request[2] = new Request(self::$request_ids[2]);
 		$request[4] = new Request(self::$request_ids[4]);
 		
-		$this->assertEquals(get_post_meta(self::$request_ids[0], "io_request_status", true), "Angenommen");
-		$this->assertEquals(get_post_meta(self::$request_ids[2], "io_request_status", true), "Angenommen");
-		$this->assertEquals(get_post_meta(self::$request_ids[4], "io_request_status", true), "Angenommen");
+		$this->assertEquals(get_post_meta(self::$request_ids[0], Request_Util::ATTRIBUT_STATUS, true), "Angenommen");
+		$this->assertEquals(get_post_meta(self::$request_ids[2], Request_Util::ATTRIBUT_STATUS, true), "Angenommen");
+		$this->assertEquals(get_post_meta(self::$request_ids[4], Request_Util::ATTRIBUT_STATUS, true), "Angenommen");
 		
 		$this->assertEquals($request[0]->status,		"Angenommen");
 		$this->assertEquals($request[2]->status,		"Angenommen");
@@ -220,8 +220,8 @@ class test_request extends PHPUnit_Framework_TestCase {
 		$request[3] = new Request(self::$request_ids[3]);
 		$request[5] = new Request(self::$request_ids[5]);
 		
-		$this->assertEquals(get_post_meta(self::$request_ids[3], "io_request_status", true), "Abgelehnt");
-		$this->assertEquals(get_post_meta(self::$request_ids[5], "io_request_status", true), "Abgelehnt");
+		$this->assertEquals(get_post_meta(self::$request_ids[3], Request_Util::ATTRIBUT_STATUS, true), "Abgelehnt");
+		$this->assertEquals(get_post_meta(self::$request_ids[5], Request_Util::ATTRIBUT_STATUS, true), "Abgelehnt");
 		
 		$this->assertEquals($request[3]->status,		"Abgelehnt");
 		$this->assertEquals($request[5]->status,		"Abgelehnt");
@@ -248,7 +248,7 @@ class test_request extends PHPUnit_Framework_TestCase {
 		
 		$request[1] = new Request(self::$request_ids[1]);
 		
-		$this->assertEquals(get_post_meta(self::$request_ids[1], "io_request_status", true), "Abgelehnt");
+		$this->assertEquals(get_post_meta(self::$request_ids[1], Request_Util::ATTRIBUT_STATUS, true), "Abgelehnt");
 		
 		$this->assertEquals($request[1]->status,		"Abgelehnt");
 		

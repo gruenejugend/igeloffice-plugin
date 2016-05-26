@@ -1,5 +1,5 @@
 <table class="form-table">
-	<tr class="form-field" id="io_user_art">
+	<tr class="form-field" id="<?php echo User_Util::ATTRIBUT_ART; ?>">
 		<th scope="row"><label for="user_art">Nutzungsart</label></th>
 		<td>
 			<input type="text" id="user_art" name="user_art" value="<?php echo ucfirst($user->art); ?>">
@@ -30,7 +30,7 @@
 		</td>
 	</tr><?php if(current_user_can('administrator')) {
 ?>
-	<tr class="form-field" id="io_user_aktiv">
+	<tr class="form-field" id="<?php echo User_Util::ATTRIBUT_AKTIV; ?>">
 		<th scope="row"><label for="user_aktiv">User Aktiv</label></th>
 		<td>
 			<input type="checkbox" id="user_aktiv" name="user_aktiv" value="true"<?php if($user->aktiv == 1) { ?> disabled checked readonly<?php } ?>>

@@ -34,9 +34,9 @@ class Group {
 		} else if($name == 'ldapName') {
 			return $this->ldapNameFunc($this->name); 
 		} else if($name == 'oberkategorie') {
-			return get_post_meta($this->id, 'io_group_ok', true);
+			return get_post_meta($this->id, Group_Util::OBERKATEGORIE, true);
 		} else if($name == 'unterkategorie') {
-			return get_post_meta($this->id, 'io_group_uk', true);
+			return get_post_meta($this->id, Group_Util::UNTERKATEGORIE, true);
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {

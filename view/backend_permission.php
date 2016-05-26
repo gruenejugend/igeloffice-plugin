@@ -43,11 +43,11 @@ class backend_permission {
 	}
 	
 	public static function column($columns) {
-		return array_merge($columns, array('io_permission_ok' => 'Oberkategorie', 'io_permission_uk' => 'Unterkategorie'));
+		return array_merge($columns, array(Permission_Util::OBERKATEGORIE => 'Oberkategorie', Permission_Util::UNTERKATEGORIE => 'Unterkategorie'));
 	}
 	
 	public static function maskColumn($column, $post_id) {
-		if($column == 'io_permission_ok' || $column == 'io_permission_uk') {
+		if($column == Permission_Util::OBERKATEGORIE || $column == Permission_Util::UNTERKATEGORIE) {
 			echo get_post_meta($post_id, $column, true) != "" ? get_post_meta($post_id, $column, true) : "Nicht Kategorisiert";
 		}
 	}
@@ -55,7 +55,7 @@ class backend_permission {
 	public static function orderby($vars) {
 		if($vars['post_type'] == Permission_Util::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
-				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_permission_ok' : 'io_permission_uk',
+				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? Permission_Util::OBERKATEGORIE : Permission_Util::UNTERKATEGORIE,
 				'orderby'	=> 'meta_value'
 			));
 		}
@@ -88,10 +88,10 @@ class backend_permission {
 			<?php
 			$title = "Oberkategorie";
 			$values = $oberkategorien;
-			$name = "io_permission_ok";
+			$name = Permission_Util::OBERKATEGORIE;
 			$selected = array();
-			if(isset($_POST['io_permission_ok'])) {
-				$selected = $_POST['io_permission_ok'];
+			if(isset($_POST[Permission_Util::OBERKATEGORIE])) {
+				$selected = $_POST[Permission_Util::OBERKATEGORIE];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -100,10 +100,10 @@ class backend_permission {
 <?php			
 			$title = "Unterkategorie";
 			$values = $unterkategorien;
-			$name = "io_permission_uk";
+			$name = Permission_Util::UNTERKATEGORIE;
 			$selected = array();
-			if(isset($_POST['io_permission_uk'])) {
-				$selected = $_POST['io_permission_uk'];
+			if(isset($_POST[Permission_Util::UNTERKATEGORIE])) {
+				$selected = $_POST[Permission_Util::UNTERKATEGORIE];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>		</td>
@@ -114,7 +114,7 @@ class backend_permission {
 	}
 	
 	public static function filtering($query) {
-		$names = array('io_permission_ok', 'io_permission_uk');
+		$names = array(Permission_Util::OBERKATEGORIE, Permission_Util::UNTERKATEGORIE);
 		return io_filter($query, $names, Permission_Util::POST_TYPE);
 	}
 	

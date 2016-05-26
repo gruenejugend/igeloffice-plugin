@@ -20,7 +20,7 @@ class backend_auth {
 
 		$user_id = $user->ID;
 		
-		if(get_user_meta($user_id, "io_user_aktiv", true) != 1) {
+		if(get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1) {
 			return new WP_Error("user_inaktiv", "<strong>FEHLER:</strong> Dein Account wurde noch nicht aktiviert!");
 		}
 		

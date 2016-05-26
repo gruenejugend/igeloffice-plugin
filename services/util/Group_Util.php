@@ -13,4 +13,7 @@
  */
 class Group_Util {
 	const POST_TYPE = 'io_group';
+	
+	const OBERKATEGORIE = 'io_group_ok';
+	const UNTERKATEGORIE = 'io_group_uk';
 }

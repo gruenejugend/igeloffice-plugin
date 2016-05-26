@@ -1,5 +1,5 @@
 <table class="form-table">
-	<tr class="form-field form-required" id="io_user_art">
+	<tr class="form-field form-required" id="<?php echo User_Util::ATTRIBUT_ART; ?>">
 		<th scope="row"><label for="user_art">Nutzungsart <span class="description">(erforderlich)</span></label></th>
 		<td>
 			<input type="radio" name="user_art" id="user_art_user" value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>> Normale*r Benutzer*in<br>

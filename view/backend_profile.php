@@ -60,17 +60,17 @@ class backend_profile {
 					'meta_query'		=> array(
 						'relation'			=> 'AND',
 						array(
-							'key'				=> 'io_request_art',
+							'key'				=> Request_Util::ATTRIBUT_ART,
 							'value'				=> Request_User::art(),
 							'compare'			=> '='
 						),
 						array(
-							'key'				=> 'io_request_steller_in',
+							'key'				=> Request_Util::ATTRIBUT_STELLER_IN,
 							'value'				=> $user_id,
 							'compare'			=> '='
 						),
 						array(
-							'key'				=> 'io_request_status',
+							'key'				=> Request_Util::ATTRIBUT_STATUS,
 							'value'				=> 'Gestellt',
 							'compare'			=> '='
 						)
@@ -146,11 +146,11 @@ class backend_profile {
 	}
 	
 	public static function column($columns) {
-		return array_merge($columns, array("io_user_art" => "Art", "io_user_aktiv" => "Aktiv"));
+		return array_merge($columns, array(User_Util::ATTRIBUT_ART => "Art", User_Util::ATTRIBUT_AKTIV => "Aktiv"));
 	}
 	
 	public static function maskColumn($value, $column, $user_id) {
-		if($column == "io_user_art" || $column == "io_user_aktiv") {
+		if($column == User_Util::ATTRIBUT_ART || $column == User_Util::ATTRIBUT_AKTIV) {
 			return get_user_meta($user_id, $column, true);
 		}
 		return $value;
@@ -165,18 +165,18 @@ class backend_profile {
 		
 		if($query->query_vars['orderby'] == "Aktiv") {
 			$query->query_from .= " LEFT OUTER JOIN $wpdb->usermeta AS um ON $wpdb->users.ID = um.user_id ";
-			$query->query_where .= " AND um.meta_key = 'io_user_aktiv' AND um.meta_value = ".($query->query_vars["order"] == "ASC" ? "0 " : "1 ");
+			$query->query_where .= " AND um.meta_key = '" . User_Util::ATTRIBUT_AKTIV . "' AND um.meta_value = ".($query->query_vars["order"] == "ASC" ? "0 " : "1 ");
 			$query->query_orderby = " ORDER BY um.meta_value ".($query->query_vars["order"] == "ASC" ? "asc " : "desc ");
 		} else if($query->query_vars['orderby'] == "Art") {
 			$query->query_from .= " LEFT OUTER JOIN $wpdb->usermeta AS um ON $wpdb->users.ID = um.user_id ";
-			$query->query_where .= " AND um.meta_key = 'io_user_art' ";
+			$query->query_where .= " AND um.meta_key = '" . User_Util::ATTRIBUT_ART . "'";
 			$query->query_orderby = " ORDER BY um.meta_value ".($query->query_vars["order"] == "ASC" ? "asc " : "desc ");
 		}
 		return $query;
 	}
 	
 	public static function row($actions, $user) {
-		if(get_user_meta($user->ID, "io_user_aktiv", true) == 0) {
+		if(get_user_meta($user->ID, User_Util::ATTRIBUT_AKTIV, true) == 0) {
 			$hinweis = "";
 			if(str_replace("@gruene-jugend.de", "", $user->user_email) != $user->user_email) {
 				$hinweis = " <b>>>ACHTUNG! GJ-Adresse!<<</b>";
@@ -189,7 +189,7 @@ class backend_profile {
 	public static function menu() {
 		if(current_user_can('administrator')) {
 			$users = get_users(array(
-				'meta_key'		=> 'io_user_aktiv',
+				'meta_key'		=> User_Util::ATTRIBUT_AKTIV,
 				'meta_value'	=> 0
 			));
 			

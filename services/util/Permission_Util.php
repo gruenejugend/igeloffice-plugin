@@ -13,4 +13,7 @@
  */
 class Permission_Util {
 	const POST_TYPE = 'io_permission';
+	
+	const OBERKATEGORIE = 'io_permission_ok';
+	const UNTERKATEGORIE = 'io_permission_uk';
 }

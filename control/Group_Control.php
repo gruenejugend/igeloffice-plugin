@@ -22,11 +22,11 @@ class Group_Control {
 	
 	public static function createMeta($id, $name, $oberkategorie = null, $unterkategorie = null) {
 		if($oberkategorie) {
-			update_post_meta($id, 'io_group_ok', $oberkategorie);
+			update_post_meta($id, Group_Util::OBERKATEGORIE, $oberkategorie);
 		}
 		
 		if($unterkategorie) {
-			update_post_meta($id, 'io_group_uk', $unterkategorie);
+			update_post_meta($id, Group_Util::UNTERKATEGORIE, $unterkategorie);
 		}
 		
 		$ldapConnector = ldapConnector::get();
@@ -36,15 +36,15 @@ class Group_Control {
 	public static function update($id, $key, $value) {
 		if($key == 'oberkategorie') {
 			if($value) {
-				update_post_meta($id, 'io_group_ok', $value);
+				update_post_meta($id, Group_Util::OBERKATEGORIE, $value);
 			} else {
-				delete_post_meta($id, 'io_group_ok');
+				delete_post_meta($id, Group_Util::OBERKATEGORIE);
 			}
 		} else if($key == 'unterkategorie') {
 			if($value) {
-				update_post_meta($id, 'io_group_uk', $value);
+				update_post_meta($id, Group_Util::UNTERKATEGORIE, $value);
 			} else {
-				delete_post_meta($id, 'io_group_uk');
+				delete_post_meta($id, Group_Util::UNTERKATEGORIE);
 			}
 		}
 	}
@@ -95,8 +95,8 @@ INNER JOIN $wpdb->postmeta pm2
 ON pm1.post_id = pm2.post_id
 INNER JOIN $wpdb->posts p
 ON p.ID = pm1.post_id
-WHERE pm1.meta_key = 'io_group_ok'
-AND pm2.meta_key = 'io_group_uk'
+WHERE pm1.meta_key = '" . Group_Util::OBERKATEGORIE . "'
+AND pm2.meta_key = '" . Group_Util::UNTERKATEGORIE . "'
 AND p.post_status = 'publish'
 AND p.post_type = '" . Group_Util::POST_TYPE. "'");
 		
@@ -118,7 +118,7 @@ AND p.post_type = '" . Group_Util::POST_TYPE. "'");
 FROM $wpdb->postmeta pm1
 INNER JOIN $wpdb->posts p
 ON p.ID = pm1.post_id
-WHERE pm1.meta_key = 'io_group_ok'
+WHERE pm1.meta_key = '" . Group_Util::OBERKATEGORIE . "'
 AND p.post_status = 'publish'
 AND p.post_type = '" . Group_Util::POST_TYPE . "'
 " . $start . implode(" AND pm1.post_id <> ", $ids) . "

@@ -19,10 +19,10 @@
 			$(".user-last-name-wrap").hide();
 		}
 		
-		$(".user-user-login-wrap").after($("#io_user_art"));
+		$(".user-user-login-wrap").after($("#<?php echo User_Util::ATTRIBUT_ART; ?>"));
 <?php if($user->art == 'basisgruppe') {
 ?>
-		$("#io_user_art").after($("#io_landesverband"));
+		$("#<?php echo User_Util::ATTRIBUT_ART; ?>").after($("#io_landesverband"));
 <?php }
 ?>
 		$(".user-sessions-wrap.").after($("#io_groups"));

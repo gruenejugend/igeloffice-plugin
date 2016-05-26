@@ -21,13 +21,13 @@ class Request {
 			case 'name':
 				return $this->name;
 			case 'art':
-				return get_post_meta($this->id, "io_request_art", true);
+				return get_post_meta($this->id, Request_Util::ATTRIBUT_ART, true);
 			case 'steller_in':
-				return get_post_meta($this->id, "io_request_steller_in", true);
+				return get_post_meta($this->id, Request_Util::ATTRIBUT_STELLER_IN, true);
 			case 'status':
-				return get_post_meta($this->id, "io_request_status", true);
+				return get_post_meta($this->id, Request_Util::ATTRIBUT_STATUS, true);
 			case 'requested_id':
-				return get_post_meta($this->id, "io_request_requested_id", true);
+				return get_post_meta($this->id, Request_Util::ATTRIBUT_REQUESTED_ID, true);
 		}
 	}
 }

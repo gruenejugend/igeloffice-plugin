@@ -46,9 +46,9 @@ class backend_request {
 		if($request->status == "Gestellt") {
 			?>
 
-<input type="radio" name="io_request_status" value="annahme"> Antrag annehmen
+<input type="radio" name="<?php echo Request_Util::ATTRIBUT_STATUS; ?>" value="annahme"> Antrag annehmen
 <br><br><br>
-<input type="radio" name="io_request_status" value="ablehnung"> Antrag ablehnen
+<input type="radio" name="<?php echo Request_Util::ATTRIBUT_STATUS; ?>" value="ablehnung"> Antrag ablehnen
 
 <?php
 		} else {
@@ -60,7 +60,7 @@ class backend_request {
 		if( !isset($_POST['io_request_action_nonce']) || 
 			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') || 
 			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
-			empty($_POST['io_request_status'])) {
+			empty($_POST[Request_Util::ATTRIBUT_STATUS])) {
 			return;
 		}
 		
@@ -79,9 +79,9 @@ class backend_request {
 		}
 		
 		if($pruef) {
-			if($_POST['io_request_status'] == "annahme") {
+			if($_POST[Request_Util::ATTRIBUT_STATUS] == "annahme") {
 				Request_Control::approve($post_id);
-			} else if($_POST['io_request_status'] == "ablehnung") {
+			} else if($_POST[Request_Util::ATTRIBUT_STATUS] == "ablehnung") {
 				Request_Control::reject($post_id);
 			}
 		}
@@ -103,11 +103,11 @@ class backend_request {
 	}
 	
 	public static function column($columns) {
-		return array_merge($columns, array('io_request_status' => 'Status'));
+		return array_merge($columns, array(Request_Util::ATTRIBUT_STATUS => 'Status'));
 	}
 	
 	public static function maskColumn($column, $post_id) {
-		if($column == 'io_request_status') {
+		if($column == Request_Util::ATTRIBUT_STATUS) {
 			echo (new Request($post_id))->status;
 		}
 	}
@@ -115,7 +115,7 @@ class backend_request {
 	public static function orderby($vars) {
 		if($vars['post_type'] == Request_Util::POST_TYPE && $vars['orderby'] == 'Status') {
 			$vars = array_merge($vars, array(
-				'meta_key'	=> 'io_request_status',
+				'meta_key'	=> Request_Util::ATTRIBUT_STATUS,
 				'orderby'	=> 'meta_value'
 			));
 		}
@@ -135,10 +135,10 @@ class backend_request {
 			<?php
 			$title = "Arten";
 			$values = Request_Factory::getValues();
-			$name = "io_request_art";
+			$name = Request_Util::ATTRIBUT_ART;
 			$selected = array();
-			if(isset($_POST['io_request_art'])) {
-				$selected = $_POST['io_request_art'];
+			if(isset($_POST[Request_Util::ATTRIBUT_ART])) {
+				$selected = $_POST[Request_Util::ATTRIBUT_ART];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -147,10 +147,10 @@ class backend_request {
 <?php		
 			$title = "Status";
 			$values = array("Angenommen", "Abgelehnt", "Gestellt");
-			$name = "io_request_status";
+			$name = Request_Util::ATTRIBUT_STATUS;
 			$selected = array();
-			if(isset($_POST['io_request_status'])) {
-				$selected = $_POST['io_request_status'];
+			if(isset($_POST[Request_Util::ATTRIBUT_STATUS])) {
+				$selected = $_POST[Request_Util::ATTRIBUT_STATUS];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -159,10 +159,10 @@ class backend_request {
 <?php		
 			$title = "Gruppen";
 			$values = self::prepareOptions($groups);
-			$name = "io_request_requested_id_groups";
+			$name = Request_Util::ATTRIBUT_REQUESTED_ID . "_groups";
 			$selected = array();
-			if(isset($_POST['io_request_requested_id_groups'])) {
-				$selected = $_POST['io_request_requested_id_groups'];
+			if(isset($_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_groups'])) {
+				$selected = $_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_groups'];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -171,10 +171,10 @@ class backend_request {
 <?php		
 			$title = "Berechtigungen";
 			$values = self::prepareOptions($permissions);
-			$name = "io_request_requested_id_permissions";
+			$name = Request_Util::ATTRIBUT_REQUESTED_ID . "_permissions";
 			$selected = array();
-			if(isset($_POST['io_request_requested_id_permissions'])) {
-				$selected = $_POST['io_request_requested_id_permissions'];
+			if(isset($_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_permissions'])) {
+				$selected = $_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_permissions'];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -183,10 +183,10 @@ class backend_request {
 <?php		
 			$title = "Steller*in";
 			$values = self::prepareOptions($users, true);
-			$name = "io_request_steller_in";
+			$name = Request_Util::ATTRIBUT_STELLER_IN;
 			$selected = array();
-			if(isset($_POST['io_request_steller_in'])) {
-				$selected = $_POST['io_request_steller_in'];
+			if(isset($_POST[Request_Util::ATTRIBUT_STELLER_IN])) {
+				$selected = $_POST[Request_Util::ATTRIBUT_STELLER_IN];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -219,17 +219,17 @@ class backend_request {
 		if(current_user_can('administrator') && function_exists(get_current_screen)) {
 			$screen = get_current_screen();
 			if($screen->post_type == $posttype && $screen->id == "edit-" . $posttype && isset($_POST['filter_action'])) {
-				$_POST['io_request_requested_id'] = array();
+				$_POST[Request_Util::ATTRIBUT_REQUESTED_ID] = array();
 
-				foreach($_POST['io_request_requested_id_groups'] AS $group) {
-					$_POST['io_request_requested_id'][] = $group;
+				foreach($_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_groups'] AS $group) {
+					$_POST[Request_Util::ATTRIBUT_REQUESTED_ID][] = $group;
 				}
 
-				foreach($_POST['io_request_requested_id_permissions'] AS $permission) {
-					$_POST['io_request_requested_id'][] = $permission;
+				foreach($_POST[Request_Util::ATTRIBUT_REQUESTED_ID . '_permissions'] AS $permission) {
+					$_POST[Request_Util::ATTRIBUT_REQUESTED_ID][] = $permission;
 				}
 
-				$names = array('io_request_art', 'io_request_status', 'io_request_requested_id', 'io_request_steller_in');
+				$names = array(Request_Util::ATTRIBUT_ART, Request_Util::ATTRIBUT_STATUS, Request_Util::ATTRIBUT_REQUESTED_ID, Request_Util::ATTRIBUT_STELLER_IN);
 				return io_filter($query, $names, Request_Util::POST_TYPE);
 			}
 		}
@@ -246,7 +246,7 @@ class backend_request {
 				if(!empty($leadingGroups)) {
 					foreach($leadingGroups AS $group) {
 						$query->query_vars['meta_query'][] = array(
-							'key'		=> 'io_request_requested_id',
+							'key'		=> Request_Util::ATTRIBUT_REQUESTED_ID,
 							'value'		=> $group->id,
 							'compare'	=> '='
 						);

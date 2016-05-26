@@ -13,8 +13,8 @@
 		$(".form-field:eq(7)").prop("id", "io_role");
 		
 		$("#io_user_login").before($("#io_user_email"));
-		$("#io_user_email").after($("#io_user_art"));
-		$("#io_user_art").after($("#io_first_name"));
+		$("#io_user_email").after($("#<?php echo User_Util::ATTRIBUT_ART; ?>"));
+		$("#<?php echo User_Util::ATTRIBUT_ART; ?>").after($("#io_first_name"));
 		$("#io_first_name").after($("#io_last_name"));
 		$("#io_last_name").after($("#io_orga_name"));
 		$("#io_orga_name").after($("#io_ort"));

@@ -20,9 +20,9 @@ class test_group extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$group_ids[0]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Test5");
-		$this->assertEquals(get_post_meta(self::$group_ids[0], 'io_group_ok', true),	"TestOben1");
-		$this->assertEquals(get_post_meta(self::$group_ids[0], 'io_group_uk', true),	"TestUnten1");
+		$this->assertEquals($post->post_title,														"Test5");
+		$this->assertEquals(get_post_meta(self::$group_ids[0], Group_Util::OBERKATEGORIE, true),	"TestOben1");
+		$this->assertEquals(get_post_meta(self::$group_ids[0], Group_Util::UNTERKATEGORIE, true),	"TestUnten1");
 		
 		/*
 		 * Test Group 2
@@ -30,9 +30,9 @@ class test_group extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$group_ids[1]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Test6");
-		$this->assertEquals(get_post_meta(self::$group_ids[1], 'io_group_ok', true),	"TestOben1");
-		$this->assertEquals(get_post_meta(self::$group_ids[1], 'io_group_uk', true),	"TestUnten2");
+		$this->assertEquals($post->post_title,														"Test6");
+		$this->assertEquals(get_post_meta(self::$group_ids[1], Group_Util::OBERKATEGORIE, true),	"TestOben1");
+		$this->assertEquals(get_post_meta(self::$group_ids[1], Group_Util::UNTERKATEGORIE, true),	"TestUnten2");
 		
 		/*
 		 * Test Group 3
@@ -40,9 +40,9 @@ class test_group extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$group_ids[2]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Test7");
-		$this->assertEquals(get_post_meta(self::$group_ids[2], 'io_group_ok', true),	"TestOben2");
-		$this->assertEquals(get_post_meta(self::$group_ids[2], 'io_group_uk', true),	"TestUnten3");
+		$this->assertEquals($post->post_title,														"Test7");
+		$this->assertEquals(get_post_meta(self::$group_ids[2], Group_Util::OBERKATEGORIE, true),	"TestOben2");
+		$this->assertEquals(get_post_meta(self::$group_ids[2], Group_Util::UNTERKATEGORIE, true),	"TestUnten3");
 		
 		/*
 		 * Test Group 4
@@ -50,16 +50,16 @@ class test_group extends PHPUnit_Framework_TestCase {
 		$post = get_post(self::$group_ids[3]);
 		
 		$this->assertNotNull($post);
-		$this->assertEquals($post->post_title,											"Test8");
-		$this->assertEquals(get_post_meta(self::$group_ids[3], 'io_group_ok', true),	"TestOben3");
-		$this->assertEquals('', get_post_meta(self::$group_ids[3], 'io_group_uk', true));
+		$this->assertEquals($post->post_title,														"Test8");
+		$this->assertEquals(get_post_meta(self::$group_ids[3], Group_Util::OBERKATEGORIE, true),	"TestOben3");
+		$this->assertEquals('', get_post_meta(self::$group_ids[3], Group_Util::UNTERKATEGORIE, true));
 	}
 	
 	public function test_control_update() {
-		Group_Control::update(self::$group_ids[0], "oberkategorie",		"TestOben2");
-		Group_Control::update(self::$group_ids[0], "unterkategorie",	"TestUnten3");
-		$this->assertEquals(get_post_meta(self::$group_ids[0], 'io_group_ok', true),	"TestOben2");
-		$this->assertEquals(get_post_meta(self::$group_ids[0], 'io_group_uk', true),	"TestUnten3");
+		Group_Control::update(self::$group_ids[0], "oberkategorie",									"TestOben2");
+		Group_Control::update(self::$group_ids[0], "unterkategorie",								"TestUnten3");
+		$this->assertEquals(get_post_meta(self::$group_ids[0], Group_Util::OBERKATEGORIE, true),	"TestOben2");
+		$this->assertEquals(get_post_meta(self::$group_ids[0], Group_Util::UNTERKATEGORIE, true),	"TestUnten3");
 	}
 	
 	public function test_model() {

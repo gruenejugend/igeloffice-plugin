@@ -27,11 +27,11 @@ class User {
 	
 	public function __get($name) {
 		if($name == 'art') {
-			return get_user_meta($this->ID, "io_user_art", true);
+			return get_user_meta($this->ID, User_Util::ATTRIBUT_ART, true);
 		} else if($name == 'aktiv') {
-			return get_user_meta($this->ID, "io_user_aktiv", true);
+			return get_user_meta($this->ID, User_Util::ATTRIBUT_AKTIV, true);
 		} else if($name == 'landesverband') {
-			return get_user_meta($this->ID, "io_user_lv", true);
+			return get_user_meta($this->ID, User_Util::ATTRIBUT_LANDESVERBAND, true);
 		} else if($name == 'permissions') {
 			$ldapConnector = ldapConnector::get();
 			$this->permissions = array();

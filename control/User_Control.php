@@ -85,14 +85,14 @@ class User_Control {
 				return;
 			}
 			
-			update_user_meta($user_id, "io_user_art", sanitize_text_field($_POST['user_art']));
-			update_user_meta($user_id, "io_user_aktiv", 0);
+			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST['user_art']));
+			update_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, 0);
 			
 			if($_POST['user_art'] == User_Util::USER_ART_USER) {
 				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
 				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
 			} elseif($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE) {
-				update_user_meta($user_id, "io_user_lv", sanitize_text_field($_POST['land']));
+				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
 			}
 			
 			if(LDAP_Proxy::isLDAPUser(get_userdata($user_id)->user_login, get_userdata($user_id)->user_email) === true) {
@@ -114,7 +114,7 @@ class User_Control {
 	}
 	
 	public static function aktivieren($id, $add = true) {
-		update_user_meta($id, 'io_user_aktiv', 1);
+		update_user_meta($id, User_Util::ATTRIBUT_AKTIV, 1);
 		$user = get_userdata($id);
 		$sendmail = false;
 		if($add && !LDAP_Proxy::isLDAPUser($user->user_login)) {
@@ -287,7 +287,7 @@ class User_Control {
 	
 	public static function getValues() {
 		$query = new WP_User_Query(array(
-			'meta_key'		=> 'io_user_aktiv',
+			'meta_key'		=> User_Util::ATTRIBUT_AKTIV,
 			'meta_value'	=> '1'
 		));
 		
@@ -295,7 +295,7 @@ class User_Control {
 		$users = $query->get_results();
 		if(!empty($users)) {
 			foreach($users AS $user) {
-				$values[ucfirst(get_user_meta($user->ID, "io_user_art", true))][] = $user->ID;
+				$values[ucfirst(get_user_meta($user->ID, User_Util::ATTRIBUT_ART, true))][] = $user->ID;
 			}
 		}
 		

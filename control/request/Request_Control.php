@@ -28,12 +28,12 @@ class Request_Control {
 	}
 	
 	public static function createMeta($id, $request, $user_id, $requested_id) {
-		update_post_meta($id, "io_request_art",					$request->getArt());
-		update_post_meta($id, "io_request_steller_in",			$user_id);
+		update_post_meta($id, Request_Util::ATTRIBUT_ART,				$request->getArt());
+		update_post_meta($id, Request_Util::ATTRIBUT_STELLER_IN,		$user_id);
 		if($requested_id) {
-			update_post_meta($id, "io_request_requested_id",	$requested_id);
+			update_post_meta($id, Request_Util::ATTRIBUT_REQUESTED_ID,	$requested_id);
 		}
-		update_post_meta($id, "io_request_status",				"Gestellt");
+		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,			"Gestellt");
 	}
 	
 	private static function createTitle($request, $user_id, $requested_id) {
@@ -46,15 +46,15 @@ class Request_Control {
 			'meta_query'		=> array(
 				'relation'			=> 'AND',
 				array(
-					'key'				=> 'io_request_art',
+					'key'				=> Request_Util::ATTRIBUT_ART,
 					'value'				=> $request->getArt()
 				),
 				array(
-					'key'				=> 'io_request_steller_in',
+					'key'				=> Request_Util::ATTRIBUT_STELLER_IN,
 					'value'				=> $user_id
 				),
 				array(
-					'key'				=> 'io_request_status',
+					'key'				=> Request_Util::ATTRIBUT_STATUS,
 					'value'				=> 'Gestellt'
 				)
 			)
@@ -62,7 +62,7 @@ class Request_Control {
 		
 		if($requested_id) {
 			$args['meta_query'][3] = array(
-				'key'				=> 'io_request_requested_id',
+				'key'				=> Request_Util::ATTRIBUT_REQUESTED_ID,
 				'value'				=> $requested_id
 			);
 		}
@@ -83,7 +83,7 @@ class Request_Control {
 			'posts_per_page'		=> -1,
 			'meta_query'			=> array(
 				array(
-					'key' => 'io_request_status',
+					'key' => Request_Util::ATTRIBUT_STATUS,
 					'value' => "Gestellt"
 				)
 			)
@@ -91,12 +91,12 @@ class Request_Control {
 	}
 	
 	public static function approve($id) {
-		Request_Factory::getRequest(get_post_meta($id, "io_request_art", true), $id)->approve($id);
-		update_post_meta($id, "io_request_status",				"Angenommen");
+		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->approve($id);
+		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Angenommen");
 	}
 	
 	public static function reject($id) {
-		Request_Factory::getRequest(get_post_meta($id, "io_request_art", true), $id)->reject($id);
-		update_post_meta($id, "io_request_status",				"Abgelehnt");
+		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->reject($id);
+		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Abgelehnt");
 	}
 }

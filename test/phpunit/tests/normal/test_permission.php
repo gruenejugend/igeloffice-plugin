@@ -21,8 +21,8 @@ class test_permission extends PHPUnit_Framework_TestCase {
 		
 		$this->assertNotNull($post);
 		$this->assertEquals($post->post_title,													"Test1");
-		$this->assertEquals(get_post_meta(self::$permission_ids[0], 'io_permission_ok', true),	"TestOben1");
-		$this->assertEquals(get_post_meta(self::$permission_ids[0], 'io_permission_uk', true),	"TestUnten1");
+		$this->assertEquals(get_post_meta(self::$permission_ids[0], Permission_Util::OBERKATEGORIE, true),	"TestOben1");
+		$this->assertEquals(get_post_meta(self::$permission_ids[0], Permission_Util::UNTERKATEGORIE, true),	"TestUnten1");
 		
 		/*
 		 * Test Permission 2
@@ -31,8 +31,8 @@ class test_permission extends PHPUnit_Framework_TestCase {
 		
 		$this->assertNotNull($post);
 		$this->assertEquals($post->post_title,													"Test2");
-		$this->assertEquals(get_post_meta(self::$permission_ids[1], 'io_permission_ok', true),	"TestOben1");
-		$this->assertEquals(get_post_meta(self::$permission_ids[1], 'io_permission_uk', true),	"TestUnten2");
+		$this->assertEquals(get_post_meta(self::$permission_ids[1], Permission_Util::OBERKATEGORIE, true),	"TestOben1");
+		$this->assertEquals(get_post_meta(self::$permission_ids[1], Permission_Util::UNTERKATEGORIE, true),	"TestUnten2");
 		
 		/*
 		 * Test Permission 3
@@ -41,8 +41,8 @@ class test_permission extends PHPUnit_Framework_TestCase {
 		
 		$this->assertNotNull($post);
 		$this->assertEquals($post->post_title,													"Test3");
-		$this->assertEquals(get_post_meta(self::$permission_ids[2], 'io_permission_ok', true),	"TestOben2");
-		$this->assertEquals(get_post_meta(self::$permission_ids[2], 'io_permission_uk', true),	"TestUnten3");
+		$this->assertEquals(get_post_meta(self::$permission_ids[2], Permission_Util::OBERKATEGORIE, true),	"TestOben2");
+		$this->assertEquals(get_post_meta(self::$permission_ids[2], Permission_Util::UNTERKATEGORIE, true),	"TestUnten3");
 		
 		/*
 		 * Test Permission 4
@@ -51,15 +51,15 @@ class test_permission extends PHPUnit_Framework_TestCase {
 		
 		$this->assertNotNull($post);
 		$this->assertEquals($post->post_title,													"Test4");
-		$this->assertEquals(get_post_meta(self::$permission_ids[3], 'io_permission_ok', true),	"TestOben3");
-		$this->assertEquals('', get_post_meta(self::$permission_ids[3], 'io_permission_uk', true));
+		$this->assertEquals(get_post_meta(self::$permission_ids[3], Permission_Util::OBERKATEGORIE, true),	"TestOben3");
+		$this->assertEquals('', get_post_meta(self::$permission_ids[3], Permission_Util::UNTERKATEGORIE, true));
 	}
 	
 	public function test_control_update() {
 		Permission_Control::update(self::$permission_ids[0], "oberkategorie",	"TestOben2");
 		Permission_Control::update(self::$permission_ids[0], "unterkategorie",	"TestUnten3");
-		$this->assertEquals(get_post_meta(self::$permission_ids[0], 'io_permission_ok', true),	"TestOben2");
-		$this->assertEquals(get_post_meta(self::$permission_ids[0], 'io_permission_uk', true),	"TestUnten3");
+		$this->assertEquals(get_post_meta(self::$permission_ids[0], Permission_Util::OBERKATEGORIE, true),	"TestOben2");
+		$this->assertEquals(get_post_meta(self::$permission_ids[0], Permission_Util::UNTERKATEGORIE, true),	"TestUnten3");
 	}
 	
 	public function test_model() {

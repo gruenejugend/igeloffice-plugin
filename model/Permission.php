@@ -26,9 +26,9 @@ class Permission {
 		} else if($name == 'name') {
 			return $this->name;
 		} else if($name == 'oberkategorie') {
-			return get_post_meta($this->id, 'io_permission_ok', true);
+			return get_post_meta($this->id, Permission_Util::OBERKATEGORIE, true);
 		} else if($name == 'unterkategorie') {
-			return get_post_meta($this->id, 'io_permission_uk', true);
+			return get_post_meta($this->id, Permission_Util::UNTERKATEGORIE, true);
 		} else {
 			$ldapConnector = ldapConnector::get();
 			

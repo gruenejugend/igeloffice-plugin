@@ -89,11 +89,11 @@ class backend_groups {
 	}
 	
 	public static function column($columns) {
-		return array_merge($columns, array('io_group_ok' => 'Oberkategorie', 'io_group_uk' => 'Unterkategorie'));
+		return array_merge($columns, array(Group_Util::OBERKATEGORIE => 'Oberkategorie', Group_Util::UNTERKATEGORIE => 'Unterkategorie'));
 	}
 	
 	public static function maskColumn($column, $post_id) {
-		if($column == 'io_group_ok' || $column == 'io_group_uk') {
+		if($column == Group_Util::OBERKATEGORIE || $column == Group_Util::UNTERKATEGORIE) {
 			echo get_post_meta($post_id, $column, true) != "" ? get_post_meta($post_id, $column, true) : "Nicht Kategorisiert";
 		}
 	}
@@ -101,7 +101,7 @@ class backend_groups {
 	public static function orderby($vars) {
 		if($vars['post_type'] == Group_Util::POST_TYPE && ($vars['orderby'] == 'Oberkategorie' || $vars['orderby'] == 'Unterkategorie')) {
 			$vars = array_merge($vars, array(
-				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? 'io_group_ok' : 'io_group_uk',
+				'meta_key'	=> $vars['orderby'] == 'Oberkategorie' ? Group_Util::OBERKATEGORIE : Group_Util::UNTERKATEGORIE,
 				'orderby'	=> 'meta_value'
 			));
 		}
@@ -128,10 +128,10 @@ class backend_groups {
 			<?php
 			$title = "Oberkategorie";
 			$values = $oberkategorien;
-			$name = "io_group_ok";
+			$name = Group_Util::OBERKATEGORIE;
 			$selected = array();
-			if(isset($_POST['io_group_ok'])) {
-				$selected = $_POST['io_group_ok'];
+			if(isset($_POST[Group_Util::OBERKATEGORIE])) {
+				$selected = $_POST[Group_Util::OBERKATEGORIE];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
@@ -140,10 +140,10 @@ class backend_groups {
 <?php			
 			$title = "Unterkategorie";
 			$values = $unterkategorien;
-			$name = "io_group_uk";
+			$name = Group_Util::UNTERKATEGORIE;
 			$selected = array();
-			if(isset($_POST['io_group_uk'])) {
-				$selected = $_POST['io_group_uk'];
+			if(isset($_POST[Group_Util::UNTERKATEGORIE])) {
+				$selected = $_POST[Group_Util::UNTERKATEGORIE];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>		</td>
@@ -154,7 +154,7 @@ class backend_groups {
 	}
 	
 	public static function filtering($query) {
-		$names = array('io_group_ok', 'io_group_uk');
+		$names = array(Group_Util::OBERKATEGORIE, Group_Util::UNTERKATEGORIE);
 		return io_filter($query, $names, Group_Util::POST_TYPE);
 	}
 	
