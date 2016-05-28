@@ -10,13 +10,13 @@
 		<tr>
 			<td width="30%"><b>Was willst du tun:</b></td>
 			<td width="70%">
-				<input type="radio" name="newsletter_art" value="l"> L&ouml;schen<br>
-				<input type="radio" name="newsletter_art" value="a"> &Auml;ndern<br>
-				<input type="radio" name="newsletter_art" value="e"> Wieder eintragen (nur f&uuml;r Mitglieder)
+				<input type="radio" id="newsletter_art_l" name="newsletter_art" value="l">&nbsp;&nbsp;<label for="newsletter_art_l">L&ouml;schen</label><br>
+				<input type="radio" id="newsletter_art_a" name="newsletter_art" value="a">&nbsp;&nbsp;<label for="newsletter_art_a">&Auml;ndern</label><br>
+				<input type="radio" id="newsletter_art_e" name="newsletter_art" value="e">&nbsp;&nbsp;<label for="newsletter_art_e">Wieder eintragen (nur f&uuml;r Mitglieder)</label>
 			</td>
 		</tr>
 		<tr>
-			<td width="30%"><b>L&ouml;se bitte folgende Aufgabe:</b> <?php echo $aufgabe; ?></td>
+			<td width="30%"><b>L&ouml;se bitte folgende Aufgabe:</b><br><br><?php echo $aufgabe; ?></td>
 			<td width="70%"><input type="number" name="newsletter_aufgabe" size="10"></td>
 		</tr>
 		<tr>
