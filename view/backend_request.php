@@ -6,15 +6,22 @@
  * @author KWM
  */
 class backend_request {
-	public static function maskHandler() {
+	public static function maskHandler($post_type, $post) {
 		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "maskInfo"), Request_Util::POST_TYPE, "normal", "default");
 		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "maskAction"), Request_Util::POST_TYPE, "normal", "default");
+
+		$request = new Request($post->ID);
+		if(current_user_can('administrator') && $request->status == "Gestellt") {
+			add_meta_box("io_request_message_mb", "Antwort", array("backend_request", "maskMessage"), Request_Util::POST_TYPE, "normal", "default");
+		}
 	}
 	
 	public static function maskInfo($post) {
 		$request = new Request($post->ID);
 		$request_art = Request_Factory::getRequest($request->art, $post->ID);
-		
+
+		$user = new User($request->steller_in);
+
 		?>
 
 <table border="0" cellpadding="5" cellspacing="0" width="100%">
@@ -24,7 +31,7 @@ class backend_request {
 	</tr>
 	<tr>
 		<td width="40%">Steller*in:</td>
-		<td width="60%"><b><?php echo $request->steller_in; ?></b></td>
+		<td width="60%"><b><?php echo $user->user_login; ?></b></td>
 	</tr>
 	<tr>
 		<td width="40%">F&uuml;r:</td>
@@ -56,6 +63,19 @@ class backend_request {
 		}
 	}
 	
+	public static function maskMessage($post) {
+		$request = new Request($post->ID);
+		wp_nonce_field('io_request_message', 'io_request_message_nonce');
+		
+		?>
+		
+		Nachricht an den*die Antragssteller*in:<br>
+		
+		<textarea name="<?php echo Request_Util::ATTRIBUT_MESSAGE; ?>" cols="80" rows="10"></textarea>
+		
+		<?php
+	}
+	
 	public static function maskSave($post_id) {
 		if( !isset($_POST['io_request_action_nonce']) || 
 			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') || 
@@ -63,7 +83,14 @@ class backend_request {
 			empty($_POST[Request_Util::ATTRIBUT_STATUS])) {
 			return;
 		}
-		
+
+		if( !isset($_POST['io_request_message_nonce']) ||
+			!wp_verify_nonce($_POST['io_request_message_nonce'], 'io_request_message') ||
+			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
+			empty($_POST[Request_Util::ATTRIBUT_STATUS])) {
+			return;
+		}
+
 		$request = new Request($post_id);
 		$pruef = false;
 		if(current_user_can('administrator')) {
@@ -84,6 +111,18 @@ class backend_request {
 			} else if($_POST[Request_Util::ATTRIBUT_STATUS] == "ablehnung") {
 				Request_Control::reject($post_id);
 			}
+		}
+
+		if(current_user_can('administrator') && $request->status == "Gestellt" && $_POST[Request_Util::ATTRIBUT_MESSAGE] != null && $_POST[Request_Util::ATTRIBUT_MESSAGE] != "") {
+			$user = new User($request->steller_in);
+
+			if($request == "User-Aktivierung") {
+				$subject = "Eine Nachricht zu deiner Registration im IGELoffice";
+			} else {
+				$subject = "Eine Nachricht zu deinem Antrag im IGELoffice";
+			}
+
+			wp_mail($user->wp_user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
 		}
 	}
 	

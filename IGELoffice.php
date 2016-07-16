@@ -113,7 +113,7 @@
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
 	
-	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'));
+	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'), 10, 2);
 	add_action('save_post',															array('backend_request', 'maskSave'));
 	add_filter('manage_' .Request_Util::POST_TYPE. '_posts_columns',				array('backend_request', 'column'), 10, 2);
 	add_filter('manage_' .Request_Util::POST_TYPE. '_posts_custom_column',			array('backend_request', 'maskColumn'), 10, 2);

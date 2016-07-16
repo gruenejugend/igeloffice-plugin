@@ -18,4 +18,5 @@ class Request_Util {
 	const ATTRIBUT_STELLER_IN = "io_request_steller_in";
 	const ATTRIBUT_STATUS = "io_request_status";
 	const ATTRIBUT_REQUESTED_ID = "io_request_requested_id";
+	const ATTRIBUT_MESSAGE = "io_request_message";
 }
