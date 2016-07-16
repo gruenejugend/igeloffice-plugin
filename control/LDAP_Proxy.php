@@ -127,8 +127,9 @@ final class LDAP_Proxy {
 		
 		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(mail=" . $mail . ")", array("givenName", "cn"));
 		
+		$pruef = $search && ldap_count_entries($res, $search) > 0;
 		self::logout($res);
-		return $search && ldap_count_entries($res, $search) > 0;
+		return $pruef;
 	}
 	
 	public static final function setSherpaMemberCode($mail, $art) {
@@ -198,18 +199,19 @@ final class LDAP_Proxy {
 		if(!empty($entries[0]["o"][0])) {
 			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
 		}
-		self::logout($res);
 		return array($res, $dn);
 	}
 	
 	public static final function setSherpaLoeschen($key) {
 		$args = self::setSherpa($key);
 		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "N"));
+		self::logout($args[0]);
 	}
 	
 	public static final function setSherpaEintragen($key) {
 		$args = self::setSherpa($key);
 		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "J"));
+		self::logout($args[0]);
 	}
 	
 	public static final function setSherpaChange($key, $alt, $neu) {
@@ -251,7 +253,7 @@ final class LDAP_Proxy {
 	public static final function setSherpaChangeFinal($key) {
 		$res = self::login();
 		
-		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("description", "qmailgid", "o", "mail", "mailAlternateAddress"));
+		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("description", "qmailgid", "o", "mail", "mailAlternateAddress", "mailReplyText"));
 		$entries = ldap_get_entries($res, $search);
 		
 		$dn = $entries[0]["dn"];
@@ -271,6 +273,10 @@ final class LDAP_Proxy {
 		if(!empty($entries[0]["mailalternateaddress"][0])) {
 			ldap_mod_del($res, $dn, array("mailAlternateAddress" => $entries[0]["mailalternateaddress"][0]));
 		}
+		if(!empty($entries[0]["mailreplytext"][0])) {
+			ldap_mod_del($res, $dn, array("mailReplyText" => $entries[0]["mailreplytext"][0]));
+		}
+		ldap_mod_add($res, $dn, array("mailReplyText" => "J"));
 		
 		self::logout($res);
 	}
