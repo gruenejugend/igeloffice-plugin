@@ -14,6 +14,7 @@ class Group {
 	private $users = array();
 	private $groups = array();
 	private $permissions = array();
+	private $sichtbarkeit = array();
 	
 	public function __construct($id) {
 		$this->id = $id;
@@ -37,6 +38,8 @@ class Group {
 			return get_post_meta($this->id, Group_Util::OBERKATEGORIE, true);
 		} else if($name == 'unterkategorie') {
 			return get_post_meta($this->id, Group_Util::UNTERKATEGORIE, true);
+		} else if($name == 'sichtbarkeit') {
+			return unserialize(get_post_meta($this->id, "io_group_sichtbarkeit", true));
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {

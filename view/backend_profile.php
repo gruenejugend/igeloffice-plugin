@@ -18,7 +18,7 @@ class backend_profile {
 		$user = new User($wp_user->ID);
 		
 		$permissions = Permission_Control::getValues();
-		$groups = Group_Control::getValues();
+		$groups = Group_Control::getValues(true);
 		
 		$permissions_values = io_get_ids($user->permissions, true);
 		$groups_values = io_get_ids($user->groups, true);

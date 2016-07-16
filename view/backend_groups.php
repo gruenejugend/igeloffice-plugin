@@ -21,6 +21,7 @@ class backend_groups {
 			add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Util::POST_TYPE, "normal", "default");
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
 			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_sichtbarkeit_mb", "Sichtbarkeit für Anträge", array("backend_groups", "metaSichtbarkeit"), Group_Util::POST_TYPE, "normal", "default");
 		} else if($pruef) {
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
@@ -86,6 +87,16 @@ class backend_groups {
 			$permissions = io_get_ids($group->permissions, true);
 		}
 		include '../wp-content/plugins/igeloffice/templates/backend/groupPermission.php';
+	}
+
+	public static function metaSichtbarkeit($post) {
+		wp_nonce_field('io_groups_sichtbarkeit', 'io_groups_sichtbarkeit_nonce');
+
+		$group = new Group($post->ID);
+
+		$sichtbarkeit = $group->sichtbarkeit;
+
+		include '../wp-content/plugins/igeloffice/templates/backend/groupSichtbarkeit.php';
 	}
 	
 	public static function column($columns) {
@@ -197,6 +208,12 @@ class backend_groups {
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
+
+			if( !isset($_POST['io_groups_sichtbarkeit_nonce']) ||
+				!wp_verify_nonce($_POST['io_groups_sichtbarkeit_nonce'], 'io_groups_sichtbarkeit') ||
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
 			
 			if(get_post_meta($post_id, "io_group_aktiv", true) != 1) {
 				update_post_meta($post_id, "io_group_aktiv", 1);
@@ -211,6 +228,11 @@ class backend_groups {
 			io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
 			io_add_del($_POST['groups'], $group->groups, $post_id, "Group_Control", "Group");
 			io_add_del($_POST['permissions'], $group->permissions, $post_id, "Group_Control", "Permission");
+
+			if(isset($_POST['sichtbarkeit'])) {
+				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['sichtbarkeit']);
+				update_post_meta($post_id, "io_group_sichtbarkeit", serialize($user_arten_save));
+			}
 		} else {
 			if( !isset($_POST['io_groups_leader_member_nonce']) || 
 				!wp_verify_nonce($_POST['io_groups_leader_member_nonce'], 'io_groups_leader_member') || 
@@ -289,6 +311,39 @@ class backend_groups {
 				set_transient("failed_user", $fail, 1);
 			}
 		}
+	}
+
+	public function userArtenChange($user_arten, $post) {
+		$user_arten_save = $user_arten;
+
+		function save_userArt($user_arten, $check, $key, $key_2 = null) {
+			if($key_2 == null) {
+				if(!in_array($key, $check)) {
+					unset($user_arten[$key]);
+				}
+			} else {
+				if(!in_array($key . "_" . $key_2, $check)) {
+					unset($user_arten[$key][$key_2]);
+				}
+
+				if(count($user_arten[$key]) == 0) {
+					unset($user_arten[$key]);
+				}
+			}
+			return $user_arten;
+		}
+
+		foreach ($user_arten AS $key => $user_art) {
+			if (is_array($user_art)) {
+				foreach ($user_art AS $key_2 => $user_art_2) {
+					$user_arten_save = save_userArt($user_arten_save, $post, $key, $key_2);
+				}
+			} else {
+				$user_arten_save = save_userArt($user_arten_save, $post, $key);
+			}
+		}
+
+		return $user_arten_save;
 	}
 					
 	public function userAddedLeaderUserMsg() {
