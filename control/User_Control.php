@@ -84,7 +84,7 @@ class User_Control {
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
-			
+
 			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST['user_art']));
 			update_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, 0);
 			
@@ -95,13 +95,28 @@ class User_Control {
 				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
 			}
 			
-			if(LDAP_Proxy::isLDAPUser(get_userdata($user_id)->user_login, get_userdata($user_id)->user_email) === true) {
-				User_Control::aktivieren($user_id, false);
-			} else if($_POST['user_art'] == User_Util::USER_ART_USER && LDAP_Proxy::isMember(sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['last_name']), sanitize_text_field($_POST['user_email']))) {
-				User_Control::aktivieren($user_id);
-			} else {
+			do_action("io_user_register", $user_id);
+
+			if(get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1) {
 				Request_Control::create($user_id, "User");
 			}
+		}
+	}
+
+	public static function inLDAP($user_id) {
+		$user = get_userdata($user_id);
+		if( get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1 &&
+			LDAP_Proxy::isLDAPUser($user->user_login, $user->user_email) === true) {
+			User_Control::aktivieren($user_id, false);
+		}
+	}
+
+	public static function inSherpa($user_id) {
+		$user = get_userdata($user_id);
+		if( get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1 &&
+			get_user_meta($user_id, User_Util::ATTRIBUT_ART, true) == User_Util::USER_ART_USER &&
+			LDAP_Proxy::isMember($user->first_name, $user->last_name, $user->user_email)) {
+			User_Control::aktivieren($user_id);
 		}
 	}
 	

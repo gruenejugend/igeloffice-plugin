@@ -58,6 +58,8 @@
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
     add_filter('registration_errors',												array('frontend_register', 'errorHandler'), 10, 3);
 	add_action('user_register',														array('User_Control', 'createMeta'));
+	add_action('io_user_register',													array('User_Control', 'inLDAP', 10, 1));
+	add_action('io_user_register',													array('User_Control', 'inSherpa', 20, 1));
 	add_action('user_register',														array('backend_register', 'maskExecution'));
 	add_filter('wp_login_errors',													array('backend_register', 'registerMsg'), 10, 2);
 	add_filter('login_message',														'io_toLoginMsg', 5, 2);
