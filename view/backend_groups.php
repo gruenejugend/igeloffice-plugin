@@ -258,18 +258,29 @@ class backend_groups {
 			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST['remember']) && $_POST['remember'] != "") {
 				$remembers = explode(", ", $_POST['remember']);
 				$remembers_save = $remembers;
+				$failed_adress = array();
+				$failes_user = array();
 				foreach ($remembers AS $key => $remember) {
 					if (!filter_var($remember, FILTER_VALIDATE_EMAIL)) {
-						set_transient("remember_failed_address", $remember, 3);
+						$failed_adress[] = $remember;
 						unset($remembers_save[$key]);
 						continue;
 					} elseif (get_user_by_email($remember) != false) {
-						set_transient("remember_failed_user", get_user_by_email($remember), 3);
+						$failes_user[] = get_user_by_email($remember);
 						unset($remembers_save[$key]);
 						continue;
 					}
 					$remembers_save[$key] = sanitize_text_field($remember);
 				}
+
+				if (count($failed_adress) != 0) {
+					set_transient("remember_failed_address", $failed_adress, 3);
+				}
+
+				if (count($failes_user) != 0) {
+					set_transient("remember_failed_user", $failes_user, 3);
+				}
+
 				update_post_meta($post_id, "io_group_remember", serialize($remembers_save));
 			}
 		} else {

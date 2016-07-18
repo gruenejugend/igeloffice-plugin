@@ -59,9 +59,10 @@ require_once 'control/Remember_Control.php';
 	add_action('user_new_form',														array('backend_register', 'maskHandler'));
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
     add_filter('registration_errors',												array('frontend_register', 'errorHandler'), 10, 3);
+add_action('io_user_register', array('User_Control', 'inLDAP'), 10, 1);
+add_action('io_user_register', array('User_Control', 'inSherpa'), 20, 1);
+add_action('io_user_register', array('Remember_Control', 'register'), 30, 1);
 	add_action('user_register',														array('User_Control', 'createMeta'));
-	add_action('io_user_register',													array('User_Control', 'inLDAP', 10, 1));
-	add_action('io_user_register',													array('User_Control', 'inSherpa', 20, 1));
 	add_action('user_register',														array('backend_register', 'maskExecution'));
 	add_filter('wp_login_errors',													array('backend_register', 'registerMsg'), 10, 2);
 	add_filter('login_message',														'io_toLoginMsg', 5, 2);
@@ -79,13 +80,13 @@ require_once 'control/Remember_Control.php';
 	add_action('admin_notices',														array('backend_profile', 'msg_request_permission_start'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_fail'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_start'));
+add_action('admin_notices', array('Remember_Control', 'unremember'));
+add_action('admin_notices', array('Remember_Control', 'unremember_final'));
 add_action('admin_notices', array('Remember_Control', 'msg_remember_profil'));
 add_action('admin_notices', array('Remember_Control', 'msg_remember_profil_final'));
-	
+
 	add_action('show_user_profile',													array('backend_profile', 'maskHandler'));
 	add_action('edit_user_profile',													array('backend_profile', 'maskHandler'));
-add_action('edit_user_profile', array('Remember_Control', 'unremember'));
-add_action('edit_user_profile', array('Remember_Control', 'unremember_final'));
 	add_action('profile_update',													array('backend_profile', 'maskExecution'), 10, 2);
 	add_action('user_profile_update_errors',										'io_mailErrorMsg', 10, 3);
 	

@@ -123,41 +123,50 @@ class Remember_Control
         }
     }
 
-    public static function unremember($wp_user)
+    public static function unremember()
     {
-        $mail = sanitize_text_field($_GET['rm']);
-        $mails = self::get_remembers();
+        if (!empty($_GET['rm'])) {
+            $wp_user = get_userdata(get_current_user_id());
+            $mail = str_replace("%40", "@", sanitize_text_field($_GET['rm']));
+            $mails = self::get_remembers();
 
-        if (in_array($mail, $mails)) {
-            $key = wp_generate_password(12, false, false);
-            $save = array($key, $mail);
-            update_user_meta($wp_user->ID, "io_remember_key", serialize($save));
-            $profilUrl = "https://account.gruene-jugend.de/wp-admin/profile.php?rmf=" . $mail . "&rmk=" . $key;
+            if (in_array($mail, $mails)) {
+                $key = wp_generate_password(12, false, false);
+                $save = array($key, $mail);
+                update_user_meta($wp_user->ID, "io_remember_key", serialize($save));
+                $profilUrl = "https://igeloffice-dev.gruene-jugend.de/wp-admin/index.php?rmf=" . $mail . "&rmk=" . $key;
 
-            $message = "Hallo,<br><br>
-Für deine Mail-Adresse wurde angegeben, dass Sie einem*einer Benutzer*in Namens " . $wp_user->user_login . " zugehörig ist.<br><br>
-Diese Zuordnung muss aus Sicherheitsgründen bestätigt werden. Wenn dem also so ist, logge dich bitte mit diesem Zugang ein und klicke auf folgenden Link: " . $profilUrl . "<br><br>
+                $message = "Hallo,
+            
+Für deine Mail-Adresse wurde angegeben, dass Sie einem*einer Benutzer*in Namens " . $wp_user->user_login . " zugehörig ist.
+
+Diese Zuordnung muss aus Sicherheitsgründen bestätigt werden. Wenn dem also so ist, logge dich bitte mit diesem Zugang ein und klicke auf folgenden Link: " . $profilUrl . "
+
 Dein IGELoffice";
 
-            wp_mail($mail, "Bitte bestätige deine Erinnerungsaufhebung!", $message, 'From: webmaster@gruene-jugend.de');
+                wp_mail($mail, "Bitte bestätige deine Erinnerungsaufhebung!", $message, 'From: webmaster@gruene-jugend.de');
 
-            set_transient("remember_profil", true, 3);
+                set_transient("remember_profil", true, 3);
+            }
         }
     }
 
-    public static function unremember_final($wp_user)
+    public static function unremember_final()
     {
-        $mail = sanitize_text_field($_GET['rmf']);
-        $key = sanitize_text_field($_GET['rmk']);
-        $mails = self::get_remembers();
+        if (!empty($_GET['rmk']) && !empty($_GET['rmf'])) {
+            $wp_user = get_userdata(get_current_user_id());
+            $mail = str_replace("%40", "@", sanitize_text_field($_GET['rmf']));
+            $key = sanitize_text_field($_GET['rmk']);
+            $mails = self::get_remembers();
 
-        $value = unserialize(get_user_meta($wp_user->ID, "io_remember_key", true));
-        if ($value != "" && count($value) == 2 && in_array($mail, $mails) && $value[0] == $key && $value[1] == $mail) {
-            delete_user_meta($wp_user->ID, "io_remember_key");
+            $value = unserialize(get_user_meta($wp_user->ID, "io_remember_key", true));
+            if ($value != "" && count($value) == 2 && in_array($mail, $mails) && $value[0] == $key && $value[1] == $mail) {
+                //delete_user_meta($wp_user->ID, "io_remember_key");
 
-            self::grant($wp_user->user_email, $wp_user->user_login);
+                self::grant($mail, $wp_user->user_login);
 
-            set_transient("remember_profil_final", true, 3);
+                set_transient("remember_profil_final", true, 3);
+            }
         }
     }
 
@@ -210,13 +219,18 @@ Dein IGELoffice";
         $mails = self::get_remembers();
 
         $registerUrl = "https://account.gruene-jugend.de/wp-login.php?action=register";
-        $profilUrl = "https://account.gruene-jugend.de/wp-admin/profile.php?rm=";
+        $profilUrl = "https://igeloffice-dev.gruene-jugend.de/wp-admin/index.php?rm=";
         foreach ($mails AS $mail) {
-            $message = "Hallo,<br><br>
-Du hast Verantwortung in der GR&Uuml;NEN JUGEND &uuml;bernommen. Das ist toll!<br><br>
-Damit du deine Aufgabe wahrnehmen kannst ist es notwendig, dass du dich im IGELoffice registrierst. Das IGELoffice ist unser Mitglieder-Service, in dem du verschiedene Services in Anspruch nehmen kannst, die du f&uuml;r deine Aufgabe brauchst. Ein Beispiel hierf&uuml;r ist das Mailinglisten-Management: Ohne eine Registrierung im IGELoffice wirst du nicht Teil der f&uuml;r dich wichtigen Mailinglisten.<br><br>
-Unter " . $registerUrl . " kannst du dich im IGELoffice registrieren. Solltest du bereits im IGELoffice registriert sein, logge dich bitte ein und besuche diesen Link: " . $profilUrl . $mail . "<br><br>
-Du wirst diese Mail nun t&auml;glich als Erinnerung bekommen. Die Erinnerung wird abgeschaltet, wenn du dich mit dieser Mail-Adresse im IGELoffice registrierst.<br><br>
+            $message = "Hallo,
+
+Du hast Verantwortung in der GRÜNEN JUGEND übernommen. Das ist toll!
+
+Damit du deine Aufgabe wahrnehmen kannst ist es notwendig, dass du dich im IGELoffice registrierst. Das IGELoffice ist unser Mitglieder-Service, in dem du verschiedene Services in Anspruch nehmen kannst, die du für deine Aufgabe brauchst. Ein Beispiel hierfür ist das Mailinglisten-Management: Ohne eine Registrierung im IGELoffice wirst du nicht Teil der für dich wichtigen Mailinglisten.
+
+Unter " . $registerUrl . " kannst du dich im IGELoffice registrieren. Solltest du bereits im IGELoffice registriert sein, logge dich bitte ein und besuche diesen Link: " . $profilUrl . $mail . "
+
+Du wirst diese Mail nun täglich als Erinnerung bekommen. Die Erinnerung wird abgeschaltet, wenn du dich mit dieser Mail-Adresse im IGELoffice registrierst.
+
 Dein IGELoffice";
             wp_mail($mail, "Bitte registriere dich im IGELoffice!", $message, 'From: webmaster@gruene-jugend.de');
         }

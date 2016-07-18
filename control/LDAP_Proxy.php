@@ -101,7 +101,7 @@ final class LDAP_Proxy {
 		))
 		) {
 			self::logout($res);
-			return LDAP::error();
+			return false;
 		}
 		self::logout($res);
 		return true;
@@ -115,7 +115,7 @@ final class LDAP_Proxy {
 		))
 		) {
 			self::logout($res);
-			return LDAP::error();
+			return false;
 		}
 		self::logout($res);
 		return true;
