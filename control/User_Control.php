@@ -6,14 +6,6 @@
  * @author KWM
  */
 class User_Control {
-	public static function deletePost() {
-		unset($_POST['user_art']);
-		unset($_POST['first_name']);
-		unset($_POST['last_name']);
-		unset($_POST['io_users_nonce']);
-		unset($_POST['land']);
-	}
-	
 	public static function createUser($first_name, $last_name, $mail) {
 		self::deletePost();
 		$id = wp_insert_user(array(
@@ -29,6 +21,43 @@ class User_Control {
 		self::createMeta($id);
 		
 		return $id;
+	}
+
+	public static function deletePost()
+	{
+		unset($_POST['user_art']);
+		unset($_POST['first_name']);
+		unset($_POST['last_name']);
+		unset($_POST['io_users_nonce']);
+		unset($_POST['land']);
+	}
+
+	public static function createMeta($user_id)
+	{
+		if (!empty($_POST['user_art'])) {
+			if (!isset($_POST['io_users_nonce']) ||
+				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') ||
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE
+			) {
+				return;
+			}
+
+			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST['user_art']));
+			update_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, 0);
+
+			if ($_POST['user_art'] == User_Util::USER_ART_USER) {
+				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
+				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
+			} elseif ($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE) {
+				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
+			}
+
+			do_action("io_user_register", $user_id);
+
+			if (get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1) {
+				Request_Control::create($user_id, "User");
+			}
+		}
 	}
 	
 	public static function createLandesverband($landesverband, $mail) {
@@ -76,32 +105,6 @@ class User_Control {
 		
 		return $id;
 	}
-	
-	public static function createMeta($user_id) {
-		if(!empty($_POST['user_art'])) {
-			if( !isset($_POST['io_users_nonce']) || 
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-				return;
-			}
-
-			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST['user_art']));
-			update_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, 0);
-			
-			if($_POST['user_art'] == User_Util::USER_ART_USER) {
-				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
-				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
-			} elseif($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE) {
-				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
-			}
-			
-			do_action("io_user_register", $user_id);
-
-			if(get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1) {
-				Request_Control::create($user_id, "User");
-			}
-		}
-	}
 
 	public static function inLDAP($user_id) {
 		$user = get_userdata($user_id);
@@ -111,23 +114,6 @@ class User_Control {
 		}
 	}
 
-	public static function inSherpa($user_id) {
-		$user = get_userdata($user_id);
-		if( get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1 &&
-			get_user_meta($user_id, User_Util::ATTRIBUT_ART, true) == User_Util::USER_ART_USER &&
-			LDAP_Proxy::isMember($user->first_name, $user->last_name, $user->user_email)) {
-			User_Control::aktivieren($user_id);
-		}
-	}
-	
-	public static function delete($id) {
-		$ldapConnector = ldapConnector::get();
-		if($ldapConnector->DNexists('cn='.(new User($id))->user_login.',ou=users,dc=gruene-jugend,dc=de')) {
-			$ldapConnector->delUser((new User($id))->user_login);
-		}
-		wp_delete_user($id);
-	}
-	
 	public static function aktivieren($id, $add = true) {
 		update_user_meta($id, User_Util::ATTRIBUT_AKTIV, 1);
 		$user = get_userdata($id);
@@ -162,8 +148,8 @@ class User_Control {
 			
 			$title = sprintf( __('[%s] Aktivierung deiner Registrierung'), wp_specialchars_decode(get_option('blogname'), ENT_QUOTES));
 			$title = apply_filters( 'retrieve_password_title', $title);
-			
-			wp_mail($user->user_email, wp_specialchars_decode($title), $message);
+
+			wp_mail($user->user_email, wp_specialchars_decode($title), $message, 'From: webmaster@gruene-jugend.de');
 		}
 	}
 	
@@ -267,10 +253,30 @@ class User_Control {
 		 */
 		$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, get_userdata($user_id) );
 
-		if ( $message && !wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) )
+		if ($message && !wp_mail($user_email, wp_specialchars_decode($title), $message, 'From: webmaster@gruene-jugend.de'))
 			wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
 
 		return true;
+	}
+
+	public static function inSherpa($user_id)
+	{
+		$user = get_userdata($user_id);
+		if (get_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, true) != 1 &&
+			get_user_meta($user_id, User_Util::ATTRIBUT_ART, true) == User_Util::USER_ART_USER &&
+			LDAP_Proxy::isMember($user->first_name, $user->last_name, $user->user_email)
+		) {
+			User_Control::aktivieren($user_id);
+		}
+	}
+
+	public static function delete($id)
+	{
+		$ldapConnector = ldapConnector::get();
+		if ($ldapConnector->DNexists('cn=' . (new User($id))->user_login . ',ou=users,dc=gruene-jugend,dc=de')) {
+			$ldapConnector->delUser((new User($id))->user_login);
+		}
+		wp_delete_user($id);
 	}
 	
 	public static function addPermission($id, $permission_id) {

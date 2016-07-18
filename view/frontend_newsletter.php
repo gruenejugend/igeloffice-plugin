@@ -6,50 +6,6 @@
  * @author KWM
  */
 class frontend_newsletter {
-	private static function setAufgabe() {
-		$operationZ = mt_rand(0, 3);
-		if($operationZ == 3) {
-			do {
-				$zahl1 = mt_rand(0, 10);
-				$zahl2 = mt_rand(1, 10);
-			} while ($zahl1 % $zahl2 != 0);
-		} else {
-			$zahl1 = mt_rand(0, 10);
-			$zahl2 = mt_rand(0, 10);
-		}
-
-		$aufgabe = "";
-		$loesung = 0;
-		switch($operationZ) {
-			case 0:
-				$aufgabe = $zahl1." plus ".$zahl2;
-				$loesung = $zahl1 + $zahl2;
-				break;
-			case 1:
-				$aufgabe = $zahl1." minus ".$zahl2;
-				$loesung = $zahl1 - $zahl2;
-				break;
-			case 2:
-				$aufgabe = $zahl1." mal ".$zahl2;
-				$loesung = $zahl1 * $zahl2;
-				break;
-			case 3:
-				$aufgabe = $zahl1." geteilt durch ".$zahl2;
-				$loesung = $zahl1 / $zahl2;
-				break;
-		}
-
-		set_transient("loesung", $loesung, 180);
-		unset($loesung);
-		
-		return $aufgabe;
-	}
-	
-	private static function maskExecution() {
-		
-	}
-
-
 	public static function maskHandler() {
 		if(!empty($_GET['newsletter_code'])) {
 			$checkCode = self::checkCode();
@@ -108,6 +64,49 @@ class frontend_newsletter {
 			include 'wp-content/plugins/igeloffice/templates/frontend/newsletterExit.php';
 		}
 	}
+
+	public static function checkCode()
+	{
+		$key = sanitize_text_field($_GET['newsletter_code']);
+		$art = LDAP_Proxy::isSherpaKey($key);
+		if ($art) {
+			if ($art == "l") {
+				LDAP_Proxy::setSherpaLoeschen($key);
+			} else if ($art == "c") {
+				LDAP_Proxy::setSherpaChangeFinal($key);
+			} else if ($art == "e") {
+				LDAP_Proxy::setSherpaEintragen($key);
+			}
+			return $art;
+		}
+		return false;
+	}
+
+	public static function changeSendMail()
+	{
+		$alt = sanitize_text_field($_POST['newsletter_email_alt']);
+		$neu = sanitize_text_field($_POST['newsletter_email_neu']);
+
+		$key = sanitize_text_field($_GET['newsletter_code']);
+
+		$key = LDAP_Proxy::setSherpaChange($key, $alt, $neu);
+		if ($key) {
+			$subject = "Änderung deiner Mail-Adresse";
+
+			$message = __('Hallo,') . "\r\n\r\n";
+			$message .= __('Diese E-Mail-Adresse wurde soeben zum als neue E-Mail-Adresse für den Monatsigel-Verteiler der GRÜNEN JUGEND markiert.') . "\r\n\r\n";
+			$message .= __('Bitte folge folgenden Link zum Eintragen auf die Liste:') . "\r\n\r\n";
+			$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
+			$message .= __('Wenn du dich nicht zum Eintragen markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
+			$message .= __('Liebe Grüße,') . "\r\n";
+			$message .= __('Deine GRÜNE JUGEND');
+
+			wp_mail($neu, $subject, $message, 'From: webmaster@gruene-jugend.de');
+
+			return true;
+		}
+		return false;
+	}
 	
 	public static function sendMail() {
 		$mail = sanitize_text_field($_POST['newsletter_email']);
@@ -146,8 +145,8 @@ class frontend_newsletter {
 				$message .= __('Liebe Grüße,') . "\r\n";
 				$message .= __('Deine GRÜNE JUGEND');
 			}
-			
-			wp_mail($mail, $subject, $message);
+
+			wp_mail($mail, $subject, $message, 'From: webmaster@gruene-jugend.de');
 		} else if($art == "e") {
 			$subject = "Eintragen zum Monatsigel-Verteiler";
 			$url = "";
@@ -158,49 +157,53 @@ class frontend_newsletter {
 			$message .= $url . "\r\n\r\n";
 			$message .= __('Liebe Grüße,') . "\r\n";
 			$message .= __('Deine GRÜNE JUGEND');
-			
-			wp_mail($mail, $subject, $message);
-		}
-	}
-	
-	public static function changeSendMail() {
-		$alt = sanitize_text_field($_POST['newsletter_email_alt']);
-		$neu = sanitize_text_field($_POST['newsletter_email_neu']);
-		
-		$key = sanitize_text_field($_GET['newsletter_code']);
-		
-		$key = LDAP_Proxy::setSherpaChange($key, $alt, $neu);
-		if($key) {
-			$subject = "Änderung deiner Mail-Adresse";
 
-			$message = __('Hallo,') . "\r\n\r\n";
-			$message .= __('Diese E-Mail-Adresse wurde soeben zum als neue E-Mail-Adresse für den Monatsigel-Verteiler der GRÜNEN JUGEND markiert.') . "\r\n\r\n";
-			$message .= __('Bitte folge folgenden Link zum Eintragen auf die Liste:') . "\r\n\r\n";
-			$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
-			$message .= __('Wenn du dich nicht zum Eintragen markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
-			$message .= __('Liebe Grüße,') . "\r\n";
-			$message .= __('Deine GRÜNE JUGEND');
-			
-			wp_mail($neu, $subject, $message);
-			
-			return true;
+			wp_mail($mail, $subject, $message, 'From: webmaster@gruene-jugend.de');
 		}
-		return false;
 	}
-	
-	public static function checkCode() {
-		$key = sanitize_text_field($_GET['newsletter_code']);
-		$art = LDAP_Proxy::isSherpaKey($key);
-		if($art) {
-			if($art == "l") {
-				LDAP_Proxy::setSherpaLoeschen($key);
-			} else if($art == "c") {
-				LDAP_Proxy::setSherpaChangeFinal($key);
-			} else if($art == "e") {
-				LDAP_Proxy::setSherpaEintragen($key);
-			}
-			return $art;
+
+	private static function setAufgabe()
+	{
+		$operationZ = mt_rand(0, 3);
+		if ($operationZ == 3) {
+			do {
+				$zahl1 = mt_rand(0, 10);
+				$zahl2 = mt_rand(1, 10);
+			} while ($zahl1 % $zahl2 != 0);
+		} else {
+			$zahl1 = mt_rand(0, 10);
+			$zahl2 = mt_rand(0, 10);
 		}
-		return false;
+
+		$aufgabe = "";
+		$loesung = 0;
+		switch ($operationZ) {
+			case 0:
+				$aufgabe = $zahl1 . " plus " . $zahl2;
+				$loesung = $zahl1 + $zahl2;
+				break;
+			case 1:
+				$aufgabe = $zahl1 . " minus " . $zahl2;
+				$loesung = $zahl1 - $zahl2;
+				break;
+			case 2:
+				$aufgabe = $zahl1 . " mal " . $zahl2;
+				$loesung = $zahl1 * $zahl2;
+				break;
+			case 3:
+				$aufgabe = $zahl1 . " geteilt durch " . $zahl2;
+				$loesung = $zahl1 / $zahl2;
+				break;
+		}
+
+		set_transient("loesung", $loesung, 180);
+		unset($loesung);
+
+		return $aufgabe;
+	}
+
+	private static function maskExecution()
+	{
+		
 	}
 }

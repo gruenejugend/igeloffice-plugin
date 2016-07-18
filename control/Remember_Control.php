@@ -139,7 +139,7 @@ Für deine Mail-Adresse wurde angegeben, dass Sie einem*einer Benutzer*in Namens
 Diese Zuordnung muss aus Sicherheitsgründen bestätigt werden. Wenn dem also so ist, logge dich bitte mit diesem Zugang ein und klicke auf folgenden Link: " . $profilUrl . "<br><br>
 Dein IGELoffice";
 
-            wp_mail($mail, "Bitte bestätige deine Erinnerungsaufhebung!", $message);
+            wp_mail($mail, "Bitte bestätige deine Erinnerungsaufhebung!", $message, 'From: webmaster@gruene-jugend.de');
 
             set_transient("remember_profil", true, 3);
         }
@@ -201,7 +201,7 @@ Dein IGELoffice";
 
     public static function schedule_exec()
     {
-        wp_mail("webmaster@gruene-jugend.de", "IO-Remember: Erinnerung verschickt!", "IO-Remember: Erinnerung verschickt!");
+        wp_mail("webmaster@gruene-jugend.de", "IO-Remember: Erinnerung verschickt!", "IO-Remember: Erinnerung verschickt!", 'From: webmaster@gruene-jugend.de');
         self::remember();
     }
 
@@ -218,7 +218,7 @@ Damit du deine Aufgabe wahrnehmen kannst ist es notwendig, dass du dich im IGELo
 Unter " . $registerUrl . " kannst du dich im IGELoffice registrieren. Solltest du bereits im IGELoffice registriert sein, logge dich bitte ein und besuche diesen Link: " . $profilUrl . $mail . "<br><br>
 Du wirst diese Mail nun t&auml;glich als Erinnerung bekommen. Die Erinnerung wird abgeschaltet, wenn du dich mit dieser Mail-Adresse im IGELoffice registrierst.<br><br>
 Dein IGELoffice";
-            wp_mail($mail, "Bitte registriere dich im IGELoffice!", $message);
+            wp_mail($mail, "Bitte registriere dich im IGELoffice!", $message, 'From: webmaster@gruene-jugend.de');
         }
     }
 }
