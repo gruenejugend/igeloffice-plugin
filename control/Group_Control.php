@@ -97,8 +97,10 @@ class Group_Control {
 			$user = new User(get_current_user_id());
 			$user_art = $user->art;
 			$land = null;
-			if($user_art == User_Util::USER_ART_BASISGRUPPE || $user_art == User_Util::USER_ART_LANDESVERBAND) {
+			if ($user_art == User_Util::USER_ART_BASISGRUPPE) {
 				$land = $user->landesverband;
+			} else if ($user_art == User_Util::USER_ART_LANDESVERBAND) {
+				$land = strtolower($user->user_login);
 			}
 		}
 
@@ -116,7 +118,7 @@ AND p.post_type = '" . Group_Util::POST_TYPE. "'");
 		$ids = array();
 		$values = array();
 		foreach($results AS $result) {
-			if($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result)) {
+			if ($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result->id)) {
 				continue;
 			}
 			$values[$result->mv1][$result->mv2][] = $result->id;
@@ -141,7 +143,7 @@ AND p.post_type = '" . Group_Util::POST_TYPE . "'
 ");
 		
 		foreach($results AS $result) {
-			if($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result)) {
+			if ($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result->id)) {
 				continue;
 			}
 			$values[$result->mv1]['Nicht Kategorisiert'][] = $result->id;
@@ -162,7 +164,7 @@ AND post_type = '" . Group_Util::POST_TYPE . "'
 " . $start . implode(" AND ID <> ", $ids));
 	
 		foreach($results AS $result) {
-			if($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result)) {
+			if ($art_sensitiv && self::sensitivCheck($user, $user_art, $land, $result->ID)) {
 				continue;
 			}
 			$values['Nicht Kategorisiert'][] = $result->ID;
@@ -174,12 +176,12 @@ AND post_type = '" . Group_Util::POST_TYPE . "'
 	}
 
 	private static function sensitivCheck($user, $user_art, $land, $result) {
-		$group = new Group($result->ID);
+		$group = new Group($result);
 		$gruppen_mitgliedschaften = $user->groups;
 		$pruef = false;
 
 		foreach($gruppen_mitgliedschaften AS $gruppen_mitgliedschaft) {
-			if($result->ID == $gruppen_mitgliedschaft->ID) {
+			if ($result == $gruppen_mitgliedschaft->ID) {
 				$pruef = true;
 				break;
 			}

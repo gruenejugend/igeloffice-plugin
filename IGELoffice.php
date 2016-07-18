@@ -22,6 +22,7 @@
 	require_once 'services/util/Group_Util.php';
 	require_once 'services/util/Permission_Util.php';
 	require_once 'services/util/Request_Util.php';
+require_once 'services/util/Remember_Util.php';
 	
 	require_once 'control/ldap.php';
 	require_once 'control/ldapConnector.php';
@@ -37,6 +38,7 @@
 	require_once 'control/LDAP_Proxy.php';
 	require_once 'control/Permission_Control.php';
 	require_once 'control/User_Control.php';
+require_once 'control/Remember_Control.php';
 	require_once 'control/request/Request_Strategy.php';
 	require_once 'control/request/Request_Control.php';
 	require_once 'control/request/Request_Factory.php';
