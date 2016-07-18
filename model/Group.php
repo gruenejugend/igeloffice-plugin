@@ -40,6 +40,8 @@ class Group {
 			return get_post_meta($this->id, Group_Util::UNTERKATEGORIE, true);
 		} else if($name == 'sichtbarkeit') {
 			return unserialize(get_post_meta($this->id, "io_group_sichtbarkeit", true));
+		} else if($name == 'remember') {
+			return unserialize(get_post_meta($this->id, "io_group_remember", true));
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {

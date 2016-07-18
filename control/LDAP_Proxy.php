@@ -90,6 +90,30 @@ final class LDAP_Proxy {
 		self::logout($res);
 		return true;
 	}
+
+	public static final function addUserPermission($user, $permission) {
+		$res = self::login();
+		if(!ldap_mod_add($res, 'cn='.$permission.','.LDAP_PERMISSION_BASE, array(
+			'member' => 'cn='.$user.','.LDAP_USER_BASE
+		))) {
+			self::logout($res);
+			return LDAP::error();
+		}
+		self::logout($res);
+		return true;
+	}
+
+	public static final function addUsersToGroup($user, $group) {
+		$res = self::login();
+		if(!ldap_mod_add($res, 'cn='.$group.','.LDAP_GROUP_BASE, array(
+			'member' => 'cn='.$user.','.LDAP_USER_BASE
+		))) {
+			self::logout($res);
+			return LDAP::error();
+		}
+		self::logout($res);
+		return true;
+	}
 	
 	public static final function addUser($firstname, $surname, $mail) {
 		$res = self::login();
