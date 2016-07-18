@@ -77,17 +77,19 @@ class backend_request {
 	}
 	
 	public static function maskSave($post_id) {
-		if( !isset($_POST['io_request_action_nonce']) || 
-			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') || 
+		if (!isset($_POST['io_request_action_nonce']) ||
+			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') ||
 			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
-			empty($_POST[Request_Util::ATTRIBUT_STATUS])) {
+			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
+		) {
 			return;
 		}
 
 		if( !isset($_POST['io_request_message_nonce']) ||
 			!wp_verify_nonce($_POST['io_request_message_nonce'], 'io_request_message') ||
 			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
-			empty($_POST[Request_Util::ATTRIBUT_STATUS])) {
+			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
+		) {
 			return;
 		}
 
@@ -122,7 +124,7 @@ class backend_request {
 				$subject = "Eine Nachricht zu deinem Antrag im IGELoffice";
 			}
 
-			wp_mail($user->wp_user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
+			wp_mail($user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
 		}
 	}
 	
