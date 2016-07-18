@@ -29,6 +29,8 @@ class Permission {
 			return get_post_meta($this->id, Permission_Util::OBERKATEGORIE, true);
 		} else if($name == 'unterkategorie') {
 			return get_post_meta($this->id, Permission_Util::UNTERKATEGORIE, true);
+		} else if ($name == 'remember') {
+			return unserialize(get_post_meta($this->id, "io_permission_remember", true));
 		} else {
 			$ldapConnector = ldapConnector::get();
 			

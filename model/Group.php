@@ -23,10 +23,6 @@ class Group {
 		$this->name = $post->post_title;
 	}
 	
-	private function ldapNameFunc($name) {
-		return ldap_escape($name, Group_Control::LDAP_ESCAPE_IGNORE);
-	}
-	
 	public function __get($name) {
 		if($name == 'id') {
 			return $this->id;
@@ -40,6 +36,8 @@ class Group {
 			return get_post_meta($this->id, Group_Util::UNTERKATEGORIE, true);
 		} else if($name == 'sichtbarkeit') {
 			return unserialize(get_post_meta($this->id, "io_group_sichtbarkeit", true));
+		} else if ($name == 'remember') {
+			return unserialize(get_post_meta($this->id, "io_group_remember", true));
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {
@@ -96,5 +94,10 @@ class Group {
 				return array();
 			}
 		}
+	}
+
+	private function ldapNameFunc($name)
+	{
+		return ldap_escape($name, Group_Control::LDAP_ESCAPE_IGNORE);
 	}
 }

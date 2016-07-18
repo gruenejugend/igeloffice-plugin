@@ -6,23 +6,6 @@
  * @author KWM
  */
 final class LDAP_Proxy {
-	private static final function login() {
-		$res = ldap_connect(LDAP_HOST, LDAP_PORT);
-		if($res === false) {
-			return;
-		}
-		ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION, 3); //we only support LDAPv3!
-		$bind = ldap_bind($res, LDAP_PROXY_USER, LDAP_PROXY_PW);
-		if(!$bind) {
-			return;
-		}
-		return $res;
-	}
-	
-	private static final function logout($res) {
-		ldap_close($res);
-	}
-	
 	public static final function isLDAPUser($user_login, $user_email = null) {
 		$res = self::login();
 		
@@ -58,6 +41,25 @@ final class LDAP_Proxy {
 		self::logout($res);
 		return false;
 	}
+
+	private static final function login()
+	{
+		$res = ldap_connect(LDAP_HOST, LDAP_PORT);
+		if ($res === false) {
+			return;
+		}
+		ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION, 3); //we only support LDAPv3!
+		$bind = ldap_bind($res, LDAP_PROXY_USER, LDAP_PROXY_PW);
+		if (!$bind) {
+			return;
+		}
+		return $res;
+	}
+
+	private static final function logout($res)
+	{
+		ldap_close($res);
+	}
 	
 	private static final function getAttribute($res, $dn, $attribute) {
 		$read = ldap_read($res, $dn, '(objectclass=*)', array($attribute));
@@ -84,6 +86,34 @@ final class LDAP_Proxy {
 			'userPassword' => "{SHA}" . base64_encode(pack( "H*", sha1($password))),
 			'qmailGID' => intval(time() / 86400) //last password change - days since 01.01.1970
 		))) {
+			self::logout($res);
+			return LDAP::error();
+		}
+		self::logout($res);
+		return true;
+	}
+
+	public static final function addUserPermission($user, $permission)
+	{
+		$res = self::login();
+		if (!ldap_mod_add($res, 'cn=' . $permission . ',' . LDAP_PERMISSION_BASE, array(
+			'member' => 'cn=' . $user . ',' . LDAP_USER_BASE
+		))
+		) {
+			self::logout($res);
+			return LDAP::error();
+		}
+		self::logout($res);
+		return true;
+	}
+
+	public static final function addUsersToGroup($user, $group)
+	{
+		$res = self::login();
+		if (!ldap_mod_add($res, 'cn=' . $group . ',' . LDAP_GROUP_BASE, array(
+			'member' => 'cn=' . $user . ',' . LDAP_USER_BASE
+		))
+		) {
 			self::logout($res);
 			return LDAP::error();
 		}
@@ -180,6 +210,13 @@ final class LDAP_Proxy {
 		self::logout($res);
 		return $entries[0]["o"][0];
 	}
+
+	public static final function setSherpaLoeschen($key)
+	{
+		$args = self::setSherpa($key);
+		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "N"));
+		self::logout($args[0]);
+	}
 	
 	private static final function setSherpa($key) {
 		$res = self::login();
@@ -200,12 +237,6 @@ final class LDAP_Proxy {
 			ldap_mod_del($res, $dn, array("o" => $entries[0]["o"][0]));
 		}
 		return array($res, $dn);
-	}
-	
-	public static final function setSherpaLoeschen($key) {
-		$args = self::setSherpa($key);
-		ldap_mod_add($args[0], $args[1], array("deliveryMode" => "N"));
-		self::logout($args[0]);
 	}
 	
 	public static final function setSherpaEintragen($key) {
