@@ -77,13 +77,9 @@
 	add_action('admin_notices',														array('backend_profile', 'msg_request_permission_start'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_fail'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_start'));
-	add_action('admin_notices',														array('Remember_Control', 'msg_remember_profil'));
-	add_action('admin_notices',														array('Remember_Control', 'msg_remember_profil_final'));
 	
 	add_action('show_user_profile',													array('backend_profile', 'maskHandler'));
 	add_action('edit_user_profile',													array('backend_profile', 'maskHandler'));
-	add_action('edit_user_profile',													array('Remember_Control', 'unremember'));
-	add_action('edit_user_profile',													array('Remember_Control', 'unremember_final'));
 	add_action('profile_update',													array('backend_profile', 'maskExecution'), 10, 2);
 	add_action('user_profile_update_errors',										'io_mailErrorMsg', 10, 3);
 	
@@ -108,7 +104,6 @@
 	add_filter('parse_query',														array('backend_groups', 'leadingFilter'));
 	add_action("admin_notices",														array("backend_groups", "userAddedLeaderUserMsg"));
 	add_action("admin_notices",														array("backend_groups", "userFailedLeaderUserMsg"));
-	add_action("admin_notices",														array("backend_groups", "rememberUserMsg"));
 	
 	add_action('add_meta_boxes',													array('backend_permission', 'maskHandler'));
 	add_action('save_post',															array('backend_permission', 'maskSave'));
@@ -119,7 +114,6 @@
 	add_filter('request',															array('backend_permission', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
-	add_action("admin_notices",														array("backend_permission", "rememberUserMsg"));
 	
 	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'), 10, 2);
 	add_action('save_post',															array('backend_request', 'maskSave'));
@@ -133,8 +127,6 @@
 	add_action('admin_menu',														array('backend_request', 'menu'));
 	
 	add_shortcode('newsletter_dialog',												array('frontend_newsletter', 'maskHandler'));
-	add_action("init",																array('Remember_Control', 'schedule'));
-	add_action("rememberSchedule",													array('Remember_Control', 'schedule_exec'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

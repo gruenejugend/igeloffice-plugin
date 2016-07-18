@@ -22,9 +22,6 @@ class backend_groups {
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
 			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Util::POST_TYPE, "normal", "default");
 			add_meta_box("io_groups_sichtbarkeit_mb", "Sichtbarkeit für Anträge", array("backend_groups", "metaSichtbarkeit"), Group_Util::POST_TYPE, "normal", "default");
-			if(Remember_Util::REMEMBER_SCHALTER) {
-				add_meta_box("io_groups_remember_mb", "Erinnerungen", array("backend_groups", "metaRemember"), Group_Util::POST_TYPE, "normal", "default");
-			}
 		} else if($pruef) {
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
@@ -100,16 +97,6 @@ class backend_groups {
 		$sichtbarkeit = $group->sichtbarkeit;
 
 		include '../wp-content/plugins/igeloffice/templates/backend/groupSichtbarkeit.php';
-	}
-
-	public static function metaRemember($post) {
-		wp_nonce_field('io_groups_remember', 'io_groups_remember_nonce');
-
-		$group = new Group($post->ID);
-
-		$remember = $group->remember;
-
-		include '../wp-content/plugins/igeloffice/templates/backend/groupRemember.php';
 	}
 	
 	public static function column($columns) {
@@ -227,12 +214,6 @@ class backend_groups {
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
-
-			if( Remember_Util::REMEMBER_SCHALTER && (!isset($_POST['io_groups_remember_nonce']) ||
-				!wp_verify_nonce($_POST['io_groups_remember_nonce'], 'io_groups_remember') ||
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
-				return;
-			}
 			
 			if(get_post_meta($post_id, "io_group_aktiv", true) != 1) {
 				update_post_meta($post_id, "io_group_aktiv", 1);
@@ -251,24 +232,6 @@ class backend_groups {
 			if(isset($_POST['sichtbarkeit'])) {
 				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['sichtbarkeit']);
 				update_post_meta($post_id, "io_group_sichtbarkeit", serialize($user_arten_save));
-			}
-
-			if(Remember_Util::REMEMBER_SCHALTER && isset($_POST['remember']) && $_POST['remember'] != "") {
-				$remembers = explode(", ", $_POST['remember']);
-				$remembers_save = $remembers;
-				foreach($remembers AS $key => $remember) {
-					if(!filter_var($remember, FILTER_VALIDATE_EMAIL)) {
-						set_transient("remember_failed_address", $remember, 3);
-						unset($remembers_save[$key]);
-						continue;
-					} elseif(get_user_by_email($remember) != false) {
-						set_transient("remember_failed_user", get_user_by_email($remember), 3);
-						unset($remembers_save[$key]);
-						continue;
-					}
-					$remembers_save[$key] = sanitize_text_field($remember);
-				}
-				update_post_meta($post_id, "io_group_remember", serialize($remembers_save));
 			}
 		} else {
 			if( !isset($_POST['io_groups_leader_member_nonce']) || 
@@ -428,54 +391,6 @@ class backend_groups {
 		</div>
 
 		<?php
-		}
-	}
-
-	public function rememberUserMsg() {
-		$address = get_transient("remember_failed_address");
-		$users = get_transient("remember_failed_user");
-
-		if(!empty($address)) {
-			?>
-
-			<div class="updated error">
-				<p>Folgende Mail-Adressen sind ung&uuml;ltig:</p>
-				<b><ul>
-						<?php
-
-						foreach($address AS $address_one) {
-							?>						<li>&bull; &nbsp; <?php echo $address_one; ?></li>
-							<?php
-						}
-
-						?>
-				</ul></b>
-			</div>
-
-			<?php
-			delete_transient("remember_failed_address");
-		}
-
-		if(!empty($users)) {
-			?>
-
-			<div class="updated notice">
-				<p>Folgende User sind bereits vorhanden:</p>
-				<b><ul>
-						<?php
-
-						foreach($users AS $user) {
-							?>						<li>&bull; &nbsp; <?php echo $user->user_email; ?> -> <?php echo $user->user_login; ?></li>
-							<?php
-						}
-
-						?>
-				</ul></b>
-				<p>Bitte f&uuml;ge sie als User hinzu.</p>
-			</div>
-
-			<?php
-			delete_transient("remember_failed_user");
 		}
 	}
 	
