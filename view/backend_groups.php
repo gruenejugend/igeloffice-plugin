@@ -28,6 +28,7 @@ class backend_groups {
 			if (Group_Util::STANDARD_ZUWEISUNG_SCHALTER) {
 				add_meta_box("io_groups_standard_mb", "Standard", array("backend_groups", "metaStandard"), Group_Util::POST_TYPE, "normal", "default");
 			}
+			add_meta_box("io_groups_quota_mb", "Mail-Quota", array("backend_groups", "metaQuota"), Group_Util::POST_TYPE, "normal", "default");
 		} else if($pruef) {
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
@@ -129,6 +130,35 @@ class backend_groups {
 		$text = "Folgende User-Arten sind standardm&auml;ßig Teil dieser Gruppe:";
 
 		include '../wp-content/plugins/igeloffice/templates/backend/groupUserArtSelekt.php';
+	}
+	
+	public static function metaQuota($post) 
+	{
+		wp_nonce_field('io_groups_quota', 'io_groups_quota_nonce');
+
+		$group = new Group($post->ID);
+		
+		$quota = $group->quota;
+		$einheit = "Byte (B)";
+		if(!empty($quota)) {
+			while($einheit != "Giga Byte (GB)" && $quota >= 1) {
+				$quota /= 1024;
+				switch($einheit) {
+					case "Byte (B)":
+						$einheit = "Kilo Byte (KB)";
+						break;
+					case "Kilo Byte (KB)":
+						$einheit = "Mega Byte (MB)";
+						break;
+					case "Mega Byte (MB)":
+						$einheit = "Giga Byte (GB)";
+						break;
+				}
+			}
+			$quota = round($quota, 2);
+		}
+
+		include '../wp-content/plugins/igeloffice/templates/backend/groupQuota.php';
 	}
 	
 	public static function column($columns) {
@@ -259,6 +289,12 @@ class backend_groups {
 			) {
 				return;
 			}
+
+			if( !isset($_POST['io_groups_quota_nonce']) ||
+				!wp_verify_nonce($_POST['io_groups_quota_nonce'], 'io_groups_quota') ||
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
+			}
 			
 			if(get_post_meta($post_id, "io_group_aktiv", true) != 1) {
 				update_post_meta($post_id, "io_group_aktiv", 1);
@@ -311,6 +347,23 @@ class backend_groups {
 			if(isset($_POST['standard'])) {
 				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['standard']);
 				update_post_meta($post_id, "io_group_standard", serialize($user_arten_save));
+			}
+			
+			if(!empty($_POST['quotaSize'])) {
+				$quota = str_replace(",", ".", sanitize_text_field($_POST['quotaSize']));
+				switch($_POST['quotaType']) {
+					case "Kilo Byte (KB)":
+						$quota *= 1024;
+						break;
+					case "Mega Byte (MB)":
+						$quota *= (1024^2);
+						break;
+					case "Giga Byte (GB)":
+						$quota *= (1024^3);
+						break;
+				}
+				update_post_meta($post_id, "io_group_quota", $quota);
+				Group_Control::setQuotaAll($group, $quota);
 			}
 		} else {
 			if( !isset($_POST['io_groups_leader_member_nonce']) || 

@@ -130,6 +130,18 @@ class Group_Control {
 		}
 	}
 	
+	public static function setQuotaAll($group, $quota) {
+		$users = $group->users;
+		foreach($users AS $user) {
+			LDAP_Proxy::setQuota($user, $quota);
+		}
+		
+		$groups = $group->groups;
+		foreach($groups AS $group_new) {
+			self::setQuotaAll($group_new, $quota);
+		}
+	}
+	
 	public static function getValues($art_sensitiv = false) {
 		global $wpdb;
 

@@ -294,6 +294,7 @@ class User_Control {
 	public static function addToGroup($id, $group_id) {
 		$ldapConnector = ldapConnector::get();
 		$ldapConnector->addUsersToGroup(array((new User($id))->user_login), (new Group($group_id))->ldapName);
+		LDAP_Proxy::setQuota(get_userdata($id), get_post_meta($group_id, "io_group_quota", true));
 	}
 	
 	public static function delToGroup($id, $group_id) {
