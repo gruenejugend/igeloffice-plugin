@@ -136,6 +136,8 @@ class User_Control {
 			$sendmail = true;
 		}
 		
+		do_action("io_user_activate", $id);
+		
 		if(!$add || $sendmail) {
 			$message = __('Hallo,') . "\r\n\r\n";
 			$message .= __('Du wurdest im IGELoffice registriert. Hiermit wird deine Registration bestätigt.') . "\r\n\r\n";

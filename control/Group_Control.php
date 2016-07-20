@@ -86,6 +86,50 @@ class Group_Control {
 		$ldapConnector->delGroupPermission((new Group($id))->ldapName, (new Permission($permission_id))->name);
 	}
 	
+	public static function standardZuweisung($user_id) {
+		$user = new User($user_id);
+		
+		$land = null;
+		$art = $user->art;
+		if($art == User_Util::USER_ART_BASISGRUPPE) {
+			$art = "Basisgruppe";
+			$land = $user->landesverband;
+		} else if($art == User_Util::USER_ART_LANDESVERBAND) {
+			$art = "Landesverbände";
+			$land = strtolower($user->user_login);
+		}
+		
+		$args = array(
+			'post_type'				=> Group_Util::POST_TYPE,
+			'meta_query'			=> array(
+				array(
+					'key'					=> "io_group_standard",
+					'value'					=> $art,
+					'compare'				=> "LIKE"
+				)
+			)
+		);
+		if($land != null) {
+			$args['meta_query'][] = array(
+					'key'					=> "io_group_standard",
+					'value'					=> $land,
+					'compare'				=> "LIKE"
+				);
+			$args['meta_query']['relation'] = "AND";
+		}
+		
+		$posts = get_posts($args);
+		
+		foreach($posts AS $post) {
+			$group = new Group($post->ID);
+			$standards = $group->standard;
+			if( (($art == User_Util::USER_ART_USER || $art == User_Util::USER_ART_ORGANISATORISCH) && $standards[$art]) || 
+				(($user->art == User_Util::USER_ART_BASISGRUPPE || $user->art == User_Util::USER_ART_LANDESVERBAND) && $standards[$art][$land])) {
+				LDAP_Proxy::addUsersToGroup($user->user_login, $group->name);
+			}
+		}
+	}
+	
 	public static function getValues($art_sensitiv = false) {
 		global $wpdb;
 

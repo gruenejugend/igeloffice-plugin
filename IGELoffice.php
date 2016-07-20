@@ -22,7 +22,7 @@
 	require_once 'services/util/Group_Util.php';
 	require_once 'services/util/Permission_Util.php';
 	require_once 'services/util/Request_Util.php';
-require_once 'services/util/Remember_Util.php';
+	require_once 'services/util/Remember_Util.php';
 	
 	require_once 'control/ldap.php';
 	require_once 'control/ldapConnector.php';
@@ -38,7 +38,7 @@ require_once 'services/util/Remember_Util.php';
 	require_once 'control/LDAP_Proxy.php';
 	require_once 'control/Permission_Control.php';
 	require_once 'control/User_Control.php';
-require_once 'control/Remember_Control.php';
+	require_once 'control/Remember_Control.php';
 	require_once 'control/request/Request_Strategy.php';
 	require_once 'control/request/Request_Control.php';
 	require_once 'control/request/Request_Factory.php';
@@ -59,9 +59,10 @@ require_once 'control/Remember_Control.php';
 	add_action('user_new_form',														array('backend_register', 'maskHandler'));
 	add_action('register_form',														array('frontend_register', 'maskHandler'));
     add_filter('registration_errors',												array('frontend_register', 'errorHandler'), 10, 3);
-add_action('io_user_register', array('User_Control', 'inLDAP'), 10, 1);
-add_action('io_user_register', array('User_Control', 'inSherpa'), 20, 1);
-add_action('io_user_register', array('Remember_Control', 'register'), 30, 1);
+    add_action('io_user_register',                                                  array('User_Control', 'inLDAP'), 10, 1);
+    add_action('io_user_register',                                                  array('User_Control', 'inSherpa'), 20, 1);
+    add_action('io_user_register',                                                  array('Remember_Control', 'register'), 30, 1);
+    add_action('io_user_activate',                                                  array('Group_Control', 'standardZuweisung'), 10, 1);
 	add_action('user_register',														array('User_Control', 'createMeta'));
 	add_action('user_register',														array('backend_register', 'maskExecution'));
 	add_filter('wp_login_errors',													array('backend_register', 'registerMsg'), 10, 2);
@@ -80,10 +81,10 @@ add_action('io_user_register', array('Remember_Control', 'register'), 30, 1);
 	add_action('admin_notices',														array('backend_profile', 'msg_request_permission_start'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_fail'));
 	add_action('admin_notices',														array('backend_profile', 'msg_request_group_start'));
-add_action('admin_notices', array('Remember_Control', 'unremember'));
-add_action('admin_notices', array('Remember_Control', 'unremember_final'));
-add_action('admin_notices', array('Remember_Control', 'msg_remember_profil'));
-add_action('admin_notices', array('Remember_Control', 'msg_remember_profil_final'));
+    add_action('admin_notices',														array('Remember_Control', 'unremember'));
+    add_action('admin_notices',														array('Remember_Control', 'unremember_final'));
+    add_action('admin_notices',														array('Remember_Control', 'msg_remember_profil'));
+    add_action('admin_notices',														array('Remember_Control', 'msg_remember_profil_final'));
 
 	add_action('show_user_profile',													array('backend_profile', 'maskHandler'));
 	add_action('edit_user_profile',													array('backend_profile', 'maskHandler'));
@@ -111,7 +112,7 @@ add_action('admin_notices', array('Remember_Control', 'msg_remember_profil_final
 	add_filter('parse_query',														array('backend_groups', 'leadingFilter'));
 	add_action("admin_notices",														array("backend_groups", "userAddedLeaderUserMsg"));
 	add_action("admin_notices",														array("backend_groups", "userFailedLeaderUserMsg"));
-add_action("admin_notices", array("backend_groups", "rememberUserMsg"));
+    add_action("admin_notices",                                                     array("backend_groups", "rememberUserMsg"));
 	
 	add_action('add_meta_boxes',													array('backend_permission', 'maskHandler'));
 	add_action('save_post',															array('backend_permission', 'maskSave'));
@@ -122,7 +123,7 @@ add_action("admin_notices", array("backend_groups", "rememberUserMsg"));
 	add_filter('request',															array('backend_permission', 'orderby'), 10, 2);
 	add_action('restrict_manage_posts',												array('backend_permission', 'maskFiltering'));
 	add_filter('parse_query',														array('backend_permission', 'filtering'));
-add_action("admin_notices", array("backend_permission", "rememberUserMsg"));
+    add_action("admin_notices",                                                     array("backend_permission", "rememberUserMsg"));
 	
 	add_action('add_meta_boxes',													array('backend_request', 'maskHandler'), 10, 2);
 	add_action('save_post',															array('backend_request', 'maskSave'));
@@ -136,8 +137,8 @@ add_action("admin_notices", array("backend_permission", "rememberUserMsg"));
 	add_action('admin_menu',														array('backend_request', 'menu'));
 	
 	add_shortcode('newsletter_dialog',												array('frontend_newsletter', 'maskHandler'));
-add_action("init", array('Remember_Control', 'schedule'));
-add_action("rememberSchedule", array('Remember_Control', 'schedule_exec'));
+    add_action("init",                                                              array('Remember_Control', 'schedule'));
+    add_action("rememberSchedule",                                                  array('Remember_Control', 'schedule_exec'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

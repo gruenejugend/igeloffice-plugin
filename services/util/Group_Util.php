@@ -16,4 +16,6 @@ class Group_Util {
 	
 	const OBERKATEGORIE = 'io_group_ok';
 	const UNTERKATEGORIE = 'io_group_uk';
+	
+	const STANDARD_ZUWEISUNG_SCHALTER = true;
 }

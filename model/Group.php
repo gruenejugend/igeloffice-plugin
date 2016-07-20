@@ -15,6 +15,8 @@ class Group {
 	private $groups = array();
 	private $permissions = array();
 	private $sichtbarkeit = array();
+	private $remember = array();
+	private $standard = array();
 	
 	public function __construct($id) {
 		$this->id = $id;
@@ -38,6 +40,8 @@ class Group {
 			return unserialize(get_post_meta($this->id, "io_group_sichtbarkeit", true));
 		} else if ($name == 'remember') {
 			return unserialize(get_post_meta($this->id, "io_group_remember", true));
+		} else if($name == 'standard') {
+			return unserialize(get_post_meta($this->id, "io_group_standard", true));
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {

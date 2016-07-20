@@ -25,6 +25,9 @@ class backend_groups {
 			if (Remember_Util::REMEMBER_SCHALTER) {
 				add_meta_box("io_groups_remember_mb", "Erinnerungen", array("backend_groups", "metaRemember"), Group_Util::POST_TYPE, "normal", "default");
 			}
+			if (Group_Util::STANDARD_ZUWEISUNG_SCHALTER) {
+				add_meta_box("io_groups_standard_mb", "Standard", array("backend_groups", "metaStandard"), Group_Util::POST_TYPE, "normal", "default");
+			}
 		} else if($pruef) {
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
@@ -97,9 +100,11 @@ class backend_groups {
 
 		$group = new Group($post->ID);
 
-		$sichtbarkeit = $group->sichtbarkeit;
+		$selekt = $group->sichtbarkeit;
+		$post = "sichtbarkeit";
+		$text = "Für wen soll diese Gruppe nicht angezeigt werden:";
 
-		include '../wp-content/plugins/igeloffice/templates/backend/groupSichtbarkeit.php';
+		include '../wp-content/plugins/igeloffice/templates/backend/groupUserArtSelekt.php';
 	}
 
 	public static function metaRemember($post)
@@ -111,6 +116,19 @@ class backend_groups {
 		$remember = $group->remember;
 
 		include '../wp-content/plugins/igeloffice/templates/backend/groupRemember.php';
+	}
+	
+	public static function metaStandard($post) 
+	{
+		wp_nonce_field('io_groups_standard', 'io_groups_standard_nonce');
+
+		$group = new Group($post->ID);
+
+		$selekt = $group->standard;
+		$post = "standard";
+		$text = "Folgende User-Arten sind standardm&auml;ßig Teil dieser Gruppe:";
+
+		include '../wp-content/plugins/igeloffice/templates/backend/groupUserArtSelekt.php';
 	}
 	
 	public static function column($columns) {
@@ -229,6 +247,12 @@ class backend_groups {
 				return;
 			}
 
+			if( Group_Util::STANDARD_ZUWEISUNG_SCHALTER && (!isset($_POST['io_groups_standard_nonce']) ||
+				!wp_verify_nonce($_POST['io_groups_standard_nonce'], 'io_groups_standard') ||
+				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
+				return;
+			}
+
 			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST['io_groups_remember_nonce']) ||
 					!wp_verify_nonce($_POST['io_groups_remember_nonce'], 'io_groups_remember') ||
 					defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -282,6 +306,11 @@ class backend_groups {
 				}
 
 				update_post_meta($post_id, "io_group_remember", serialize($remembers_save));
+			}
+
+			if(isset($_POST['standard'])) {
+				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['standard']);
+				update_post_meta($post_id, "io_group_standard", serialize($user_arten_save));
 			}
 		} else {
 			if( !isset($_POST['io_groups_leader_member_nonce']) || 
