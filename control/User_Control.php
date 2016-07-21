@@ -34,11 +34,13 @@ class User_Control {
 
 	public static function createMeta($user_id)
 	{
+		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
+		
 		if (!empty($_POST['user_art'])) {
 			if (!isset($_POST['io_users_nonce']) ||
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') ||
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE
-			) {
+				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users')) {
 				return;
 			}
 

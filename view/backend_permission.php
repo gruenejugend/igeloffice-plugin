@@ -133,22 +133,23 @@ class backend_permission {
 	}
 	
 	public static function maskSave($post_id) {
+		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
+		
 		if(current_user_can('administrator')) {
 			if( !isset($_POST['io_permissions_info_nonce']) || 
-				!wp_verify_nonce($_POST['io_permissions_info_nonce'], 'io_permissions_info') || 
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				!wp_verify_nonce($_POST['io_permissions_info_nonce'], 'io_permissions_info')) {
 				return;
 			}
 			
 			if( !isset($_POST['io_permissions_member_nonce']) || 
-				!wp_verify_nonce($_POST['io_permissions_member_nonce'], 'io_permissions_member') || 
-				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				!wp_verify_nonce($_POST['io_permissions_member_nonce'], 'io_permissions_member')) {
 				return;
 			}
 
 			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST['io_permissions_remember_nonce']) ||
-					!wp_verify_nonce($_POST['io_permissions_remember_nonce'], 'io_permissions_remember') ||
-					defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+					!wp_verify_nonce($_POST['io_permissions_remember_nonce'], 'io_permissions_remember'))
 			) {
 				return;
 			}

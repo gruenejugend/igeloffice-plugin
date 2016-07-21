@@ -77,9 +77,12 @@ class backend_request {
 	}
 	
 	public static function maskSave($post_id) {
+		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
+		
 		if (!isset($_POST['io_request_action_nonce']) ||
 			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') ||
-			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
 			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
 		) {
 			return;
@@ -87,7 +90,6 @@ class backend_request {
 
 		if( !isset($_POST['io_request_message_nonce']) ||
 			!wp_verify_nonce($_POST['io_request_message_nonce'], 'io_request_message') ||
-			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
 			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
 		) {
 			return;
