@@ -102,7 +102,7 @@ class Groups_Backend_View {
 		$group = new Group($post->ID);
 
 		$selekt = $group->sichtbarkeit;
-		$post = "sichtbarkeit";
+		$post = Group_Util::POST_ATTRIBUT_SICHTBARKEIT;
 		$text = "Für wen soll diese Gruppe nicht angezeigt werden:";
 
 		include '../wp-content/plugins/igeloffice/templates/backend/groupUserArtSelekt.php';
@@ -126,7 +126,7 @@ class Groups_Backend_View {
 		$group = new Group($post->ID);
 
 		$selekt = $group->standard;
-		$post = "standard";
+		$post = Group_Util::POST_ATTRIBUT_STANDARD;
 		$text = "Folgende User-Arten sind standardm&auml;ßig Teil dieser Gruppe:";
 
 		include '../wp-content/plugins/igeloffice/templates/backend/groupUserArtSelekt.php';
@@ -302,18 +302,18 @@ class Groups_Backend_View {
 			
 			io_save_kategorie($post_id, $group, "group");
 			
-			io_add_del($_POST['owner'], $group->owner, $post_id, "Group_Control", "Owner");
-			io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
-			io_add_del($_POST['groups'], $group->groups, $post_id, "Group_Control", "Group");
-			io_add_del($_POST['permissions'], $group->permissions, $post_id, "Group_Control", "Permission");
+			io_add_del($_POST[Group_Util::POST_ATTRIBUT_OWNER], $group->owner, $post_id, "Group_Control", "Owner");
+			io_add_del($_POST[Group_Util::POST_ATTRIBUT_USERS], $group->users, $post_id, "User_Control", "ToGroup", true);
+			io_add_del($_POST[Group_Util::POST_ATTRIBUT_GROUPS], $group->groups, $post_id, "Group_Control", "Group");
+			io_add_del($_POST[Group_Util::POST_ATTRIBUT_PERMISSIONS], $group->permissions, $post_id, "Group_Control", "Permission");
 
-			if(isset($_POST['sichtbarkeit'])) {
-				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['sichtbarkeit']);
+			if(isset($_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT])) {
+				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT]);
 				update_post_meta($post_id, "io_group_sichtbarkeit", serialize($user_arten_save));
 			}
 
-			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST['remember']) && $_POST['remember'] != "") {
-				$remembers = explode(", ", $_POST['remember']);
+			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST[Group_Util::POST_ATTRIBUT_REMEMBER]) && $_POST[Group_Util::POST_ATTRIBUT_REMEMBER] != "") {
+				$remembers = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_REMEMBER]);
 				$remembers_save = $remembers;
 				$failed_adress = array();
 				$failes_user = array();
@@ -341,14 +341,14 @@ class Groups_Backend_View {
 				update_post_meta($post_id, "io_group_remember", serialize($remembers_save));
 			}
 
-			if(isset($_POST['standard'])) {
-				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST['standard']);
+			if(isset($_POST[Group_Util::POST_ATTRIBUT_STANDARD])) {
+				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST[Group_Util::POST_ATTRIBUT_STANDARD]);
 				update_post_meta($post_id, "io_group_standard", serialize($user_arten_save));
 			}
 			
-			if(!empty($_POST['quotaSize'])) {
-				$quota = str_replace(",", ".", sanitize_text_field($_POST['quotaSize']));
-				switch($_POST['quotaType']) {
+			if(!empty($_POST[Group_Util::POST_ATTRIBUT_QUOTA_SIZE])) {
+				$quota = str_replace(",", ".", sanitize_text_field($_POST[Group_Util::POST_ATTRIBUT_QUOTA_SIZE]));
+				switch($_POST[Group_Util::POST_ATTRIBUT_QUOTA_TYPE]) {
 					case "Kilo Byte (KB)":
 						$quota *= 1024;
 						break;
@@ -385,16 +385,16 @@ class Groups_Backend_View {
 				
 				$fehler = false;
 				if(!empty($group->users)) {
-					$_POST['users'] = $_POST['users'] == null ? array() : $_POST['users'];
-					if(!empty(array_diff(io_get_ids($_POST['users']), $group->users))) {
+					$_POST[Group_Util::POST_ATTRIBUT_USERS] = $_POST[Group_Util::POST_ATTRIBUT_USERS] == null ? array() : $_POST[Group_Util::POST_ATTRIBUT_USERS];
+					if(!empty(array_diff(io_get_ids($_POST[Group_Util::POST_ATTRIBUT_USERS]), $group->users))) {
 						$fehler = true;
 					}
-				} elseif(empty($group->users) && !empty($_POST['users'])) {
+				} elseif(empty($group->users) && !empty($_POST[Group_Util::POST_ATTRIBUT_USERS])) {
 					$fehler = true;
 				}
 				
 				if(!$fehler) {
-					io_add_del($_POST['users'], $group->users, $post_id, "User_Control", "ToGroup", true);
+					io_add_del($_POST[Group_Util::POST_ATTRIBUT_USERS], $group->users, $post_id, "User_Control", "ToGroup", true);
 				}
 				
 				/*
@@ -402,8 +402,8 @@ class Groups_Backend_View {
 				 */
 				$added_user = array();
 				$fail = array();
-				if(!empty($_POST['new_mails'])) {
-					$new_mails = explode(", ", $_POST['new_mails']);
+				if(!empty($_POST[Group_Util::POST_ATTRIBUT_NEW_MAILS])) {
+					$new_mails = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_NEW_MAILS]);
 					foreach($new_mails AS $mail) {
 						$mail_to_add = sanitize_text_field($mail);
 						
@@ -420,8 +420,8 @@ class Groups_Backend_View {
 				/*
 				 * Gruppenmitglieder mit Namen hinzufügen
 				 */
-				if(!empty($_POST['new_names'])) {
-					$new_names = explode(", ", $_POST['new_names']);
+				if(!empty($_POST[Group_Util::POST_ATTRIBUT_NEW_NAMES])) {
+					$new_names = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_NEW_NAMES]);
 					foreach($new_names AS $name) {
 						$name_to_add = sanitize_text_field($name);
 						

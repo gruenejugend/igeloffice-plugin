@@ -35,4 +35,16 @@ class Group_Util {
 	const QUOTA_NONCE = 'io_groups_quota';
 	const POST_ATTRIBUT_LEADER_MEMBER_NONCE = 'io_groups_leader_member_nonce';
 	const LEADER_MEMBER_NONCE = 'io_groups_leader_member';
+	
+	const POST_ATTRIBUT_OWNER = 'owner';
+	const POST_ATTRIBUT_USERS = 'users';
+	const POST_ATTRIBUT_GROUPS = 'groups';
+	const POST_ATTRIBUT_PERMISSIONS = 'permissions';
+	const POST_ATTRIBUT_SICHTBARKEIT = 'sichtbarkeit';
+	const POST_ATTRIBUT_REMEMBER = 'remember';
+	const POST_ATTRIBUT_STANDARD = 'standard';
+	const POST_ATTRIBUT_QUOTA_SIZE = 'quotaSize';
+	const POST_ATTRIBUT_QUOTA_TYPE = 'quotaType';
+	const POST_ATTRIBUT_NEW_NAMES = 'new_names';
+	CONST POST_ATTRIBUT_NEW_MAILS = 'new_mails';
 }

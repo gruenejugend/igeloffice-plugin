@@ -2,7 +2,7 @@
 	<tr>
 		<th width="30%">Mitglieder</th>
 		<td width="70%">
-			<select name="users[]" id="user" size="10" multiple>
+			<select name="<?php echo Group_Util::POST_ATTRIBUT_USERS; ?>[]" id="<?php echo Group_Util::POST_ATTRIBUT_USERS; ?>" size="10" multiple>
 				<?php 
 				
 				foreach($users AS $key_1 => $value_1) {
@@ -18,14 +18,14 @@
 		<th width="30%">Mitglieder anhand E-Mail-Adresse hinzuf&uuml;gen</th>
 		<td width="70%">
 			<i>Trennen mit Komma und folgendem Leerzeichen</i><br>
-			<input type="email" name="new_mails" id="new_mails" size="50" multiple>
+			<input type="email" name="<?php echo Group_Util::POST_ATTRIBUT_NEW_MAILS; ?>" id="<?php echo Group_Util::POST_ATTRIBUT_NEW_MAILS; ?>" size="50" multiple>
 		</td>
 	</tr>
 	<tr>
 		<th width="30%">Mitglieder anhand Vorname und Nachname hinzuf&uuml;gen</th>
 		<td width="70%">
 			<i>Trennen mit Komma und folgendem Leerzeichen</i><br>
-			<input type="text" name="new_names" id="new_names" size="50">
+			<input type="text" name="<?php echo Group_Util::POST_ATTRIBUT_NEW_NAMES; ?>" id="<?php echo Group_Util::POST_ATTRIBUT_NEW_NAMES; ?>" size="50">
 		</td>
 	</tr>
 </table>

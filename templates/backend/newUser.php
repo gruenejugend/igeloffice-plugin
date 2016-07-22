@@ -45,9 +45,9 @@
 		</td>
 	</tr>
 	<tr class="form-field" id="io_groups">
-		<th scope="row"><label for="groups">Gruppenmitgliedschaften </label></th>
+		<th scope="row"><label for="<?php echo Group_Util::POST_ATTRIBUT_GROUPS; ?>">Gruppenmitgliedschaften </label></th>
 		<td>
-			<select name="groups[]" id="groups" size="10" multiple>
+			<select name="<?php echo Group_Util::POST_ATTRIBUT_GROUPS; ?>[]" id="<?php echo Group_Util::POST_ATTRIBUT_GROUPS; ?>" size="10" multiple>
 				<?php io_form_select($groups, $group_values); ?>
 			</select>
 		</td>
