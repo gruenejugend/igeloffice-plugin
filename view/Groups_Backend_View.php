@@ -35,7 +35,7 @@ class Groups_Backend_View {
 	}
 	
 	public static function metaInfo($post) {
-		wp_nonce_field('io_groups_info', 'io_groups_info_nonce');
+		wp_nonce_field('io_groups_info', Group_Util::POST_ATTRIBUT_INFO_NONCE);
 		
 		$oberkategorie_sel = "";
 		$unterkategorie_sel = "";
@@ -51,7 +51,7 @@ class Groups_Backend_View {
 	}
 	
 	public static function metaMember($post) {
-		wp_nonce_field('io_groups_member', 'io_groups_member_nonce');
+		wp_nonce_field(Group_Util::MEMBER_NONCE, Group_Util::POST_ATTRIBUT_MEMBER_NONCE);
 		
 		$owner = array();
 		$users = array();
@@ -85,7 +85,7 @@ class Groups_Backend_View {
 	}
 	
 	public static function metaPermission($post) {
-		wp_nonce_field('io_groups_permission', 'io_groups_permission_nonce');
+		wp_nonce_field(Group_Util::REMEMBER_NONCE, Group_Util::POST_ATTRIBUT_PERMISSION_NONCE);
 		
 		$permissions = array();
 		if(get_post_meta($post->ID, "io_group_aktiv", true) != "") {
@@ -97,7 +97,7 @@ class Groups_Backend_View {
 	}
 
 	public static function metaSichtbarkeit($post) {
-		wp_nonce_field('io_groups_sichtbarkeit', 'io_groups_sichtbarkeit_nonce');
+		wp_nonce_field(Group_Util::SICHTBARKEIT_NONCE, Group_Util::POST_ATTRIBUT_SICHTBARKEIT_NONCE);
 
 		$group = new Group($post->ID);
 
@@ -110,7 +110,7 @@ class Groups_Backend_View {
 
 	public static function metaRemember($post)
 	{
-		wp_nonce_field('io_groups_remember', 'io_groups_remember_nonce');
+		wp_nonce_field(Group_Util::REMEMBER_NONCE, Group_Util::POST_ATTRIBUT_REMEMBER_NONCE);
 
 		$group = new Group($post->ID);
 
@@ -121,7 +121,7 @@ class Groups_Backend_View {
 	
 	public static function metaStandard($post) 
 	{
-		wp_nonce_field('io_groups_standard', 'io_groups_standard_nonce');
+		wp_nonce_field(Group_Util::STANDARD_NONCE, Group_Util::POST_ATTRIBUT_STANDARD_NONCE);
 
 		$group = new Group($post->ID);
 
@@ -134,7 +134,7 @@ class Groups_Backend_View {
 	
 	public static function metaQuota($post) 
 	{
-		wp_nonce_field('io_groups_quota', 'io_groups_quota_nonce');
+		wp_nonce_field(Group_Util::QUOTA_NONCE, Group_Util::POST_ATTRIBUT_QUOTA_NONCE);
 
 		$group = new Group($post->ID);
 		
@@ -257,39 +257,39 @@ class Groups_Backend_View {
 		}
 		
 		if(current_user_can('administrator')) {
-			if( !isset($_POST['io_groups_info_nonce']) || 
-				!wp_verify_nonce($_POST['io_groups_info_nonce'], 'io_groups_info')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_INFO_NONCE]) || 
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_INFO_NONCE], Group_Util::INFO_NONCE)) {
 				return;
 			}
 			
-			if( !isset($_POST['io_groups_member_nonce']) || 
-				!wp_verify_nonce($_POST['io_groups_member_nonce'], 'io_groups_member')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_MEMBER_NONCE]) || 
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_MEMBER_NONCE], Group_Util::MEMBER_NONCE)) {
 				return;
 			}
 			
-			if( !isset($_POST['io_groups_permission_nonce']) || 
-				!wp_verify_nonce($_POST['io_groups_permission_nonce'], 'io_groups_permission')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_PERMISSION_NONCE]) || 
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_PERMISSION_NONCE], Group_Util::REMEMBER_NONCE)) {
 				return;
 			}
 
-			if( !isset($_POST['io_groups_sichtbarkeit_nonce']) ||
-				!wp_verify_nonce($_POST['io_groups_sichtbarkeit_nonce'], 'io_groups_sichtbarkeit')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT_NONCE]) ||
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT_NONCE], Group_Util::SICHTBARKEIT_NONCE)) {
 				return;
 			}
 
-			if( Group_Util::STANDARD_ZUWEISUNG_SCHALTER && (!isset($_POST['io_groups_standard_nonce']) ||
-				!wp_verify_nonce($_POST['io_groups_standard_nonce'], 'io_groups_standard'))) {
+			if( Group_Util::STANDARD_ZUWEISUNG_SCHALTER && (!isset($_POST[Group_Util::POST_ATTRIBUT_STANDARD_NONCE]) ||
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_STANDARD_NONCE], Group_Util::STANDARD_NONCE))) {
 				return;
 			}
 
-			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST['io_groups_remember_nonce']) ||
-					!wp_verify_nonce($_POST['io_groups_remember_nonce'], 'io_groups_remember'))
+			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST[Group_Util::POST_ATTRIBUT_REMEMBER_NONCE]) ||
+					!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_REMEMBER_NONCE], Group_Util::REMEMBER_NONCE))
 			) {
 				return;
 			}
 
-			if( !isset($_POST['io_groups_quota_nonce']) ||
-				!wp_verify_nonce($_POST['io_groups_quota_nonce'], 'io_groups_quota')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_QUOTA_NONCE]) ||
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_QUOTA_NONCE], Group_Util::QUOTA_NONCE)) {
 				return;
 			}
 			
