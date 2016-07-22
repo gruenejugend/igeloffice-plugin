@@ -1,6 +1,6 @@
 	<p id="land_box">
-		<label for="land">Bundesland:<br>
-			<select name="land" id="land">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">Bundesland:<br>
+			<select name="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>" id="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">
 				<option value="0">--- Bitte auswählen ---</option>
 				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
@@ -35,7 +35,7 @@
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() { 
 		var userNameKeyUp = function() {
-			switch($("#land").val()) {
+			switch($("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").val()) {
 				case 'baden-wuerttemberg':
 					landKurz = 'Baden-Württemberg';
 					break;
@@ -91,7 +91,7 @@
 			$("#user_login").val(landKurz);
 		};
 		
-		$("#land").change(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").change(function() {
 			userNameKeyUp();
 		});
 	});

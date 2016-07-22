@@ -11,8 +11,8 @@
 		</label>
 	</p>
 	<p id="land_box">
-		<label for="land">Bundesland:<br>
-			<select name="land" id="land">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">Bundesland:<br>
+			<select name="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>" id="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">
 				<option value="0">--- Bitte auswählen ---</option>
 				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>

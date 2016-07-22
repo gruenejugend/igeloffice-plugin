@@ -45,7 +45,7 @@ class Register_Backend_View {
 		$last_name = (!empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]) : '';
 		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
 		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
-		$land = (!empty($_POST['land'])) ? sanitize_text_field($_POST['land']) : '';
+		$land = (!empty($_POST[User_Util::POST_ATTRIBUT_LAND])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAND]) : '';
 		
 		$landChecked[0]  = ($land == 'baden-wuerttemberg' ? ' checked' : '');
 		$landChecked[1]  = ($land == 'bayern' ? ' checked' : '');

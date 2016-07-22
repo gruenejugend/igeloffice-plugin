@@ -29,7 +29,7 @@ class User_Control {
 		unset($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]);
 		unset($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]);
 		unset($_POST['io_users_nonce']);
-		unset($_POST['land']);
+		unset($_POST[User_Util::POST_ATTRIBUT_LAND]);
 	}
 
 	public static function createMeta($user_id)
@@ -51,7 +51,7 @@ class User_Control {
 				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]));
 				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]));
 			} elseif ($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE) {
-				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
+				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAND]));
 			}
 
 			do_action("io_user_register", $user_id);
@@ -85,7 +85,7 @@ class User_Control {
 		));
 		
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_BASISGRUPPE;
-		$_POST['land'] = $landesverband;
+		$_POST[User_Util::POST_ATTRIBUT_LAND] = $landesverband;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);

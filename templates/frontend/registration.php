@@ -42,8 +42,8 @@
 		</label>
 	</p>
 	<p id="land_box">
-		<label for="land">Bundesland:<br>
-			<select name="land" id="land">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">Bundesland:<br>
+			<select name="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>" id="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">
 				<option value="0">--- Bitte auswählen ---</option>
 				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-Württemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>
@@ -56,7 +56,7 @@
 				<option<?php echo $landChecked[8];  ?> value="niedersachsen">Niedersachsen</option>
 				<option<?php echo $landChecked[9];  ?> value="nordrhein-westfalen">Nordrhein-Westfalen</option>
 				<option<?php echo $landChecked[10]; ?> value="rheinland-pfalz">Rheinland-Pfalz</option>
-				<option<?php echo $landChecked[11]; ?> value="saarland">Saarland</option>
+				<option<?php echo $landChecked[11]; ?> value="saar<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">Saarland</option>
 				<option<?php echo $landChecked[12]; ?> value="sachsen">Sachsen</option>
 				<option<?php echo $landChecked[13]; ?> value="sachsen-anhalt">Sachsen-Anhalt</option>
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
@@ -116,7 +116,7 @@
 		};
 		
 		var userNameKeyUp = function() {
-			switch($("#land").val()) {
+			switch($("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").val()) {
 				case 'baden-wuerttemberg':
 					landKurz = 'Baden-Württemberg';
 					break;
@@ -211,7 +211,7 @@
 			userNameKeyUp();
 		});
 		
-		$("#land").change(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").change(function() {
 			userNameKeyUp();
 		});
 	});

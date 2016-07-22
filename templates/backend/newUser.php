@@ -21,9 +21,9 @@
 		</td>
 	</tr>
 	<tr class="form-field form-required" id="io_landesverband">
-		<th scope="row"><label for="land">Bundesland <span class="description">(erforderlich)</span></label></th>
+		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">Bundesland <span class="description">(erforderlich)</span></label></th>
 		<td>
-			<select name="land" id="land">
+			<select name="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>" id="<?php echo User_Util::POST_ATTRIBUT_LAND; ?>">
 				<option value="0">--- Bitte auswählen ---</option>
 				<option<?php echo $landChecked[0];  ?> value="baden-wuerttemberg">Baden-W&uuml;rttemberg</option>
 				<option<?php echo $landChecked[1];  ?> value="bayern">Bayern</option>

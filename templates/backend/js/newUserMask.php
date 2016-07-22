@@ -62,7 +62,7 @@
 		};
 		
 		var userNameKeyUp = function() {
-			switch($("#land").val()) {
+			switch($("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").val()) {
 				case 'baden-wuerttemberg':
 					landKurz = 'Baden-Württemberg';
 					break;
@@ -157,7 +157,7 @@
 			userNameKeyUp();
 		});
 		
-		$("#land").change(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>").change(function() {
 			userNameKeyUp();
 		});
 	});
