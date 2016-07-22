@@ -48,14 +48,16 @@ class Request_Backend_View {
 	
 	public static function maskAction($post) {
 		$request = new Request($post->ID);
-		wp_nonce_field('io_request_action', 'io_request_action_nonce');
+		wp_nonce_field(Request_Util::ACTION_NONCE, Request_Util::POST_ATTRIBUT_ACTION_NONCE);
 		
 		if($request->status == "Gestellt") {
 			?>
 
-<input type="radio" name="<?php echo Request_Util::ATTRIBUT_STATUS; ?>" value="annahme"> Antrag annehmen
+			<input type="radio" name="<?php echo Request_Util::POST_ATTRIBUT_STATUS; ?>"
+				   value="annahme"> Antrag annehmen
 <br><br><br>
-<input type="radio" name="<?php echo Request_Util::ATTRIBUT_STATUS; ?>" value="ablehnung"> Antrag ablehnen
+			<input type="radio" name="<?php echo Request_Util::POST_ATTRIBUT_STATUS; ?>"
+				   value="ablehnung"> Antrag ablehnen
 
 <?php
 		} else {
@@ -65,7 +67,7 @@ class Request_Backend_View {
 	
 	public static function maskMessage($post) {
 		$request = new Request($post->ID);
-		wp_nonce_field('io_request_message', 'io_request_message_nonce');
+		wp_nonce_field(Request_Util::MESSAGE_NONCE, Request_Util::POST_ATTRIBUT_MESSAGE_NONCE);
 		
 		?>
 		
@@ -80,17 +82,17 @@ class Request_Backend_View {
 		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 			return;
 		}
-		
-		if (!isset($_POST['io_request_action_nonce']) ||
-			!wp_verify_nonce($_POST['io_request_action_nonce'], 'io_request_action') ||
-			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
+
+		if (!isset($_POST[Request_Util::POST_ATTRIBUT_ACTION_NONCE]) ||
+			!wp_verify_nonce($_POST[Request_Util::POST_ATTRIBUT_ACTION_NONCE], Request_Util::ACTION_NONCE) ||
+			(empty($_POST[Request_Util::POST_ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
 		) {
 			return;
 		}
 
-		if( !isset($_POST['io_request_message_nonce']) ||
-			!wp_verify_nonce($_POST['io_request_message_nonce'], 'io_request_message') ||
-			(empty($_POST[Request_Util::ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
+		if (!isset($_POST[Request_Util::POST_ATTRIBUT_MESSAGE_NONCE]) ||
+			!wp_verify_nonce($_POST[Request_Util::POST_ATTRIBUT_MESSAGE_NONCE], Request_Util::MESSAGE_NONCE) ||
+			(empty($_POST[Request_Util::POST_ATTRIBUT_STATUS]) && empty($_POST[Request_Util::ATTRIBUT_MESSAGE]))
 		) {
 			return;
 		}
@@ -110,9 +112,9 @@ class Request_Backend_View {
 		}
 		
 		if($pruef) {
-			if($_POST[Request_Util::ATTRIBUT_STATUS] == "annahme") {
+			if ($_POST[Request_Util::POST_ATTRIBUT_STATUS] == "annahme") {
 				Request_Control::approve($post_id);
-			} else if($_POST[Request_Util::ATTRIBUT_STATUS] == "ablehnung") {
+			} else if ($_POST[Request_Util::POST_ATTRIBUT_STATUS] == "ablehnung") {
 				Request_Control::reject($post_id);
 			}
 		}
@@ -192,8 +194,8 @@ class Request_Backend_View {
 			$values = array("Angenommen", "Abgelehnt", "Gestellt");
 			$name = Request_Util::ATTRIBUT_STATUS;
 			$selected = array();
-			if(isset($_POST[Request_Util::ATTRIBUT_STATUS])) {
-				$selected = $_POST[Request_Util::ATTRIBUT_STATUS];
+if (isset($_POST[Request_Util::POST_ATTRIBUT_STATUS])) {
+	$selected = $_POST[Request_Util::POST_ATTRIBUT_STATUS];
 			}
 			include '../wp-content/plugins/igeloffice/templates/backend/filterSelect.php';
 			?>
