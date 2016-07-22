@@ -15,7 +15,7 @@ class Permission_Backend_View {
 	}
 	
 	public static function metaInfo($post) {
-		wp_nonce_field('io_permissions_info', 'io_permissions_info_nonce');
+		wp_nonce_field(Permission_Util::REMEMBER_INFO, Permission_Util::POST_ATTRIBUT_INFO_NONCE);
 		
 		$oberkategorie_sel = "";
 		$unterkategorie_sel = "";
@@ -31,7 +31,7 @@ class Permission_Backend_View {
 	}
 	
 	public static function metaMember($post) {
-		wp_nonce_field('io_permissions_member', 'io_permissions_member_nonce');
+		wp_nonce_field(Permission_Util::MEMBER_NONCE, Permission_Util::POST_ATTRIBUT_MEMBER_NONCE);
 		
 		$users = array();
 		$groups = array();
@@ -47,7 +47,7 @@ class Permission_Backend_View {
 
 	public static function metaRemember($post)
 	{
-		wp_nonce_field('io_permissions_remember', 'io_permissions_remember_nonce');
+		wp_nonce_field(Permission_Util::REMEMBER_NONCE, Permission_Util::POST_ATTRIBUT_REMEMBER_NONCE);
 
 		$permission = new Permission($post->ID);
 
@@ -138,18 +138,18 @@ class Permission_Backend_View {
 		}
 		
 		if(current_user_can('administrator')) {
-			if( !isset($_POST['io_permissions_info_nonce']) || 
-				!wp_verify_nonce($_POST['io_permissions_info_nonce'], 'io_permissions_info')) {
+			if( !isset($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE]) || 
+				!wp_verify_nonce($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE], Permission_Util::REMEMBER_INFO)) {
 				return;
 			}
 			
-			if( !isset($_POST['io_permissions_member_nonce']) || 
-				!wp_verify_nonce($_POST['io_permissions_member_nonce'], 'io_permissions_member')) {
+			if( !isset($_POST[Permission_Util::POST_ATTRIBUT_MEMBER_NONCE]) || 
+				!wp_verify_nonce($_POST[Permission_Util::POST_ATTRIBUT_MEMBER_NONCE], Permission_Util::MEMBER_NONCE)) {
 				return;
 			}
 
-			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST['io_permissions_remember_nonce']) ||
-					!wp_verify_nonce($_POST['io_permissions_remember_nonce'], 'io_permissions_remember'))
+			if (Remember_Util::REMEMBER_SCHALTER && (!isset($_POST[Permission_Util::POST_ATTRIBUT_REMEMBER_NONCE]) ||
+					!wp_verify_nonce($_POST[Permission_Util::POST_ATTRIBUT_REMEMBER_NONCE], Permission_Util::REMEMBER_NONCE))
 			) {
 				return;
 			}
@@ -163,11 +163,11 @@ class Permission_Backend_View {
 			
 			io_save_kategorie($post_id, $permission, "permission");
 			
-			io_add_del($_POST['users'], $permission->users, $post_id, "User_Control", "Permission", true);
-			io_add_del($_POST['groups'], $permission->groups, $post_id, "Group_Control", "Permission", true);
+			io_add_del($_POST[Permission_Util::POST_ATTRIBUT_USERS], $permission->users, $post_id, "User_Control", "Permission", true);
+			io_add_del($_POST[Permission_Util::POST_ATTRIBUT_GROUPS], $permission->groups, $post_id, "Group_Control", "Permission", true);
 
-			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST['remember']) && $_POST['remember'] != "") {
-				$remembers = explode(", ", $_POST['remember']);
+			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST[Permission_Util::POST_ATTRIBUT_REMEMBER]) && $_POST[Permission_Util::POST_ATTRIBUT_REMEMBER] != "") {
+				$remembers = explode(", ", $_POST[Permission_Util::POST_ATTRIBUT_REMEMBER]);
 				$remembers_save = $remembers;
 				$failed_adress = array();
 				$failes_user = array();
