@@ -21,19 +21,24 @@ function io_form_select($values, $selected = array(), $notto = "", $user = false
 }
 
 function io_save_kategorie($post_id, $obj, $type) {
-	if(current_user_can('administrator')) {		
-		if(isset($_POST['oberkategorie_txt']) && $_POST['oberkategorie_txt'] != "") {
-			update_post_meta($post_id, "io_" . $type . "_ok", sanitize_text_field($_POST['oberkategorie_txt']));
-		} else if(isset($_POST['oberkategorie_sel']) && $_POST['oberkategorie_sel'] != -1) {
-			update_post_meta($post_id, "io_" . $type . "_ok", sanitize_text_field($_POST['oberkategorie_sel']));
+	if (current_user_can('administrator')) {
+		$OBERKATEGORIE_TXT = 'oberkategorie_txt';
+		$OBERKATEGORIE_SEL = 'oberkategorie_sel';
+		$UNTERKATEGORIE_TXT = 'unterkategorie_txt';
+		$UNTERKATEGORIE_SEL = 'unterkategorie_sel';
+
+		if (isset($_POST[$OBERKATEGORIE_TXT]) && $_POST[$OBERKATEGORIE_TXT] != "") {
+			update_post_meta($post_id, "io_" . $type . "_ok", sanitize_text_field($_POST[$OBERKATEGORIE_TXT]));
+		} else if (isset($_POST[$OBERKATEGORIE_SEL]) && $_POST[$OBERKATEGORIE_SEL] != -1) {
+			update_post_meta($post_id, "io_" . $type . "_ok", sanitize_text_field($_POST[$OBERKATEGORIE_SEL]));
 		} else if($obj->oberkategorie != "") {
 			delete_post_meta($post_id, "io_" . $type . "_ok");
 		}
 
-		if(isset($_POST['unterkategorie_txt']) && $_POST['unterkategorie_txt'] != "") {
-			update_post_meta($post_id, "io_" . $type . "_uk", sanitize_text_field($_POST['unterkategorie_txt']));
-		} else if(isset($_POST['unterkategorie_sel']) && $_POST['unterkategorie_sel'] != -1) {
-			update_post_meta($post_id, "io_" . $type . "_uk", sanitize_text_field($_POST['unterkategorie_sel']));
+		if (isset($_POST[$UNTERKATEGORIE_TXT]) && $_POST[$UNTERKATEGORIE_TXT] != "") {
+			update_post_meta($post_id, "io_" . $type . "_uk", sanitize_text_field($_POST[$UNTERKATEGORIE_TXT]));
+		} else if (isset($_POST[$UNTERKATEGORIE_SEL]) && $_POST[$UNTERKATEGORIE_SEL] != -1) {
+			update_post_meta($post_id, "io_" . $type . "_uk", sanitize_text_field($_POST[$UNTERKATEGORIE_SEL]));
 		} else if($obj->unterkategorie != "") {
 			delete_post_meta($post_id, "io_" . $type . "_uk");
 		}
