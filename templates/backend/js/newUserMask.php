@@ -119,7 +119,7 @@
 			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
-					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>").val() + " " + $("#last_name").val();
+					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>").val() + " " + $("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>").val();
 					break;
 				case 'landesverband':
 					userLoginValue = landKurz;
@@ -145,7 +145,7 @@
 			userNameKeyUp();
 		});
 		
-		$("#last_name").keyup(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>").keyup(function() {
 			userNameKeyUp();
 		});
 		

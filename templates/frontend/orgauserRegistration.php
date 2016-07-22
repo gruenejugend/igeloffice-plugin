@@ -1,5 +1,5 @@
 	<p style="display: block;" id="orga_name_box">
-		<label for="last_name">Name:<br>
+		<label for="orga_name">Name:<br>
 			<input name="orga_name" id="orga_name" class="input" value="" size="25" type="text">
 			<input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>">
 			<?php

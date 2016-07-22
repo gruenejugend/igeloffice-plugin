@@ -43,7 +43,7 @@ class Register_Frontend_View {
 				break;
 		}
 		$first_name = (!empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) : '';
-		$last_name = (!empty($_POST['last_name'])) ? sanitize_text_field($_POST['last_name']) : '';
+		$last_name = (!empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]) : '';
 		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
 		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
 		$land = (!empty($_POST['land'])) ? sanitize_text_field($_POST['land']) : '';
@@ -91,12 +91,12 @@ class Register_Frontend_View {
 			$errors->add('user_email_gj_error', '<strong>FEHLER:</strong> Du darfst keine GR&Uuml;NE JUGEND E-Mail-Adresse hier angeben!');
 		}
 		
-		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_USER && (empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) || empty($_POST['last_name']))) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_USER && (empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) || empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]))) {
 			if(empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME])) {
 				$errors->add('first_name_error', '<strong>FEHLER:</strong> Du musst einen Vornamen angeben!');
 			}
 			
-			if(empty($_POST['last_name'])) {
+			if(empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME])) {
 				$errors->add('last_name_error', '<strong>FEHLER:</strong> Du musst einen Nachnamen angeben!');
 			}
 		}

@@ -15,7 +15,7 @@ class User_Control {
 		
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_USER;
 		$_POST[User_Util::POST_ATTRIBUT_FIRST_NAME] = $first_name;
-		$_POST['last_name'] = $last_name;
+		$_POST[User_Util::POST_ATTRIBUT_LAST_NAME] = $last_name;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);
@@ -27,7 +27,7 @@ class User_Control {
 	{
 		unset($_POST[User_Util::POST_ATTRIBUT_ART]);
 		unset($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]);
-		unset($_POST['last_name']);
+		unset($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]);
 		unset($_POST['io_users_nonce']);
 		unset($_POST['land']);
 	}
@@ -49,7 +49,7 @@ class User_Control {
 
 			if ($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_USER) {
 				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]));
-				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
+				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]));
 			} elseif ($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE) {
 				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
 			}
