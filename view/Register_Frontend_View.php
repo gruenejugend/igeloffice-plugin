@@ -44,7 +44,7 @@ class Register_Frontend_View {
 		}
 		$first_name = (!empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) : '';
 		$last_name = (!empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]) : '';
-		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
+		$orga_name = (!empty($_POST[User_Util::POST_ATTRIBUT_ORGA_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ORGA_NAME]) : '';
 		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
 		$land = (!empty($_POST[User_Util::POST_ATTRIBUT_LAND])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAND]) : '';
 		
@@ -115,7 +115,7 @@ class Register_Frontend_View {
 			$errors->add('land_error', '<strong>FEHLER:</strong> Du musst ein Bundesland angeben!');
 		}
 		
-		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_ORGANISATORISCH && empty($_POST['orga_name'])) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_ORGANISATORISCH && empty($_POST[User_Util::POST_ATTRIBUT_ORGA_NAME])) {
 			$errors->add('orga_error', '<strong>FEHLER:</strong> Du musst einen Namen angeben!');
 		}
 		

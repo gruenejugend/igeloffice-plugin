@@ -9,9 +9,9 @@
 		</td>
 	</tr>
 	<tr class="form-field form-required" id="io_orga_name">
-		<th scope="row"><label for="orga_name">Orga-Name <span class="description">(erforderlich)</span></label></th>
+		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>">Orga-Name <span class="description">(erforderlich)</span></label></th>
 		<td>
-			<input type="text" name="orga_name" id="orga_name" class="input" value="<?php echo esc_attr(wp_unslash($orga_name)); ?>" size="25">
+			<input type="text" name="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" id="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" class="input" value="<?php echo esc_attr(wp_unslash($orga_name)); ?>" size="25">
 		</td>
 	</tr>
 	<tr class="form-field form-required" id="io_ort">

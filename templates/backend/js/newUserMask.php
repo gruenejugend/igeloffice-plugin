@@ -128,7 +128,7 @@
 					userLoginValue = $("#name").val();
 					break;
 				case 'organisatorisch':
-					userLoginValue = $("#orga_name").val();
+					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").val();
 					break;
 			}
 			
@@ -149,7 +149,7 @@
 			userNameKeyUp();
 		});
 		
-		$("#orga_name").keyup(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").keyup(function() {
 			userNameKeyUp();
 		});
 		

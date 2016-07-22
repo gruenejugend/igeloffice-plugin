@@ -32,8 +32,8 @@
 		</label>
 	</p>
 	<p id="orga_name_box">
-		<label for="orga_name">Name:<br>
-			<input name="orga_name" id="orga_name" class="input" value="" size="25" type="text">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>">Name:<br>
+			<input name="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" id="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" class="input" value="" size="25" type="text">
 		</label>
 	</p>
 	<p id="name_box">
@@ -182,7 +182,7 @@
 					userLoginValue = $("#name").val();
 					break;
 				case 'organisatorisch':
-					userLoginValue = $("#orga_name").val();
+					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").val();
 					break;
 			};
 			
@@ -203,7 +203,7 @@
 			userNameKeyUp();
 		});
 		
-		$("#orga_name").keyup(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").keyup(function() {
 			userNameKeyUp();
 		});
 		

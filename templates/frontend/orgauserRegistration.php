@@ -1,6 +1,6 @@
 	<p style="display: block;" id="orga_name_box">
-		<label for="orga_name">Name:<br>
-			<input name="orga_name" id="orga_name" class="input" value="" size="25" type="text">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>">Name:<br>
+			<input name="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" id="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" class="input" value="" size="25" type="text">
 			<input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>">
 			<?php
 				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
@@ -19,11 +19,11 @@
 		var userLoginValue = "";
 		
 		var userNameKeyUp = function() {
-			userLoginValue = $("#orga_name").val();
+			userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").val();
 			$("#user_login").val(userLoginValue);
 		};
 		
-		$("#orga_name").keyup(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").keyup(function() {
 			userNameKeyUp();
 		});
 	});
