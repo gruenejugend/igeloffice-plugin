@@ -23,6 +23,7 @@
 	require_once 'services/util/Permission_Util.php';
 	require_once 'services/util/Request_Util.php';
 	require_once 'services/util/Remember_Util.php';
+	require_once 'services/util/Newsletter_Util.php';
 	
 	require_once 'control/ldap.php';
 	require_once 'control/ldapConnector.php';

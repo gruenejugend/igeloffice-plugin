@@ -3,7 +3,7 @@
 /**
  * Description of test_mailStandard
  *
- * @author deb139e
+ * @author KWM
  */
 class test_mailStandard extends PHPUnit_Framework_TestCase {
 	public static $user_ids = array();

@@ -7,7 +7,7 @@
  */
 class Newsletter_Frontend_View {
 	public static function maskHandler() {
-		if(!empty($_GET['newsletter_code'])) {
+		if(!empty($_GET[Newsletter_Util::GET_ATTRIBUTE_CODE])) {
 			$checkCode = self::checkCode();
 			if($checkCode == "l") {
 				echo "Du wurdest erfolgreich aus dem Verteiler ausgetragen.";
@@ -15,9 +15,9 @@ class Newsletter_Frontend_View {
 				echo "Du wurdest erfolgreich auf dem Verteiler eingetragen.";
 			} else if($checkCode == "a") {
 				$pruef = true;
-				if(!empty($_POST['newsletter_submit'])) {
-					if( !isset($_POST['io_newsletter_nonce']) || 
-						!wp_verify_nonce($_POST['io_newsletter_nonce'], 'io_newsletter') || 
+				if(!empty($_POST[Newsletter_Util::POST_ATTRIBUT_SUBMIT])) {
+					if( !isset($_POST[Newsletter_Util::POST_ATTRIBUT_NONCE]) || 
+						!wp_verify_nonce($_POST[Newsletter_Util::POST_ATTRIBUT_NONCE], Newsletter_Util::NONCE) || 
 						defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 						return;
 					}
@@ -40,18 +40,18 @@ class Newsletter_Frontend_View {
 			}
 			echo '<br><br>';
 		} else {
-			if(!empty($_POST['newsletter_submit'])) {
-				if( !isset($_POST['io_newsletter_nonce']) || 
-					!wp_verify_nonce($_POST['io_newsletter_nonce'], 'io_newsletter') || 
+			if(!empty($_POST[Newsletter_Util::POST_ATTRIBUT_SUBMIT])) {
+				if( !isset($_POST[Newsletter_Util::POST_ATTRIBUT_NONCE]) || 
+					!wp_verify_nonce($_POST[Newsletter_Util::POST_ATTRIBUT_NONCE], Newsletter_Util::NONCE) || 
 					defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 					return;
 				}
 				
 				if(empty(get_transient("loesung"))) {
 					echo "Du musst die Aufgabe innerhalb drei Minuten l&ouml;sen.";
-				} else if(get_transient("loesung") != $_POST['newsletter_aufgabe']) {
+				} else if(get_transient("loesung") != $_POST[Newsletter_Util::POST_ATTRIBUT_AUFGABE]) {
 					echo "Die eingegebene L&ouml;sung ist leider falsch. Bitte versuche es nochmal!";
-					$vorlage = sanitize_text_field($_POST['newsletter_email']);
+					$vorlage = sanitize_text_field($_POST[Newsletter_Util::POST_ATTRIBUT_EMAIL]);
 				} else {
 					echo "Deine Eingabe war erfolgreich. Sollte die angegebene Mail-Adresse in unserem System wirklich existieren, schicken wir dieser nun eine E-Mail in der das weitere Verfahren beschrieben ist.";
 					self::sendMail();
@@ -67,7 +67,7 @@ class Newsletter_Frontend_View {
 
 	public static function checkCode()
 	{
-		$key = sanitize_text_field($_GET['newsletter_code']);
+		$key = sanitize_text_field($_GET[Newsletter_Util::GET_ATTRIBUTE_CODE]);
 		$art = LDAP_Proxy::isSherpaKey($key);
 		if ($art) {
 			if ($art == "l") {
@@ -84,10 +84,10 @@ class Newsletter_Frontend_View {
 
 	public static function changeSendMail()
 	{
-		$alt = sanitize_text_field($_POST['newsletter_email_alt']);
-		$neu = sanitize_text_field($_POST['newsletter_email_neu']);
+		$alt = sanitize_text_field($_POST[Newsletter_Util::POST_ATTRIBUT_EMAIL_ALT]);
+		$neu = sanitize_text_field($_POST[Newsletter_Util::POST_ATTRIBUT_EMAIL_NEU]);
 
-		$key = sanitize_text_field($_GET['newsletter_code']);
+		$key = sanitize_text_field($_GET[Newsletter_Util::GET_ATTRIBUTE_CODE]);
 
 		$key = LDAP_Proxy::setSherpaChange($key, $alt, $neu);
 		if ($key) {
@@ -96,7 +96,7 @@ class Newsletter_Frontend_View {
 			$message = __('Hallo,') . "\r\n\r\n";
 			$message .= __('Diese E-Mail-Adresse wurde soeben zum als neue E-Mail-Adresse für den Monatsigel-Verteiler der GRÜNEN JUGEND markiert.') . "\r\n\r\n";
 			$message .= __('Bitte folge folgenden Link zum Eintragen auf die Liste:') . "\r\n\r\n";
-			$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
+			$message .= io_get_current_url() . "&" . Newsletter_Util::GET_ATTRIBUTE_CODE . "=" . $key . "\r\n\r\n";
 			$message .= __('Wenn du dich nicht zum Eintragen markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
 			$message .= __('Liebe Grüße,') . "\r\n";
 			$message .= __('Deine GRÜNE JUGEND');
@@ -109,8 +109,8 @@ class Newsletter_Frontend_View {
 	}
 	
 	public static function sendMail() {
-		$mail = sanitize_text_field($_POST['newsletter_email']);
-		$art = sanitize_text_field($_POST['newsletter_art']);
+		$mail = sanitize_text_field($_POST[Newsletter_Util::POST_ATTRIBUT_EMAIL]);
+		$art = sanitize_text_field($_POST[Newsletter_Util::POST_ATTRIBUT_ART]);
 		if(LDAP_Proxy::isSherpaMember($mail)) {
 			$key = LDAP_Proxy::setSherpaMemberCode($mail, $art);
 			
@@ -120,7 +120,7 @@ class Newsletter_Frontend_View {
 				$message = __('Hallo,') . "\r\n\r\n";
 				$message .= __('Diese E-Mail-Adresse wurde soeben zum Austragen aus dem Monatsigel-Verteiler der GRÜNEN JUGEND markiert.') . "\r\n\r\n";
 				$message .= __('Um dich vom Verteiler auszutragen, folge bitte diesen Link:') . "\r\n\r\n";
-				$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
+				$message .= io_get_current_url() . "&" . Newsletter_Util::GET_ATTRIBUTE_CODE . "=" . $key . "\r\n\r\n";
 				$message .= __('Wenn du dich nicht zum Austragen markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
 				$message .= __('Liebe Grüße,') . "\r\n";
 				$message .= __('Deine GRÜNE JUGEND');
@@ -130,7 +130,7 @@ class Newsletter_Frontend_View {
 				$message = __('Hallo,') . "\r\n\r\n";
 				$message .= __('Diese E-Mail-Adresse wurde soeben zum Ändern markiert. Du möchtest diese Mail-Adresse durch eine andere ersetzen.') . "\r\n\r\n";
 				$message .= __('Um deine Mail-Adresse zu ändern, folge bitte diesen Link:') . "\r\n\r\n";
-				$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
+				$message .= io_get_current_url() . "&" . Newsletter_Util::GET_ATTRIBUTE_CODE . "=" . $key . "\r\n\r\n";
 				$message .= __('Wenn du dich nicht zum Ändern markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
 				$message .= __('Liebe Grüße,') . "\r\n";
 				$message .= __('Deine GRÜNE JUGEND');
@@ -140,7 +140,7 @@ class Newsletter_Frontend_View {
 				$message = __('Hallo,') . "\r\n\r\n";
 				$message .= __('Diese E-Mail-Adresse wurde soeben zum Eintragen auf dem Monatsigel-Verteiler der GRÜNEN JUGEND markiert.') . "\r\n\r\n";
 				$message .= __('Um deine Mail-Adresse einzutragen, folge bitte diesen Link:') . "\r\n\r\n";
-				$message .= io_get_current_url() . "&newsletter_code=" . $key . "\r\n\r\n";
+				$message .= io_get_current_url() . "&" . Newsletter_Util::GET_ATTRIBUTE_CODE . "=" . $key . "\r\n\r\n";
 				$message .= __('Wenn du dich nicht zum Eintragen markiert hast, ignoriere diese Mail bitte.') . "\r\n\r\n";
 				$message .= __('Liebe Grüße,') . "\r\n";
 				$message .= __('Deine GRÜNE JUGEND');
@@ -200,10 +200,5 @@ class Newsletter_Frontend_View {
 		unset($loesung);
 
 		return $aufgabe;
-	}
-
-	private static function maskExecution()
-	{
-		
 	}
 }
