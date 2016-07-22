@@ -1,19 +1,19 @@
 	<p>
-		<label for="user_art">Nutzungsart:<br>
+		<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>">Nutzungsart:<br>
 			<label for="user_art_user">Normale*r Benutzer*in
-				<input type="radio" name="user_art" id="user_art_user" class="input" value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>>
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_user" class="input" value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>>
 			</label>
 			<label for="user_art_landesverband">Landesverband
-				<input type="radio" name="user_art" id="user_art_landesverband" class="input" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>"<?php echo $userArtValue[1]; ?>>
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_landesverband" class="input" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>"<?php echo $userArtValue[1]; ?>>
 			</label>
 			<label for="user_art_basisgruppe">Basisgruppe
-				<input type="radio" name="user_art" id="user_art_basisgruppe" class="input" value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>"<?php echo $userArtValue[2]; ?>>
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_basisgruppe" class="input" value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>"<?php echo $userArtValue[2]; ?>>
 			</label>
 			<?php
 				if($_GET['erweitert'] == 1) {
 			?>
 			<label for="user_art_basisgruppe">Organisatorische*r Benutzer*in
-				<input type="radio" name="user_art" id="user_art_organisatorisch" class="input" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>"<?php echo $userArtValue[3]; ?>>
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_organisatorisch" class="input" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>"<?php echo $userArtValue[3]; ?>>
 			</label>
 			<?php
 				}
@@ -80,7 +80,7 @@
 		var userLoginValueTmp = "";
 		
 		var userArtChange = function() {
-			switch($("input[name='user_art']:checked").val()) {
+			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
 					$("#first_name_box").show();
@@ -170,7 +170,7 @@
 					break;
 			};
 			
-			switch($("input[name='user_art']:checked").val()) {
+			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
@@ -191,7 +191,7 @@
 		
 		userArtChange();
 		
-		$("input[name='user_art']:radio").change(function() {
+		$("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:radio").change(function() {
 			userArtChange();
 		});
 		

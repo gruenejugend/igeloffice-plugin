@@ -9,7 +9,7 @@ class Register_Frontend_View {
 	public static function maskHandler() {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? sanitize_text_field($_POST['user_art']) : ''));
+		$userArtInput = esc_attr(wp_unslash((!empty($_POST[User_Util::POST_ATTRIBUT_ART])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ART]) : ''));
 		switch($userArtInput) {
 			case 'User':
 				$userArtValue[0] = " checked";
@@ -79,7 +79,7 @@ class Register_Frontend_View {
 	}
 	
 	public static function errorHandler($errors) {
-		if(empty($_POST['user_art'])) {
+		if(empty($_POST[User_Util::POST_ATTRIBUT_ART])) {
 			$errors->add('user_art_error', '<strong>FEHLER:</strong> Du musst eine Nutzungsart angeben!');
 		}
 		
@@ -91,7 +91,7 @@ class Register_Frontend_View {
 			$errors->add('user_email_gj_error', '<strong>FEHLER:</strong> Du darfst keine GR&Uuml;NE JUGEND E-Mail-Adresse hier angeben!');
 		}
 		
-		if($_POST['user_art'] == User_Util::USER_ART_USER && (empty($_POST['first_name']) || empty($_POST['last_name']))) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_USER && (empty($_POST['first_name']) || empty($_POST['last_name']))) {
 			if(empty($_POST['first_name'])) {
 				$errors->add('first_name_error', '<strong>FEHLER:</strong> Du musst einen Vornamen angeben!');
 			}
@@ -101,7 +101,7 @@ class Register_Frontend_View {
 			}
 		}
 		
-		if($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE && (empty($_POST['name']) || $_POST['land'] == '0')) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE && (empty($_POST['name']) || $_POST['land'] == '0')) {
 			if(empty($_POST['name'])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
@@ -111,11 +111,11 @@ class Register_Frontend_View {
 			}
 		}
 		
-		if($_POST['user_art'] == User_Util::USER_ART_LANDESVERBAND && $_POST['land'] == '0') {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_LANDESVERBAND && $_POST['land'] == '0') {
 			$errors->add('land_error', '<strong>FEHLER:</strong> Du musst ein Bundesland angeben!');
 		}
 		
-		if($_POST['user_art'] == User_Util::USER_ART_ORGANISATORISCH && empty($_POST['orga_name'])) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_ORGANISATORISCH && empty($_POST['orga_name'])) {
 			$errors->add('orga_error', '<strong>FEHLER:</strong> Du musst einen Namen angeben!');
 		}
 		

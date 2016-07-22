@@ -13,7 +13,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = User_Util::USER_ART_USER;
+		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_USER;
 		$_POST['first_name'] = $first_name;
 		$_POST['last_name'] = $last_name;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
@@ -25,7 +25,7 @@ class User_Control {
 
 	public static function deletePost()
 	{
-		unset($_POST['user_art']);
+		unset($_POST[User_Util::POST_ATTRIBUT_ART]);
 		unset($_POST['first_name']);
 		unset($_POST['last_name']);
 		unset($_POST['io_users_nonce']);
@@ -38,19 +38,19 @@ class User_Control {
 			return;
 		}
 		
-		if (!empty($_POST['user_art'])) {
+		if (!empty($_POST[User_Util::POST_ATTRIBUT_ART])) {
 			if (!isset($_POST['io_users_nonce']) ||
 				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users')) {
 				return;
 			}
 
-			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST['user_art']));
+			update_user_meta($user_id, User_Util::ATTRIBUT_ART, sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ART]));
 			update_user_meta($user_id, User_Util::ATTRIBUT_AKTIV, 0);
 
-			if ($_POST['user_art'] == User_Util::USER_ART_USER) {
+			if ($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_USER) {
 				update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
 				update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
-			} elseif ($_POST['user_art'] == User_Util::USER_ART_BASISGRUPPE) {
+			} elseif ($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE) {
 				update_user_meta($user_id, User_Util::ATTRIBUT_LANDESVERBAND, sanitize_text_field($_POST['land']));
 			}
 
@@ -69,7 +69,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = User_Util::USER_ART_LANDESVERBAND;
+		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_LANDESVERBAND;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);
@@ -84,7 +84,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = User_Util::USER_ART_BASISGRUPPE;
+		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_BASISGRUPPE;
 		$_POST['land'] = $landesverband;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
@@ -100,7 +100,7 @@ class User_Control {
 			'user_email'	=> $mail
 		));
 		
-		$_POST['user_art'] = User_Util::USER_ART_ORGANISATORISCH;
+		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_ORGANISATORISCH;
 		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
 		
 		self::createMeta($id);

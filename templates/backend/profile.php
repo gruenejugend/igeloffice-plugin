@@ -1,8 +1,8 @@
 <table class="form-table">
 	<tr class="form-field" id="<?php echo User_Util::ATTRIBUT_ART; ?>">
-		<th scope="row"><label for="user_art">Nutzungsart</label></th>
+		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>">Nutzungsart</label></th>
 		<td>
-			<input type="text" id="user_art" name="user_art" value="<?php echo ucfirst($user->art); ?>">
+			<input type="text" id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo ucfirst($user->art); ?>">
 		</td>
 	</tr><?php if($user->art == 'basisgruppe') {
 ?>

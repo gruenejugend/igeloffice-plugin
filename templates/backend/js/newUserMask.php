@@ -26,7 +26,7 @@
 		var userLoginValueTmp = "";
 		
 		var userArtChange = function() {
-			switch($("input[name='user_art']:checked").val()) {
+			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
 					$("#io_first_name").show();
@@ -116,7 +116,7 @@
 					break;
 			}
 			
-			switch($("input[name='user_art']:checked").val()) {
+			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
 					userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
@@ -137,7 +137,7 @@
 		
 		userArtChange();
 		
-		$("input[name='user_art']:radio").change(function() {
+		$("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:radio").change(function() {
 			userArtChange();
 		});
 		

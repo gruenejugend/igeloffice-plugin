@@ -19,7 +19,7 @@
 				<option<?php echo $landChecked[14]; ?> value="schleswig-holstein">Schleswig-Holstein</option>
 				<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
 			</select>
-			<input type="hidden" name="user_art" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>">
+			<input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>">
 			<?php
 				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
 					?><input type="hidden" name="erweitert" value="1">

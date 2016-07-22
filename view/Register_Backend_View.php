@@ -8,7 +8,7 @@ class Register_Backend_View {
 	public static function maskHandler() {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
-		$userArtInput = esc_attr(wp_unslash((!empty($_POST['user_art'])) ? sanitize_text_field($_POST['user_art']) : ''));
+		$userArtInput = esc_attr(wp_unslash((!empty($_POST[User_Util::POST_ATTRIBUT_ART])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ART]) : ''));
 		switch($userArtInput) {
 			case 'User':
 				$userArtValue[0] = " checked";

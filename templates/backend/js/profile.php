@@ -1,7 +1,7 @@
 <script type='text/javascript' src='https://code.jquery.com/jquery-1.11.3.min.js'></script>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() { 
-		$("#user_art").prop('readonly', true);
+		$("#<?php echo User_Util::POST_ATTRIBUT_ART; ?>").prop('readonly', true);
 		$("#landesverband").prop('readonly', true);
 <?php if(!current_user_can('administrator')) {
 ?>
@@ -14,7 +14,7 @@
 		$(".user-display-name-wrap").hide();
 		$(".user-description-wrap").hide();
 		
-		if($("#user_art").val() !== 'User') {
+		if($("#<?php echo User_Util::POST_ATTRIBUT_ART; ?>).val() !== 'User') {
 			$(".user-first-name-wrap").hide();
 			$(".user-last-name-wrap").hide();
 		}

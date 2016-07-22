@@ -55,4 +55,6 @@ class User_Util {
 	const ATTRIBUT_ART = "io_user_art";
 	const ATTRIBUT_AKTIV = "io_user_aktiv";
 	const ATTRIBUT_LANDESVERBAND = "io_user_lv";
+	
+	const POST_ATTRIBUT_ART = "user_art";
 }
