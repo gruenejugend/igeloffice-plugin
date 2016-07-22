@@ -33,4 +33,6 @@ class Group_Util {
 	const REMEMBER_NONCE = 'io_groups_remember';
 	const POST_ATTRIBUT_QUOTA_NONCE = 'io_groups_quota_nonce';
 	const QUOTA_NONCE = 'io_groups_quota';
+	const POST_ATTRIBUT_LEADER_MEMBER_NONCE = 'io_groups_leader_member_nonce';
+	const LEADER_MEMBER_NONCE = 'io_groups_leader_member';
 }

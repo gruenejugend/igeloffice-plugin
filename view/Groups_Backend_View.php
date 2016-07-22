@@ -70,7 +70,7 @@ class Groups_Backend_View {
 	}
 	
 	public static function metaLeaderMember($post) {
-		wp_nonce_field('io_groups_leader_member', 'io_groups_leader_member_nonce');
+		wp_nonce_field(Group_Util::LEADER_MEMBER_NONCE, Group_Util::POST_ATTRIBUT_LEADER_MEMBER_NONCE);
 		
 		$users = array();
 		if(get_post_meta($post->ID, "io_group_aktiv", true) == 1) {
@@ -363,8 +363,8 @@ class Groups_Backend_View {
 				Group_Control::setQuotaAll($group, $quota);
 			}
 		} else {
-			if( !isset($_POST['io_groups_leader_member_nonce']) || 
-				!wp_verify_nonce($_POST['io_groups_leader_member_nonce'], 'io_groups_leader_member')) {
+			if( !isset($_POST[Group_Util::POST_ATTRIBUT_LEADER_MEMBER_NONCE]) || 
+				!wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_LEADER_MEMBER_NONCE], Group_Util::LEADER_MEMBER_NONCE)) {
 				return;
 			}
 			
