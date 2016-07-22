@@ -66,16 +66,16 @@ class Register_Backend_View {
 		
 		$groups = Group_Control::getValues();
 		$group_values = array();
-		if(isset($_POST['groups']) && count($_POST['groups']) > 0) {
-			foreach($_POST['groups'] AS $group) {
+		if (isset($_POST[User_Util::POST_ATTRIBUT_GROUPS]) && count($_POST[User_Util::POST_ATTRIBUT_GROUPS]) > 0) {
+			foreach ($_POST[User_Util::POST_ATTRIBUT_GROUPS] AS $group) {
 				$group_values[sanitize_text_field($group)] = sanitize_text_field($group);
 			}
 		}
 		
 		$permissions = Permission_Control::getValues();
 		$permission_values = array();
-		if(isset($_POST['permissions']) && count($_POST['permissions']) > 0) {
-			foreach($_POST['permissions'] AS $permission) {
+		if (isset($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS]) && count($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS]) > 0) {
+			foreach ($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS] AS $permission) {
 				$permission_values[sanitize_text_field($permission)] = sanitize_text_field($permission);
 			}
 		}
@@ -93,12 +93,12 @@ class Register_Backend_View {
 			
 			User_Control::aktivieren($user_id);
 
-			foreach($_POST['groups'] AS $group) {
+			foreach ($_POST[User_Util::POST_ATTRIBUT_GROUPS] AS $group) {
 				$group = sanitize_text_field($group);
 				User_Control::addToGroup($user_id, $group);
 			}
 
-			foreach($_POST['permissions'] AS $permission) {
+			foreach ($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS] AS $permission) {
 				$permission = sanitize_text_field($permission);
 				User_Control::addPermission($user_id, $permission);
 			}

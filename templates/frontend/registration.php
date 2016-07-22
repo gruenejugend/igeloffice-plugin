@@ -1,44 +1,54 @@
 	<p>
 		<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>">Nutzungsart:<br>
-			<label for="user_art_user">Normale*r Benutzer*in
-				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_user" class="input" value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>>
+			<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_user">Normale*r Benutzer*in
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>"
+					   id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_user" class="input"
+					   value="<?php echo User_Util::USER_ART_USER; ?>"<?php echo $userArtValue[0]; ?>>
 			</label>
-			<label for="user_art_landesverband">Landesverband
-				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_landesverband" class="input" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>"<?php echo $userArtValue[1]; ?>>
+			<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_landesverband">Landesverband
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>"
+					   id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_landesverband" class="input"
+					   value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>"<?php echo $userArtValue[1]; ?>>
 			</label>
-			<label for="user_art_basisgruppe">Basisgruppe
-				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_basisgruppe" class="input" value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>"<?php echo $userArtValue[2]; ?>>
+			<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_basisgruppe">Basisgruppe
+				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>"
+					   id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_basisgruppe" class="input"
+					   value="<?php echo User_Util::USER_ART_BASISGRUPPE; ?>"<?php echo $userArtValue[2]; ?>>
 			</label>
 			<?php
 				if($_GET['erweitert'] == 1) {
 			?>
-			<label for="user_art_basisgruppe">Organisatorische*r Benutzer*in
-				<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" id="user_art_organisatorisch" class="input" value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>"<?php echo $userArtValue[3]; ?>>
+					<label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_basisgruppe">Organisatorische*r Benutzer*in
+						<input type="radio" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>"
+							   id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>_organisatorisch" class="input"
+							   value="<?php echo User_Util::USER_ART_ORGANISATORISCH; ?>"<?php echo $userArtValue[3]; ?>>
 			</label>
 			<?php
 				}
 			?>
 		</label>
 	</p>
-	<p id="first_name_box">
+	<p id="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>_box">
 		<label for="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>">Vorname:<br>
 			<input type="text" name="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>" id="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>" class="input" value="<?php echo esc_attr(wp_unslash($first_name)); ?>" size="25">
 		</label>
 	</p>
-	
-	<p id="last_name_box">
+
+	<p id="<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>_box">
 		<label for="<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>">Nachname:<br>
 			<input type="text" name="<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>" id="<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>" class="input" value="<?php echo esc_attr(wp_unslash($last_name)); ?>" size="25">
 		</label>
 	</p>
-	<p id="orga_name_box">
+	<p id="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>_box">
 		<label for="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>">Name:<br>
 			<input name="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" id="<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>" class="input" value="" size="25" type="text">
 		</label>
 	</p>
-	<p id="name_box">
-		<label for="name">Ort:<br>
-			<input type="text" name="name" id="name" class="input" value="<?php echo esc_attr(wp_unslash($name)); ?>" size="25">
+	<p id="<?php echo User_Util::POST_ATTRIBUT_NAME; ?>_box">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_NAME; ?>">Ort:<br>
+			<input type="text" name="<?php echo User_Util::POST_ATTRIBUT_NAME; ?>"
+				   id="<?php echo User_Util::POST_ATTRIBUT_NAME; ?>" class="input"
+				   value="<?php echo esc_attr(wp_unslash($name)); ?>" size="25">
 		</label>
 	</p>
 	<p id="land_box">
@@ -63,8 +73,8 @@
 				<option<?php echo $landChecked[15]; ?> value="thueringen">Thüringen</option>
 			</select>
 			<?php
-				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
-					?><input type="hidden" name="erweitert" value="1">
+			if (isset($_GET[User_Util::POST_ATTRIBUT_ERWEITERT]) && $_GET[User_Util::POST_ATTRIBUT_ERWEITERT] == 1) {
+				?><input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ERWEITERT; ?>" value="1">
 <?php
 				}
 			?>
@@ -83,32 +93,32 @@
 			switch($("input[name='<?php echo User_Util::POST_ATTRIBUT_ART; ?>']:checked").val()) {
 				case 'user':
 				default:
-					$("#first_name_box").show();
-					$("#last_name_box").show();
-					$("#orga_name_box").hide();
-					$("#name_box").hide();
-					$("#land_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>_box").hide();
 					break;
 				case 'landesverband':
-					$("#first_name_box").hide();
-					$("#last_name_box").hide();
-					$("#orga_name_box").hide();
-					$("#name_box").hide();
-					$("#land_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>_box").show();
 					break;
 				case 'basisgruppe':
-					$("#first_name_box").hide();
-					$("#last_name_box").hide();
-					$("#orga_name_box").hide();
-					$("#name_box").show();
-					$("#land_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>_box").show();
 					break;
 				case 'organisatorisch':
-					$("#first_name_box").hide();
-					$("#last_name_box").hide();
-					$("#orga_name_box").show();
-					$("#name_box").hide();
-					$("#land_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAST_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME; ?>_box").show();
+					$("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>_box").hide();
+					$("#<?php echo User_Util::POST_ATTRIBUT_LAND; ?>_box").hide();
 					break
 			}
 			userNameKeyUp();
@@ -179,7 +189,7 @@
 					userLoginValue = landKurz;
 					break;
 				case 'basisgruppe':
-					userLoginValue = $("#name").val();
+					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>").val();
 					break;
 				case 'organisatorisch':
 					userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").val();
@@ -206,8 +216,8 @@
 		$("#<?php echo User_Util::POST_ATTRIBUT_ORGA_NAME ?>").keyup(function() {
 			userNameKeyUp();
 		});
-		
-		$("#name").keyup(function() {
+
+		$("#<?php echo User_Util::POST_ATTRIBUT_NAME; ?>").keyup(function () {
 			userNameKeyUp();
 		});
 		

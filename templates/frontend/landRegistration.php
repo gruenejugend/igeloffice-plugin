@@ -21,7 +21,7 @@
 			</select>
 			<input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo User_Util::USER_ART_LANDESVERBAND; ?>">
 			<?php
-				if(isset($_GET['erweitert']) && $_GET['erweitert'] == 1) {
+			if (isset($_GET[User_Util::POST_ATTRIBUT_ERWEITERT]) && $_GET[User_Util::POST_ATTRIBUT_ERWEITERT] == 1) {
 					?><input type="hidden" name="erweitert" value="1">
 <?php
 				}

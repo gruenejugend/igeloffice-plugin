@@ -57,6 +57,7 @@ class User_Util {
 	const ATTRIBUT_LANDESVERBAND = "io_user_lv";
 	
 	const POST_ATTRIBUT_ART = "user_art";
+	const POST_ATTRIBUT_EMAIL = "user_email";
 	const POST_ATTRIBUT_FIRST_NAME = "first_name";
 	const POST_ATTRIBUT_LAST_NAME = "last_name";
 	const POST_ATTRIBUT_ORGA_NAME = "orga_name";
@@ -67,6 +68,7 @@ class User_Util {
 	const POST_ATTRIBUT_AKTIV = "user_aktiv";
 	const POST_ATTRIBUT_PERMISSIONS = "permissions";
 	const POST_ATTRIBUT_GROUPS = "groups";
+	const POST_ATTRIBUT_ERWEITERT = "erweitert";
 	
 	const USERS_NONCE = 'io_users';
 }

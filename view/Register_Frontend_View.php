@@ -82,12 +82,12 @@ class Register_Frontend_View {
 		if(empty($_POST[User_Util::POST_ATTRIBUT_ART])) {
 			$errors->add('user_art_error', '<strong>FEHLER:</strong> Du musst eine Nutzungsart angeben!');
 		}
-		
-		if(empty($_POST['user_email'])) {
+
+		if (empty($_POST[User_Util::POST_ATTRIBUT_EMAIL])) {
 			$errors->add('user_email_error', '<strong>FEHLER:</strong> Du musst eine E-Mail-Adresse angeben!');
 		}
-		
-		if((!isset($_POST['erweitert']) || (isset($_POST['erweitert']) && $_POST['erweitert'] != 1)) && str_replace("@gruene-jugend.de", "", $_POST['user_email']) != $_POST['user_email']) {
+
+		if ((!isset($_POST[User_Util::POST_ATTRIBUT_ERWEITERT]) || (isset($_POST[User_Util::POST_ATTRIBUT_ERWEITERT]) && $_POST[User_Util::POST_ATTRIBUT_ERWEITERT] != 1)) && str_replace("@gruene-jugend.de", "", $_POST[User_Util::POST_ATTRIBUT_EMAIL]) != $_POST[User_Util::POST_ATTRIBUT_EMAIL]) {
 			$errors->add('user_email_gj_error', '<strong>FEHLER:</strong> Du darfst keine GR&Uuml;NE JUGEND E-Mail-Adresse hier angeben!');
 		}
 		
