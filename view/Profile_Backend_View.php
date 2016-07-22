@@ -7,7 +7,7 @@
  */
 class Profile_Backend_View {
 	public static function maskHandler($wp_user) {
-		wp_nonce_field('io_users', 'io_users_nonce');
+		wp_nonce_field(User_Util::USERS_NONCE, User_Util::POST_ATTRIBUT_USERS_NONCE);
 		
 		if($_GET['user_aktiv'] == "true" && current_user_can('administrator')) {
 			User_Control::aktivieren($wp_user->ID);
@@ -45,8 +45,8 @@ class Profile_Backend_View {
 		}
 		
 		if(current_user_can('administrator')) {
-			if( !isset($_POST['io_users_nonce']) || 
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+			if( !isset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]) || 
+				!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE], User_Util::USERS_NONCE) || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
@@ -81,8 +81,8 @@ class Profile_Backend_View {
 			io_add_del($_POST['permissions'], $user->permissions, $user_id, "User_Control", "Permission");
 			io_add_del($_POST['groups'], $user->groups, $user_id, "User_Control", "ToGroup");
 		} else {
-			if( !isset($_POST['io_users_nonce']) || 
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+			if( !isset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]) || 
+				!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE], User_Util::USERS_NONCE) || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}

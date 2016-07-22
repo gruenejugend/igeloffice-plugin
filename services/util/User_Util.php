@@ -62,4 +62,6 @@ class User_Util {
 	const POST_ATTRIBUT_ORGA_NAME = "orga_name";
 	const POST_ATTRIBUT_NAME = "name";
 	const POST_ATTRIBUT_LAND = "land";
+	const POST_ATTRIBUT_USERS_NONCE = 'io_users_nonce';
+	const USERS_NONCE = 'io_users';
 }

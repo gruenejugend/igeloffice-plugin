@@ -16,7 +16,7 @@ class User_Control {
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_USER;
 		$_POST[User_Util::POST_ATTRIBUT_FIRST_NAME] = $first_name;
 		$_POST[User_Util::POST_ATTRIBUT_LAST_NAME] = $last_name;
-		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
+		$_POST[User_Util::POST_ATTRIBUT_USERS_NONCE] = wp_create_nonce(User_Util::USERS_NONCE);
 		
 		self::createMeta($id);
 		
@@ -28,7 +28,7 @@ class User_Control {
 		unset($_POST[User_Util::POST_ATTRIBUT_ART]);
 		unset($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]);
 		unset($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]);
-		unset($_POST['io_users_nonce']);
+		unset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]);
 		unset($_POST[User_Util::POST_ATTRIBUT_LAND]);
 	}
 
@@ -39,8 +39,8 @@ class User_Control {
 		}
 		
 		if (!empty($_POST[User_Util::POST_ATTRIBUT_ART])) {
-			if (!isset($_POST['io_users_nonce']) ||
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users')) {
+			if (!isset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]) ||
+				!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE], User_Util::USERS_NONCE)) {
 				return;
 			}
 
@@ -70,7 +70,7 @@ class User_Control {
 		));
 		
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_LANDESVERBAND;
-		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
+		$_POST[User_Util::POST_ATTRIBUT_USERS_NONCE] = wp_create_nonce(User_Util::USERS_NONCE);
 		
 		self::createMeta($id);
 		
@@ -86,7 +86,7 @@ class User_Control {
 		
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_BASISGRUPPE;
 		$_POST[User_Util::POST_ATTRIBUT_LAND] = $landesverband;
-		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
+		$_POST[User_Util::POST_ATTRIBUT_USERS_NONCE] = wp_create_nonce(User_Util::USERS_NONCE);
 		
 		self::createMeta($id);
 		
@@ -101,7 +101,7 @@ class User_Control {
 		));
 		
 		$_POST[User_Util::POST_ATTRIBUT_ART] = User_Util::USER_ART_ORGANISATORISCH;
-		$_POST['io_users_nonce'] = wp_create_nonce('io_users');
+		$_POST[User_Util::POST_ATTRIBUT_USERS_NONCE] = wp_create_nonce(User_Util::USERS_NONCE);
 		
 		self::createMeta($id);
 		

@@ -6,7 +6,7 @@
  */
 class Register_Backend_View {
 	public static function maskHandler() {
-		wp_nonce_field('io_users', 'io_users_nonce');
+		wp_nonce_field(User_Util::USERS_NONCE, User_Util::POST_ATTRIBUT_USERS_NONCE);
 		
 		$userArtInput = esc_attr(wp_unslash((!empty($_POST[User_Util::POST_ATTRIBUT_ART])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ART]) : ''));
 		switch($userArtInput) {
@@ -85,8 +85,8 @@ class Register_Backend_View {
 	
 	public static function maskExecution($user_id) {
 		if(current_user_can('administrator')) {
-			if( !isset($_POST['io_users_nonce']) || 
-				!wp_verify_nonce($_POST['io_users_nonce'], 'io_users') || 
+			if( !isset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]) || 
+				!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE], User_Util::USERS_NONCE) || 
 				defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 				return;
 			}
