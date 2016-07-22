@@ -62,6 +62,11 @@ class User_Util {
 	const POST_ATTRIBUT_ORGA_NAME = "orga_name";
 	const POST_ATTRIBUT_NAME = "name";
 	const POST_ATTRIBUT_LAND = "land";
+	const POST_ATTRIBUT_LANDESVERBAND = "landesverband";
 	const POST_ATTRIBUT_USERS_NONCE = 'io_users_nonce';
+	const POST_ATTRIBUT_AKTIV = "user_aktiv";
+	const POST_ATTRIBUT_PERMISSIONS = "permissions";
+	const POST_ATTRIBUT_GROUPS = "groups";
+	
 	const USERS_NONCE = 'io_users';
 }

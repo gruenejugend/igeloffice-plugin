@@ -9,7 +9,7 @@ class Profile_Backend_View {
 	public static function maskHandler($wp_user) {
 		wp_nonce_field(User_Util::USERS_NONCE, User_Util::POST_ATTRIBUT_USERS_NONCE);
 		
-		if($_GET['user_aktiv'] == "true" && current_user_can('administrator')) {
+		if($_GET[User_Util::POST_ATTRIBUT_AKTIV] == "true" && current_user_can('administrator')) {
 			User_Control::aktivieren($wp_user->ID);
 			
 			set_transient("user_aktiv", true, 3);
@@ -52,7 +52,7 @@ class Profile_Backend_View {
 			}
 			
 			$user = new User($user_id);
-			if(isset($_POST['user_aktiv']) && $_POST['user_aktiv'] == 'true' && $user->aktiv == 0) {
+			if(isset($_POST[User_Util::POST_ATTRIBUT_AKTIV]) && $_POST[User_Util::POST_ATTRIBUT_AKTIV] == 'true' && $user->aktiv == 0) {
 				User_Control::aktivieren($user_id);
 				
 				Request_Control::approve(get_post(array(
@@ -78,8 +78,8 @@ class Profile_Backend_View {
 				))->ID);
 			}
 			
-			io_add_del($_POST['permissions'], $user->permissions, $user_id, "User_Control", "Permission");
-			io_add_del($_POST['groups'], $user->groups, $user_id, "User_Control", "ToGroup");
+			io_add_del($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS], $user->permissions, $user_id, "User_Control", "Permission");
+			io_add_del($_POST[User_Util::POST_ATTRIBUT_GROUPS], $user->groups, $user_id, "User_Control", "ToGroup");
 		} else {
 			if( !isset($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE]) || 
 				!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_NONCE], User_Util::USERS_NONCE) || 
@@ -89,14 +89,14 @@ class Profile_Backend_View {
 			
 			$user = new User($user_id);
 			
-			$_POST['permissions'] = $_POST['permissions'] == null ? array() : $_POST['permissions'];
+			$_POST[User_Util::POST_ATTRIBUT_PERMISSIONS] = $_POST[User_Util::POST_ATTRIBUT_PERMISSIONS] == null ? array() : $_POST[User_Util::POST_ATTRIBUT_PERMISSIONS];
 			$user_permissions = $user->permissions == null ? array() : $user->permissions;
 			
-			$_POST['permissions'] = io_get_ids($_POST['permissions']);
+			$_POST[User_Util::POST_ATTRIBUT_PERMISSIONS] = io_get_ids($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS]);
 			$user_permissions = io_get_ids($user_permissions, true);
 			
-			$to_del_permission = array_diff($user_permissions, $_POST['permissions']);
-			$to_add_permission = array_diff($_POST['permissions'], $user_permissions);
+			$to_del_permission = array_diff($user_permissions, $_POST[User_Util::POST_ATTRIBUT_PERMISSIONS]);
+			$to_add_permission = array_diff($_POST[User_Util::POST_ATTRIBUT_PERMISSIONS], $user_permissions);
 			
 			if(count($to_del_permission) > 0) {
 				set_transient("permission_fail", true, 3);
@@ -109,14 +109,14 @@ class Profile_Backend_View {
 				set_transient("permission_start", true, 3);
 			}
 			
-			$_POST['groups'] = $_POST['groups'] == null ? array() : $_POST['groups'];
+			$_POST[User_Util::POST_ATTRIBUT_GROUPS] = $_POST[User_Util::POST_ATTRIBUT_GROUPS] == null ? array() : $_POST[User_Util::POST_ATTRIBUT_GROUPS];
 			$user_groups = $user->groups == null ? array() : $user->groups;
 			
-			$_POST['groups'] = io_get_ids($_POST['groups']);
+			$_POST[User_Util::POST_ATTRIBUT_GROUPS] = io_get_ids($_POST[User_Util::POST_ATTRIBUT_GROUPS]);
 			$user_groups = io_get_ids($user_groups, true);
 
-			$to_del_group = array_diff($user_groups, $_POST['groups']);
-			$to_add_group = array_diff($_POST['groups'], $user_groups);
+			$to_del_group = array_diff($user_groups, $_POST[User_Util::POST_ATTRIBUT_GROUPS]);
+			$to_add_group = array_diff($_POST[User_Util::POST_ATTRIBUT_GROUPS], $user_groups);
 
 			if(count($to_del_group) > 0) {
 				set_transient("group_fail", true, 3);
