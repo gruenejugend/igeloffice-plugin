@@ -60,5 +60,6 @@ class User_Util {
 	const POST_ATTRIBUT_FIRST_NAME = "first_name";
 	const POST_ATTRIBUT_LAST_NAME = "last_name";
 	const POST_ATTRIBUT_ORGA_NAME = "orga_name";
+	const POST_ATTRIBUT_NAME = "name";
 	const POST_ATTRIBUT_LAND = "land";
 }

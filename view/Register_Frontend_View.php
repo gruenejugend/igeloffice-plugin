@@ -45,7 +45,7 @@ class Register_Frontend_View {
 		$first_name = (!empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) : '';
 		$last_name = (!empty($_POST[User_Util::POST_ATTRIBUT_LAST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAST_NAME]) : '';
 		$orga_name = (!empty($_POST[User_Util::POST_ATTRIBUT_ORGA_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ORGA_NAME]) : '';
-		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';
+		$name = (!empty($_POST[User_Util::POST_ATTRIBUT_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_NAME]) : '';
 		$land = (!empty($_POST[User_Util::POST_ATTRIBUT_LAND])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LAND]) : '';
 		
 		$landChecked[0]  = ($land == 'baden-wuerttemberg' ? ' checked' : '');
@@ -101,8 +101,8 @@ class Register_Frontend_View {
 			}
 		}
 		
-		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE && (empty($_POST['name']) || $_POST[User_Util::POST_ATTRIBUT_LAND] == '0')) {
-			if(empty($_POST['name'])) {
+		if($_POST[User_Util::POST_ATTRIBUT_ART] == User_Util::USER_ART_BASISGRUPPE && (empty($_POST[User_Util::POST_ATTRIBUT_NAME]) || $_POST[User_Util::POST_ATTRIBUT_LAND] == '0')) {
+			if(empty($_POST[User_Util::POST_ATTRIBUT_NAME])) {
 				$errors->add('name_error', '<strong>FEHLER:</strong> Du musst einen Ortsnamen angeben!');
 			}
 			
