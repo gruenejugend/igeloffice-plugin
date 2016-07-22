@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of frontend_register
+ * Description of Register_Frontend_View
  *
  * @author KWM
  */
-class frontend_register {
+class Register_Frontend_View {
 	public static function maskHandler() {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		

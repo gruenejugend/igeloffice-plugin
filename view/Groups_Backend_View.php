@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of backend_groups
+ * Description of Groups_Backend_View
  *
  * @author KWM
  */
-class backend_groups {
+class Groups_Backend_View {
 	public static function maskHandler($post_type, $post) {
 		$user = new User(get_current_user_id());
 		
@@ -18,19 +18,19 @@ class backend_groups {
 		}
 		
 		if(current_user_can('administrator')) {
-			add_meta_box("io_groups_info_mb", "Informationen", array("backend_groups", "metaInfo"), Group_Util::POST_TYPE, "normal", "default");
-			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
-			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("backend_groups", "metaPermission"), Group_Util::POST_TYPE, "normal", "default");
-			add_meta_box("io_groups_sichtbarkeit_mb", "Sichtbarkeit für Anträge", array("backend_groups", "metaSichtbarkeit"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_info_mb", "Informationen", array("Groups_Backend_View", "metaInfo"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("Groups_Backend_View", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_permission_mb", "Berechtigungen", array("Groups_Backend_View", "metaPermission"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_sichtbarkeit_mb", "Sichtbarkeit für Anträge", array("Groups_Backend_View", "metaSichtbarkeit"), Group_Util::POST_TYPE, "normal", "default");
 			if (Remember_Util::REMEMBER_SCHALTER) {
-				add_meta_box("io_groups_remember_mb", "Erinnerungen", array("backend_groups", "metaRemember"), Group_Util::POST_TYPE, "normal", "default");
+				add_meta_box("io_groups_remember_mb", "Erinnerungen", array("Groups_Backend_View", "metaRemember"), Group_Util::POST_TYPE, "normal", "default");
 			}
 			if (Group_Util::STANDARD_ZUWEISUNG_SCHALTER) {
-				add_meta_box("io_groups_standard_mb", "Standard", array("backend_groups", "metaStandard"), Group_Util::POST_TYPE, "normal", "default");
+				add_meta_box("io_groups_standard_mb", "Standard", array("Groups_Backend_View", "metaStandard"), Group_Util::POST_TYPE, "normal", "default");
 			}
-			add_meta_box("io_groups_quota_mb", "Mail-Quota", array("backend_groups", "metaQuota"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_quota_mb", "Mail-Quota", array("Groups_Backend_View", "metaQuota"), Group_Util::POST_TYPE, "normal", "default");
 		} else if($pruef) {
-			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("backend_groups", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("Groups_Backend_View", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
 	}
 	

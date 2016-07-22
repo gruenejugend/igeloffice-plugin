@@ -1,10 +1,10 @@
 <?php
 /**
- * Description of backend_register
+ * Description of Register_Backend_View
  *
  * @author KWM
  */
-class backend_register {
+class Register_Backend_View {
 	public static function maskHandler() {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		

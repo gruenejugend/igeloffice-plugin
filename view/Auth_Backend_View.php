@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of backend_auth
+ * Description of Auth_Backend_View
  *
  * @author KWM
  */
-class backend_auth {
+class Auth_Backend_View {
 	public static function authentifizierung($user, $user_name, $password) {
 		if(empty($user_name) || empty($password)) {
 			return;

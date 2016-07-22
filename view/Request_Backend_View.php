@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Description of backend_requestr
+ * Description of Request_Backend_Viewr
  *
  * @author KWM
  */
-class backend_request {
+class Request_Backend_View {
 	public static function maskHandler($post_type, $post) {
-		add_meta_box("io_request_info_mb", "Informationen", array("backend_request", "maskInfo"), Request_Util::POST_TYPE, "normal", "default");
-		add_meta_box("io_request_action_mb", "Aktion", array("backend_request", "maskAction"), Request_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_info_mb", "Informationen", array("Request_Backend_View", "maskInfo"), Request_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_request_action_mb", "Aktion", array("Request_Backend_View", "maskAction"), Request_Util::POST_TYPE, "normal", "default");
 
 		$request = new Request($post->ID);
 		if(current_user_can('administrator') && $request->status == "Gestellt") {
-			add_meta_box("io_request_message_mb", "Antwort", array("backend_request", "maskMessage"), Request_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_request_message_mb", "Antwort", array("Request_Backend_View", "maskMessage"), Request_Util::POST_TYPE, "normal", "default");
 		}
 	}
 	

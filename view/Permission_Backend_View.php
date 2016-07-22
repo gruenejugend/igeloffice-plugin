@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Description of backend_groups
+ * Description of Permission_Backend_View
  *
  * @author KWM
  */
-class backend_permission {
+class Permission_Backend_View {
 	public static function maskHandler() {
-		add_meta_box("io_permissions_info_mb", "Informationen", array("backend_permission", "metaInfo"), Permission_Util::POST_TYPE, "normal", "default");
-		add_meta_box("io_permissions_member_mb", "Mitgliedschaften", array("backend_permission", "metaMember"), Permission_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_permissions_info_mb", "Informationen", array("Permission_Backend_View", "metaInfo"), Permission_Util::POST_TYPE, "normal", "default");
+		add_meta_box("io_permissions_member_mb", "Mitgliedschaften", array("Permission_Backend_View", "metaMember"), Permission_Util::POST_TYPE, "normal", "default");
 		if (Remember_Util::REMEMBER_SCHALTER) {
-			add_meta_box("io_permissions_remember_mb", "Erinnerungen", array("backend_permission", "metaRemember"), Permission_Util::POST_TYPE, "normal", "default");
+			add_meta_box("io_permissions_remember_mb", "Erinnerungen", array("Permission_Backend_View", "metaRemember"), Permission_Util::POST_TYPE, "normal", "default");
 		}
 	}
 	

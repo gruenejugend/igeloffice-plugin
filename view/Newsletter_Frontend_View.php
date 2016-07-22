@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of backend_news
+ * Description of Newsletter_Frontend_View
  *
  * @author KWM
  */
-class frontend_newsletter {
+class Newsletter_Frontend_View {
 	public static function maskHandler() {
 		if(!empty($_GET['newsletter_code'])) {
 			$checkCode = self::checkCode();

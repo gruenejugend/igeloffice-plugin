@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of backend_profile
+ * Description of Profile_Backend_View
  *
  * @author KWM
  */
-class backend_profile {
+class Profile_Backend_View {
 	public static function maskHandler($wp_user) {
 		wp_nonce_field('io_users', 'io_users_nonce');
 		
