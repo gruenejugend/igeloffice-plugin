@@ -1,11 +1,11 @@
 	<p id="first_name_box">
-		<label for="first_name">Vorname:<br>
-			<input type="text" name="first_name" id="first_name" class="input" value="<?php echo esc_attr(wp_unslash($first_name)); ?>" size="25">
+		<label for="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>">Vorname:<br>
+			<input type="text" name="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>" id="<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>" class="input" value="<?php echo esc_attr(wp_unslash($first_name)); ?>" size="25">
 		</label>
 	</p>
 	
 	<p id="last_name_box">
-		<label for="first_name">Nachname:<br>
+		<label for="last_name">Nachname:<br>
 			<input type="text" name="last_name" id="last_name" class="input" value="<?php echo esc_attr(wp_unslash($last_name)); ?>" size="25">
 			<input type="hidden" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo User_Util::USER_ART_USER; ?>">
 			<?php
@@ -25,11 +25,11 @@
 		var userLoginValue = "";
 		
 		var userNameKeyUp = function() {
-			userLoginValue = $("#first_name").val() + " " + $("#last_name").val();
+			userLoginValue = $("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>").val() + " " + $("#last_name").val();
 			$("#user_login").val(userLoginValue);
 		};
 		
-		$("#first_name").keyup(function() {
+		$("#<?php echo User_Util::POST_ATTRIBUT_FIRST_NAME; ?>").keyup(function() {
 			userNameKeyUp();
 		});
 		

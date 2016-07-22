@@ -41,7 +41,7 @@ class Register_Backend_View {
 				$userArtValue[3] = "";
 				break;
 		}
-		$first_name = (!empty($_POST['first_name'])) ? sanitize_text_field($_POST['first_name']) : '';
+		$first_name = (!empty($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME])) ? sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FIRST_NAME]) : '';
 		$last_name = (!empty($_POST['last_name'])) ? sanitize_text_field($_POST['last_name']) : '';
 		$orga_name = (!empty($_POST['orga_name'])) ? sanitize_text_field($_POST['orga_name']) : '';
 		$name = (!empty($_POST['name'])) ? sanitize_text_field($_POST['name']) : '';

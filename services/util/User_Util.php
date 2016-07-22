@@ -57,4 +57,5 @@ class User_Util {
 	const ATTRIBUT_LANDESVERBAND = "io_user_lv";
 	
 	const POST_ATTRIBUT_ART = "user_art";
+	const POST_ATTRIBUT_FIRST_NAME = "first_name";
 }
