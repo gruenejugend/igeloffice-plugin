@@ -24,6 +24,7 @@
 	require_once 'services/util/Request_Util.php';
 	require_once 'services/util/Remember_Util.php';
 	require_once 'services/util/Newsletter_Util.php';
+	require_once 'services/util/Domain_Util.php';
 	
 	require_once 'control/ldap.php';
 	require_once 'control/ldapConnector.php';
@@ -34,12 +35,15 @@
 	require_once 'model/Permission.php';
 	require_once 'model/Request.php';
 	require_once 'model/User.php';
+	require_once 'model/Domain.php';
 	
 	require_once 'control/Group_Control.php';
 	require_once 'control/LDAP_Proxy.php';
+	require_once 'control/MySQL_Proxy.php';
 	require_once 'control/Permission_Control.php';
 	require_once 'control/User_Control.php';
 	require_once 'control/Remember_Control.php';
+	require_once 'control/Domain_Control.php';
 	require_once 'control/request/Request_Strategy.php';
 	require_once 'control/request/Request_Control.php';
 	require_once 'control/request/Request_Factory.php';
@@ -56,6 +60,7 @@
 	require_once 'view/viewHelper.php';
 	require_once 'view/Request_Backend_View.php';
 	require_once 'view/Newsletter_Frontend_View.php';
+	require_once 'view/Domain_Backend_View.php';
 	
 	add_action('user_new_form',														array('Register_Backend_View', 'maskHandler'));
 	add_action('register_form',														array('Register_Frontend_View', 'maskHandler'));
@@ -140,6 +145,13 @@
 	add_shortcode('newsletter_dialog',												array('Newsletter_Frontend_View', 'maskHandler'));
     add_action("init",                                                              array('Remember_Control', 'schedule'));
     add_action("rememberSchedule",                                                  array('Remember_Control', 'schedule_exec'));
+	
+	add_action('add_meta_boxes',													array('Domain_Backend_View', 'maskHandler'));
+	add_action('save_post',															array('Domain_Backend_View', 'maskSave'));
+	add_filter('manage_' .Domain_Util::POST_TYPE. '_posts_columns',					array('Domain_Backend_View', 'column'), 10, 2);
+	add_filter('manage_' .Domain_Util::POST_TYPE. '_posts_custom_column',			array('Domain_Backend_View', 'maskColumn'), 10, 2);
+	add_action('publish_post',														array('Domain_Control', 'freigabe'));
+	add_action('delete_post',														array('Domain_Control', 'delete'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

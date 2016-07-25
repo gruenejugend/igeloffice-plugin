@@ -121,10 +121,40 @@
 	}
 	add_action('admin_init', 'requestLeaderCap');
 	
+	function io_register_domain() {
+		$labels = array(
+			'name'					=> "Domains",
+			'singular_name'			=> "Domain",
+			'name_admin_bar'		=> "Neue Domain",
+			'add_new'				=> "Neue Domains",
+			'add_new_item'			=> "Neue Domain",
+			'edit_item'				=> "Domain bearbeiten",
+			'new_item'				=> "Neue Domain",
+			'view_item'				=> "Domain anzeigen",
+			'search_items'			=> "Domain suchen",
+			'not_found'				=> "Keine Domain gefunden",
+			'not_found_in_trash'	=> "Keine Domain im Papierkorb gefunden"
+		);
+		
+		$args = array(
+			'labels'				=> $labels,
+			'public'				=> true,
+			'publicly_queryable'	=> false,
+			'show_in_nav_menus'		=> false,
+			'supports'				=> array("title"),
+			'capabilities'			=> array(
+				'create_posts'			=> false
+			)
+		);
+		
+		register_post_type(Domain_Util::POST_TYPE, $args);
+	}
+	
 	function io_register_posttype() {
 		io_register_group();
 		io_register_permission();
 		io_register_request();
+		io_register_domain();
 	}
 	
 	add_action('init', 'io_register_posttype');
