@@ -23,4 +23,11 @@
 			</select>
 		</td>
 	</tr>
+	<?php if (current_user_can('administrator')) { ?>
+		<tr>
+			<th width="30%">Maximale Gruppengr&ouml;&szlig;e (0 oder leer für unendlich)</th>
+			<td width="70%"><input type="number" name="<?php echo Group_Util::POST_ATTRIBUT_SIZE; ?>"
+								   value="<?php echo $size; ?>"></td>
+		</tr>
+	<?php } ?>
 </table>

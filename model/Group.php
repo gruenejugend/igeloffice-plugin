@@ -44,7 +44,9 @@ class Group {
 			return unserialize(get_post_meta($this->id, "io_group_standard", true));
 		} else if ($name == 'quota') {
 			return get_post_meta($this->id, "io_group_quota", true);
-		} else  {
+		} else if ($name == 'size') {
+			return get_post_meta($this->id, "io_group_size", true);
+		} else {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {
 				$owners = $ldapConnector->getGroupAttribute($this->ldapNameFunc($this->name), "owner");

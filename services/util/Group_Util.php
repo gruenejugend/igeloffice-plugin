@@ -41,6 +41,7 @@ class Group_Util {
 	const POST_ATTRIBUT_GROUPS = 'groups';
 	const POST_ATTRIBUT_PERMISSIONS = 'permissions';
 	const POST_ATTRIBUT_SICHTBARKEIT = 'sichtbarkeit';
+	const POST_ATTRIBUT_SIZE = "size";
 	const POST_ATTRIBUT_REMEMBER = 'remember';
 	const POST_ATTRIBUT_STANDARD = 'standard';
 	const POST_ATTRIBUT_QUOTA_SIZE = 'quotaSize';

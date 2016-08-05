@@ -56,12 +56,14 @@ class Groups_Backend_View {
 		$owner = array();
 		$users = array();
 		$groups = array();
+		$size = 0;
 		if(get_post_meta($post->ID, "io_group_aktiv", true) == 1) {
 			$group = new Group($post->ID);
 			
 			$owner = io_get_ids($group->owner, true, true);
 			$users = io_get_ids($group->users, true, true);
 			$groups = io_get_ids($group->groups, true);
+			$size = $group->size;
 		}
 		
 		$post_id = $post->ID;
@@ -308,6 +310,10 @@ class Groups_Backend_View {
 			io_add_del($_POST[Group_Util::POST_ATTRIBUT_GROUPS], $group->groups, $post_id, "Group_Control", "Group");
 			io_add_del($_POST[Group_Util::POST_ATTRIBUT_PERMISSIONS], $group->permissions, $post_id, "Group_Control", "Permission");
 
+			if ($_POST[Group_Util::POST_ATTRIBUT_SIZE] != $group->size && current_user_can('administrator')) {
+				update_post_meta($post_id, "io_group_size", sanitize_text_field($_POST[Group_Util::POST_ATTRIBUT_SIZE]));
+			}
+
 			if(isset($_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT])) {
 				$user_arten_save = self::userArtenChange(User_Util::USER_ARTEN, $_POST[Group_Util::POST_ATTRIBUT_SICHTBARKEIT]);
 				update_post_meta($post_id, "io_group_sichtbarkeit", serialize($user_arten_save));
@@ -397,6 +403,8 @@ class Groups_Backend_View {
 				if(!$fehler) {
 					io_add_del($_POST[Group_Util::POST_ATTRIBUT_USERS], $group->users, $post_id, "User_Control", "ToGroup", true);
 				}
+
+				$count = count($group->users);
 				
 				/*
 				 * Gruppenmitglieder mit E-Mail hinzufügen
@@ -405,15 +413,20 @@ class Groups_Backend_View {
 				$fail = array();
 				if(!empty($_POST[Group_Util::POST_ATTRIBUT_NEW_MAILS])) {
 					$new_mails = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_NEW_MAILS]);
-					foreach($new_mails AS $mail) {
-						$mail_to_add = sanitize_text_field($mail);
-						
-						$user = get_user_by("email", $mail_to_add);
-						if($user) {
-							User_Control::addToGroup($user->ID, $post_id);
-							$added_user[] = $user->user_login;
-						} else {
-							$fail[] = $mail_to_add;
+					if (($count + count($new_mails)) > $group->size) {
+						set_transient("size_fail", true, 1);
+					} else {
+						foreach ($new_mails AS $mail) {
+							$mail_to_add = sanitize_text_field($mail);
+
+							$user = get_user_by("email", $mail_to_add);
+							if ($user) {
+								$count++;
+								User_Control::addToGroup($user->ID, $post_id);
+								$added_user[] = $user->user_login;
+							} else {
+								$fail[] = $mail_to_add;
+							}
 						}
 					}
 				}
@@ -423,15 +436,19 @@ class Groups_Backend_View {
 				 */
 				if(!empty($_POST[Group_Util::POST_ATTRIBUT_NEW_NAMES])) {
 					$new_names = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_NEW_NAMES]);
-					foreach($new_names AS $name) {
-						$name_to_add = sanitize_text_field($name);
-						
-						$user = get_user_by("user_login", $name_to_add);
-						if($user) {
-							User_Control::addToGroup($user->ID, $post_id);
-							$added_user[] = $user->user_login;
-						} else {
-							$fail[] = $name_to_add;
+					if (($count + count($new_names)) > $group->size) {
+						set_transient("size_fail", true, 1);
+					} else {
+						foreach ($new_names AS $name) {
+							$name_to_add = sanitize_text_field($name);
+
+							$user = get_user_by("user_login", $name_to_add);
+							if ($user) {
+								User_Control::addToGroup($user->ID, $post_id);
+								$added_user[] = $user->user_login;
+							} else {
+								$fail[] = $name_to_add;
+							}
 						}
 					}
 				}
@@ -480,6 +497,21 @@ class Groups_Backend_View {
 	{
 		if (current_user_can('administrator') && get_post_meta($post_id, "io_group_aktiv", true) != "") {
 			Group_Control::delete($post_id);
+		}
+	}
+
+	public function userSizeMsg()
+	{
+		$size_fail = get_transient("size_fail");
+
+		if (!empty($size_fail)) {
+			?>
+
+			<div class="error notice">
+				<p>Die maximale Gruppengr&ouml;&szlig;e wurde &uuml;berschritten.</p>
+			</div>
+
+			<?php
 		}
 	}
 					
