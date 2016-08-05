@@ -42,6 +42,8 @@ class Group {
 			return unserialize(get_post_meta($this->id, "io_group_remember", true));
 		} else if($name == 'standard') {
 			return unserialize(get_post_meta($this->id, "io_group_standard", true));
+		} else if ($name == 'quota') {
+			return get_post_meta($this->id, "io_group_quota", true);
 		} else  {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {

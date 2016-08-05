@@ -137,21 +137,22 @@ class Groups_Backend_View {
 		wp_nonce_field(Group_Util::QUOTA_NONCE, Group_Util::POST_ATTRIBUT_QUOTA_NONCE);
 
 		$group = new Group($post->ID);
-		
+
 		$quota = $group->quota;
-		$einheit = "Byte (B)";
+
+		$einheit = Group_Util::POST_ATTRIBUT_QUOTA_B;
 		if(!empty($quota)) {
-			while($einheit != "Giga Byte (GB)" && $quota >= 1) {
+			while ($einheit != Group_Util::POST_ATTRIBUT_QUOTA_GB && $quota >= 1024) {
 				$quota /= 1024;
 				switch($einheit) {
-					case "Byte (B)":
-						$einheit = "Kilo Byte (KB)";
+					case Group_Util::POST_ATTRIBUT_QUOTA_B:
+						$einheit = Group_Util::POST_ATTRIBUT_QUOTA_KB;
 						break;
-					case "Kilo Byte (KB)":
-						$einheit = "Mega Byte (MB)";
+					case Group_Util::POST_ATTRIBUT_QUOTA_KB:
+						$einheit = Group_Util::POST_ATTRIBUT_QUOTA_MB;
 						break;
-					case "Mega Byte (MB)":
-						$einheit = "Giga Byte (GB)";
+					case Group_Util::POST_ATTRIBUT_QUOTA_MB:
+						$einheit = Group_Util::POST_ATTRIBUT_QUOTA_GB;
 						break;
 				}
 			}
@@ -349,14 +350,14 @@ class Groups_Backend_View {
 			if(!empty($_POST[Group_Util::POST_ATTRIBUT_QUOTA_SIZE])) {
 				$quota = str_replace(",", ".", sanitize_text_field($_POST[Group_Util::POST_ATTRIBUT_QUOTA_SIZE]));
 				switch($_POST[Group_Util::POST_ATTRIBUT_QUOTA_TYPE]) {
-					case "Kilo Byte (KB)":
+					case Group_Util::POST_ATTRIBUT_QUOTA_KB:
 						$quota *= 1024;
 						break;
-					case "Mega Byte (MB)":
-						$quota *= (1024^2);
+					case Group_Util::POST_ATTRIBUT_QUOTA_MB:
+						$quota *= pow(1024, 2);
 						break;
-					case "Giga Byte (GB)":
-						$quota *= (1024^3);
+					case Group_Util::POST_ATTRIBUT_QUOTA_GB:
+						$quota *= pow(1024, 3);
 						break;
 				}
 				update_post_meta($post_id, "io_group_quota", $quota);

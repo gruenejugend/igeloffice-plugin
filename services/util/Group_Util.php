@@ -46,5 +46,10 @@ class Group_Util {
 	const POST_ATTRIBUT_QUOTA_SIZE = 'quotaSize';
 	const POST_ATTRIBUT_QUOTA_TYPE = 'quotaType';
 	const POST_ATTRIBUT_NEW_NAMES = 'new_names';
-	CONST POST_ATTRIBUT_NEW_MAILS = 'new_mails';
+	const POST_ATTRIBUT_NEW_MAILS = 'new_mails';
+
+	const POST_ATTRIBUT_QUOTA_B = 'b';
+	const POST_ATTRIBUT_QUOTA_KB = 'kb';
+	const POST_ATTRIBUT_QUOTA_MB = 'mb';
+	const POST_ATTRIBUT_QUOTA_GB = 'gb';
 }
