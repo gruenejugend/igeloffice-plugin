@@ -301,7 +301,7 @@ class Groups_Backend_View {
 			$group = new Group($post_id);
 			
 			io_save_kategorie($post_id, $group, "group");
-			
+
 			io_add_del($_POST[Group_Util::POST_ATTRIBUT_OWNER], $group->owner, $post_id, "Group_Control", "Owner");
 			io_add_del($_POST[Group_Util::POST_ATTRIBUT_USERS], $group->users, $post_id, "User_Control", "ToGroup", true);
 			io_add_del($_POST[Group_Util::POST_ATTRIBUT_GROUPS], $group->groups, $post_id, "Group_Control", "Group");
@@ -444,34 +444,35 @@ class Groups_Backend_View {
 	public function userArtenChange($user_arten, $post) {
 		$user_arten_save = $user_arten;
 
-		function save_userArt($user_arten, $check, $key, $key_2 = null) {
-			if($key_2 == null) {
-				if(!in_array($key, $check)) {
-					unset($user_arten[$key]);
-				}
-			} else {
-				if(!in_array($key . "_" . $key_2, $check)) {
-					unset($user_arten[$key][$key_2]);
-				}
-
-				if(count($user_arten[$key]) == 0) {
-					unset($user_arten[$key]);
-				}
-			}
-			return $user_arten;
-		}
-
 		foreach ($user_arten AS $key => $user_art) {
 			if (is_array($user_art)) {
 				foreach ($user_art AS $key_2 => $user_art_2) {
-					$user_arten_save = save_userArt($user_arten_save, $post, $key, $key_2);
+					$user_arten_save = self::save_userArt($user_arten_save, $post, $key, $key_2);
 				}
 			} else {
-				$user_arten_save = save_userArt($user_arten_save, $post, $key);
+				$user_arten_save = self::save_userArt($user_arten_save, $post, $key);
 			}
 		}
 
 		return $user_arten_save;
+	}
+
+	private static function save_userArt($user_arten, $check, $key, $key_2 = null)
+	{
+		if ($key_2 == null) {
+			if (!in_array($key, $check)) {
+				unset($user_arten[$key]);
+			}
+		} else {
+			if (!in_array($key . "_" . $key_2, $check)) {
+				unset($user_arten[$key][$key_2]);
+			}
+
+			if (count($user_arten[$key]) == 0) {
+				unset($user_arten[$key]);
+			}
+		}
+		return $user_arten;
 	}
 
 	public static function maskDelete($post_id)
