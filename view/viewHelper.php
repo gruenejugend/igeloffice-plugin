@@ -69,8 +69,8 @@ function io_get_ids($array, $obj = false, $user = false) {
 function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 	$new = $new == null ? array() : $new;
 	$old = $old == null ? array() : $old;
-	
-	if($class == "User_Control") {
+
+	if ($class == "User_Control" || $method == "Owner" || $method == "ToGroup") {
 		$old = io_get_ids($old, true, true);
 	} else {
 		$old = io_get_ids($old, true);
@@ -79,7 +79,7 @@ function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 	
 	$to_del = array_diff($old, $new);
 	$to_add = array_diff($new, $old);
-	
+
 	if($switch) {
 		if(!empty($to_del)) {
 			foreach($to_del AS $user) {
