@@ -116,6 +116,7 @@
 	add_action('restrict_manage_posts',												array('Groups_Backend_View', 'maskFiltering'));
 	add_filter('parse_query',														array('Groups_Backend_View', 'filtering'));
 	add_filter('parse_query',														array('Groups_Backend_View', 'leadingFilter'));
+add_action("admin_notices", array("Groups_Backend_View", "userSizeMsg"));
 	add_action("admin_notices",														array("Groups_Backend_View", "userAddedLeaderUserMsg"));
 	add_action("admin_notices",														array("Groups_Backend_View", "userFailedLeaderUserMsg"));
     add_action("admin_notices",                                                     array("Groups_Backend_View", "rememberUserMsg"));

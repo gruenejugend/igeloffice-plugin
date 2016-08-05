@@ -389,17 +389,19 @@ class Groups_Backend_View {
 				 * Gruppenmitglieder entfernen
 				 */
 				$group = new Group($post_id);
+
+				$usersID = io_get_ids($group->users, true, true);
 				
 				$fehler = false;
-				if(!empty($group->users)) {
+				if (!empty($usersID)) {
 					$_POST[Group_Util::POST_ATTRIBUT_USERS] = $_POST[Group_Util::POST_ATTRIBUT_USERS] == null ? array() : $_POST[Group_Util::POST_ATTRIBUT_USERS];
-					if(!empty(array_diff(io_get_ids($_POST[Group_Util::POST_ATTRIBUT_USERS]), $group->users))) {
+					if (!empty(array_diff(io_get_ids($_POST[Group_Util::POST_ATTRIBUT_USERS]), $usersID))) {
 						$fehler = true;
 					}
-				} elseif(empty($group->users) && !empty($_POST[Group_Util::POST_ATTRIBUT_USERS])) {
+				} elseif (empty($usersID) && !empty($_POST[Group_Util::POST_ATTRIBUT_USERS])) {
 					$fehler = true;
 				}
-				
+
 				if(!$fehler) {
 					io_add_del($_POST[Group_Util::POST_ATTRIBUT_USERS], $group->users, $post_id, "User_Control", "ToGroup", true);
 				}
@@ -504,7 +506,7 @@ class Groups_Backend_View {
 	{
 		$size_fail = get_transient("size_fail");
 
-		if (!empty($size_fail)) {
+		if ($size_fail) {
 			?>
 
 			<div class="error notice">
