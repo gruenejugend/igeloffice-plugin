@@ -19,14 +19,15 @@ class Domain_Control {
 		return $id;
 	}
 	
-	public static function prepareRouting($routing) {
-		return str_replace(array("https://", "http://"), "", $routing);
-	}
-	
 	public static function createMeta($id, $routing, $alias) {
 		$routing = self::prepareRouting($routing);
 		update_post_meta($id, Domain_Util::ATTRIBUT_TARGET, $routing);
 		update_post_meta($id, Domain_Util::ATTRIBUT_ALIAS, $alias);
+	}
+
+	public static function prepareRouting($routing)
+	{
+		return str_replace(array("https://", "http://"), "", $routing);
 	}
 	
 	public static function update($host, $target, $alias) {
@@ -38,6 +39,11 @@ class Domain_Control {
 			$domain = new Domain($id);
 			MySQL_Proxy::deleteDomain($domain->host);
 		}
+	}
+
+	public static function prepareDomain($name)
+	{
+		return io_umlaute(strtolower(str_replace(" ", "-", $name)));
 	}
 	
 	public static function freigabe($id) {

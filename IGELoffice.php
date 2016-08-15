@@ -186,3 +186,7 @@ add_action("admin_notices", array("Groups_Backend_View", "userSizeMsg"));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'mailMenu'));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'listMenu'));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'diensteMenu'));
+
+require_once 'permission/wordpress/services/util/WordPress_Util.php';
+require_once 'permission/wordpress/WordPress_Control.php';
+require_once 'permission/wordpress/WordPress_View.php';

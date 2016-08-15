@@ -157,6 +157,36 @@ final class LDAP_Proxy {
 		self::logout($res);
 		return true;
 	}
+
+	public static final function addGroup($group, $leader)
+	{
+		$res = self::login();
+		if (!ldap_add($res, 'cn=' . $group . ',' . LDAP_GROUP_BASE, array(
+			'cn' => $group,
+			'member' => '',
+			'owner' => array('cn=' . $leader . ',' . LDAP_USER_BASE, LDAP_SERVICE_WORDPRESS),
+			'objectClass' => array(
+				'groupOfNames',
+				'gjGroup',
+				'top'
+			)
+		))
+		) {
+			self::logout($res);
+			return false);
+		}
+		self::logout($res);
+		return true;
+	}
+
+	public static final function delGroup($group)
+	{
+		$res = self::login();
+		if (!ldap_delete($res, 'cn=' . $group . ',' . LDAP_GROUP_BASE)) {
+			return false;
+		}
+		return true;
+	}
 	
 	/*
 	 * CODE: description
