@@ -19,6 +19,14 @@ class ldapConnector extends LDAP {
 	private static $instance;
 
 	/**
+	 * connects to LDAP
+	 */
+	protected function __construct()
+	{
+		parent::__construct(LDAP_HOST, LDAP_PORT);
+	}
+
+	/**
 	 * get only instance of this class
 	 * @param  boolean $bind if the class should bind to the LDAP server after connecting
 	 * @return ldapConnector        instance of this class
@@ -33,7 +41,7 @@ class ldapConnector extends LDAP {
 		}
 		return self::$instance;
 	}
-	
+
 	/**
 	 * binds to ldap server
 	 * @param  string $user username. if username and password are read from database & cookies
@@ -60,6 +68,11 @@ class ldapConnector extends LDAP {
 		return parent::bind($this->userDN($user), $pass);
 	}
 
+	private function userDN($user)
+	{
+		return 'cn=' . $user . ',' . LDAP_USER_BASE;
+	}
+	
 	/**
 	 * this is called before every public LDAP query method.
 	 * @param  string $method method name
@@ -100,11 +113,12 @@ class ldapConnector extends LDAP {
 				'qmailUser'
 			)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addUser: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
 	}
-	
+
 	private function addOrgaUser($firstname, $mail) { //check if user or DN exists!
 		if(empty($firstname) || empty($mail)) {
 			return new WP_Error('ldap_add_user_nodata', 'Der User benötigt einen Vornamen, Nachnamen und eine gültige E-Mail-Adresse.');
@@ -121,6 +135,7 @@ class ldapConnector extends LDAP {
 				'qmailUser'
 			)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addOrgaUser: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -136,9 +151,15 @@ class ldapConnector extends LDAP {
 		if(!ldap_mod_add($this->res, $this->permissionDN($permission), array(
 			'member' => $this->userDN($user)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addUserPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
+	}
+
+	private function permissionDN($permission)
+	{
+		return 'cn=' . $permission . ',' . LDAP_PERMISSION_BASE;
 	}
 
 	/**
@@ -155,10 +176,16 @@ class ldapConnector extends LDAP {
 		if(!ldap_mod_add($this->res, $this->groupDN($group), array(
 			'member' => $users
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addUsersToGroup: " . ldap_error($this->res));
 			return $this->error();
 		}
 
 		return true;
+	}
+
+	private function groupDN($group)
+	{
+		return 'cn=' . $group . ',' . LDAP_GROUP_BASE;
 	}
 
 	/**
@@ -172,6 +199,7 @@ class ldapConnector extends LDAP {
 			'userPassword' => "{SHA}" . base64_encode(pack( "H*", sha1($password))),
 			'qmailGID' => intval(time() / 86400) //last password change - days since 01.01.1970
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "setUserPassword: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -203,6 +231,7 @@ class ldapConnector extends LDAP {
 	 */
 	private function delUser($user) {
 		if(!ldap_delete($this->res, $this->userDN($user))) {
+			Log_Control::writeLog("ldapConnector.php", "delUser: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -216,6 +245,7 @@ class ldapConnector extends LDAP {
 	 */
 	private function delUserPermission($user, $permission) {
 		if(!ldap_mod_del($this->res, $this->permissionDN($permission), array('member' => $this->userDN($user)))) {
+			Log_Control::writeLog("ldapConnector.php", "delUserPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -229,15 +259,11 @@ class ldapConnector extends LDAP {
 	 */
 	private function delUserFromGroup($user, $group) {
 		if(!ldap_mod_del($this->res, $this->groupDN($group), array('member' => $this->userDN($user)))) {
+			Log_Control::writeLog("ldapConnector.php", "delUserFromGroup: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
 	}
-
-
-
-
-
 	
 	/**
 	 * adds LDAP group
@@ -254,6 +280,7 @@ class ldapConnector extends LDAP {
 				'top'
 			)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addGroup: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -278,6 +305,7 @@ class ldapConnector extends LDAP {
 		if(!ldap_mod_add($this->res, $this->permissionDN($permission), array(
 			'member' => $this->groupDN($group)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addGroupPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -301,7 +329,7 @@ class ldapConnector extends LDAP {
 	private function getAllGroupMembers($group) {
 		return $this->getCNList($this->groupDN($group), 'member', 'users');
 	}
-	
+
 	/**
 	 * returns a list of groups in a group
 	 * @param  string $group group name
@@ -310,7 +338,7 @@ class ldapConnector extends LDAP {
 	private function getAllGroupGroups($group) {
 		return $this->getCNList($this->groupDN($group), 'member', 'groups');
 	}
-	
+
 	/**
 	 * returns a list of owners of a group
 	 * @param  string $group group name
@@ -319,7 +347,7 @@ class ldapConnector extends LDAP {
 	private function getAllGroupLeaders($group) {
 		return $this->getCNList($this->groupDN($group), 'owner');
 	}
-	
+
 	private function getGroupsOfLeader($leader) {
 		$search = $this->search(LDAP_GROUP_BASE, "(owner=" . $this->userDN($leader) . ")", array('cn'));
 		if($search) {
@@ -331,7 +359,7 @@ class ldapConnector extends LDAP {
 		}
 		return false;
 	}
-	
+
 	private function getGroupPermissions($group) {
 		return $this->getMemberOfList($this->groupDN($group), 'permissions');
 	}
@@ -343,10 +371,13 @@ class ldapConnector extends LDAP {
 	 */
 	private function delGroup($group) {
 		if(!ldap_delete($this->res, $this->groupDN($group))) {
+			Log_Control::writeLog("ldapConnector.php", "delGroup: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
 	}
+
+	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 
 	/**
 	 * removes a LDAP permission from a group
@@ -358,6 +389,7 @@ class ldapConnector extends LDAP {
 		if(!ldap_mod_del($this->res, $this->permissionDN($permission), array(
 			'member' => $this->groupDN($group)
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "delGroupPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -373,9 +405,6 @@ class ldapConnector extends LDAP {
 		return $this->delAttribute($this->groupDN($group), array('member' => $this->groupDN($groupToDel)));
 	}
 
-
-
-
 	/**
 	 * adds a LDAP-permission
 	 * @param string $permission permission CN
@@ -387,6 +416,7 @@ class ldapConnector extends LDAP {
 			'objectClass' => 'groupOfNames',
 			'member' => ''
 		))) {
+			Log_Control::writeLog("ldapConnector.php", "addPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
@@ -399,15 +429,17 @@ class ldapConnector extends LDAP {
 	 */
 	private function delPermission($permission) {
 		if(!ldap_delete($this->res, $this->permissionDN($permission))) {
+			Log_Control::writeLog("ldapConnector.php", "delPermission: " . ldap_error($this->res));
 			return $this->error();
 		}
 		return true;
 	}
 
-	//TODO: VORSICHT - WAS BEI MEHRERE ATTRIBUTE? RÜCKGABE ALS ARRAY?
 	private function getUserPermissions($user) {
 		return $this->getMemberOfList($this->userDN($user), 'permissions');
 	}
+
+	//TODO: Sowohl Berechtigungen durch Permission und Group berücksichtigen
 
 	private function getAllUserPermissions($user) {
 		$search = $this->search(LDAP_PERMISSION_BASE, null, array('cn'));
@@ -430,7 +462,8 @@ class ldapConnector extends LDAP {
 		return $this->getMemberOfList($this->userDN($user), 'groups');
 	}
 
-	//TODO: Sowohl Berechtigungen durch Permission und Group berücksichtigen
+	//TODO: Array bei Value
+
 	private function isQualified($user, $permission) {
 		if($this->searchCN(LDAP_PERMISSION_BASE, $permission)) {
 			return true;
@@ -448,7 +481,9 @@ class ldapConnector extends LDAP {
 	private function delGroupAttribute($group, $attribute, $value) {
 		return $this->delAttribute($this->groupDN($group), array($attribute => $value));
 	}
-	
+
+	//TODO: Was heißt hier $mode = 'add'? Manchmal muss ein Attribute als komplett neues Attribut hinzugefügt werden, manchmal geändert werden
+
 	/**
 	 * Deletes an attribute from a permission
 	 * @param  string $group     permission name
@@ -459,7 +494,9 @@ class ldapConnector extends LDAP {
 	private function delPermissionAttribute($permission, $attribute, $value) {
 		return $this->delAttribute($this->permissionDN($permission), array($attribute => $value));
 	}
-	
+
+	//TODO
+
 	/**
 	 * Deletes an attribute from an user
 	 * @param  string $group     user name
@@ -471,46 +508,23 @@ class ldapConnector extends LDAP {
 		return $this->delAttribute($this->userDN($user), array($attribute => $value));
 	}
 
-	//TODO: Array bei Value
+
+	// PRIVATE METHODS //
+
 	private function setGroupAttribute($group, $attribute, $value, $mode = 'add', $old_value = null) {
 		$this->setAttribute($this->groupDN($group), $attribute, $value, $mode, $old_value);
 	}
-	
+
 	private function setPermissionAttribute($permission, $attribute, $value, $mode = 'add', $old_value = null) {
 		$this->setAttribute($this->permissionDN($permission), $attribute, $value, $mode, $old_value);
 	}
 
-	//TODO: Was heißt hier $mode = 'add'? Manchmal muss ein Attribute als komplett neues Attribut hinzugefügt werden, manchmal geändert werden
 	private function setUserAttribute($user, $attribute, $value, $mode = 'add', $old_value = null) {
 		$this->setAttribute($this->userDN($user), $attribute, $value, $mode, $old_value);
 	}	
 
-	//TODO
 	private function isServerDomain($domain) {
 		return $this->DNexists($this->domainDN($domain));
-	}
-
-
-
-	// PRIVATE METHODS //
-
-	/**
-	 * connects to LDAP
-	 */
-	protected function __construct() {
-		parent::__construct(LDAP_HOST, LDAP_PORT);
-	}
-
-	private function userDN($user) {
-		return 'cn='.$user.','.LDAP_USER_BASE;
-	}
-
-	private function groupDN($group) {
-		return 'cn='.$group.','.LDAP_GROUP_BASE;
-	}
-
-	private function permissionDN($permission) {
-		return 'cn='.$permission.','.LDAP_PERMISSION_BASE;
 	}
 
 	private function domainDN($domain) {
