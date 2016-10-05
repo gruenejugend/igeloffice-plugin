@@ -15,7 +15,7 @@ class Permission_Backend_View {
 	}
 	
 	public static function metaInfo($post) {
-		wp_nonce_field(Permission_Util::REMEMBER_INFO, Permission_Util::POST_ATTRIBUT_INFO_NONCE);
+		wp_nonce_field(Permission_Util::REMEMBER_NONCE, Permission_Util::POST_ATTRIBUT_INFO_NONCE);
 		
 		$oberkategorie_sel = "";
 		$unterkategorie_sel = "";
