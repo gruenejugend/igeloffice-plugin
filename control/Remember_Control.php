@@ -134,7 +134,7 @@ class Remember_Control
                 $key = wp_generate_password(12, false, false);
                 $save = array($key, $mail);
                 update_user_meta($wp_user->ID, "io_remember_key", serialize($save));
-                $profilUrl = "https://igeloffice-dev.gruene-jugend.de/wp-admin/index.php?rmf=" . $mail . "&rmk=" . $key;
+                $profilUrl = "https://account.gruene-jugend.de/wp-admin/index.php?rmf=" . $mail . "&rmk=" . $key;
 
                 $message = "Hallo,
             
@@ -219,7 +219,7 @@ Dein IGELoffice";
         $mails = self::get_remembers();
 
         $registerUrl = "https://account.gruene-jugend.de/wp-login.php?action=register";
-        $profilUrl = "https://igeloffice-dev.gruene-jugend.de/wp-admin/index.php?rm=";
+        $profilUrl = "https://account.gruene-jugend.de/wp-admin/index.php?rm=";
         foreach ($mails AS $mail) {
             $message = "Hallo,
 
