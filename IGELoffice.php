@@ -17,6 +17,8 @@
 	define('IO_URL', trailingslashit(plugin_dir_url(__FILE__)));
 	
 	wp_register_script('jqueryIO', 'https://code.jquery.com/jquery-1.11.3.min.js');
+
+require_once 'control/Log_Control.php';
 	
 	require_once 'services/util/User_Util.php';
 	require_once 'services/util/Group_Util.php';

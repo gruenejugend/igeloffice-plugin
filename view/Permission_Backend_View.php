@@ -15,7 +15,7 @@ class Permission_Backend_View {
 	}
 	
 	public static function metaInfo($post) {
-		wp_nonce_field(Permission_Util::REMEMBER_INFO, Permission_Util::POST_ATTRIBUT_INFO_NONCE);
+		wp_nonce_field(Permission_Util::REMEMBER_NONCE, Permission_Util::POST_ATTRIBUT_INFO_NONCE);
 		
 		$oberkategorie_sel = "";
 		$unterkategorie_sel = "";
@@ -138,8 +138,9 @@ class Permission_Backend_View {
 		}
 		
 		if(current_user_can('administrator')) {
-			if( !isset($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE]) || 
-				!wp_verify_nonce($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE], Permission_Util::REMEMBER_INFO)) {
+			if( !isset($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE]) ||
+				!wp_verify_nonce($_POST[Permission_Util::POST_ATTRIBUT_INFO_NONCE], Permission_Util::REMEMBER_NONCE)
+			) {
 				return;
 			}
 			

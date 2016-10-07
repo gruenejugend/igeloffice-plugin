@@ -14,6 +14,7 @@ final class LDAP_Proxy {
 		try {
 			$read = ldap_read($res, $dn, '(objectclass=*)', array());
 			if($read === false) {
+				Log_Control::writeLog("LDAP_Proxy.php", "isLDAPUser, read: " . ldap_error($res));
 				self::logout($res);
 				return false;
 			}
@@ -23,9 +24,10 @@ final class LDAP_Proxy {
 				if($user_email && (self::getAttribute($res, $dn, "mail") == $user_email || self::getAttribute($res, $dn, "mailAlternateAddress") == $user_email)) {
 					return true;
 				} elseif($user_email) {
+					Log_Control::writeLog("LDAP_Proxy.php", "isLDAPUser, count_entries, mailNotThere: " . $user_email);
 					return "mailNotThere";
 				}
-				
+
 				self::logout($res);
 				return true;
 			}
@@ -34,6 +36,7 @@ final class LDAP_Proxy {
 				self::logout($res);
 				return false;
 			}
+			Log_Control::writeLog("LDAP_Proxy.php", "isLDAPUser: " . $ex->getTraceAsString());
 			self::logout($res);
 			echo $ex->getTraceAsString();
 			die;
@@ -46,11 +49,13 @@ final class LDAP_Proxy {
 	{
 		$res = ldap_connect(LDAP_HOST, LDAP_PORT);
 		if ($res === false) {
+			Log_Control::writeLog("LDAP_Proxy.php", "construct, connect: " . ldap_error($res));
 			return;
 		}
 		ldap_set_option($res, LDAP_OPT_PROTOCOL_VERSION, 3); //we only support LDAPv3!
 		$bind = ldap_bind($res, LDAP_PROXY_USER, LDAP_PROXY_PW);
 		if (!$bind) {
+			Log_Control::writeLog("LDAP_Proxy.php", "construct, bind: " . ldap_error($res));
 			return;
 		}
 		return $res;
@@ -64,15 +69,18 @@ final class LDAP_Proxy {
 	private static final function getAttribute($res, $dn, $attribute) {
 		$read = ldap_read($res, $dn, '(objectclass=*)', array($attribute));
 		if($read === false) {
-			return $this->error();
+			Log_Control::writeLog("LDAP_Proxy.php", "getAttribute, read: " . ldap_error($res));
+			return;
 		}
 		$read = ldap_first_entry($res, $read);
 		if($read === false) {
-			return $this->error();
+			Log_Control::writeLog("LDAP_Proxy.php", "getAttribute, first_entry: " . ldap_error($res));
+			return;
 		}
 		$data = ldap_get_attributes($res, $read);
 		if(!is_array($data)) {
-			return $this->error();
+			Log_Control::writeLog("LDAP_Proxy.php", "getAttribute, get_attributes: " . ldap_error($res));
+			return;
 		}
 		return $data[$attribute][0];
 	}
@@ -99,8 +107,9 @@ final class LDAP_Proxy {
 			'userPassword' => "{SHA}" . base64_encode(pack( "H*", sha1($password))),
 			'qmailGID' => intval(time() / 86400) //last password change - days since 01.01.1970
 		))) {
+			Log_Control::writeLog("LDAP_Proxy.php", "changePW: " . ldap_error($res));
 			self::logout($res);
-			return LDAP::error();
+			return;
 		}
 		self::logout($res);
 		return true;
@@ -113,6 +122,7 @@ final class LDAP_Proxy {
 			'member' => 'cn=' . $user . ',' . LDAP_USER_BASE
 		))
 		) {
+			Log_Control::writeLog("LDAP_Proxy.php", "addUserPermission: " . ldap_error($res));
 			self::logout($res);
 			return false;
 		}
@@ -127,6 +137,7 @@ final class LDAP_Proxy {
 			'member' => 'cn=' . $user . ',' . LDAP_USER_BASE
 		))
 		) {
+			Log_Control::writeLog("LDAP_Proxy.php", "addUsersToGroup: " . ldap_error($res));
 			self::logout($res);
 			return false;
 		}
@@ -151,6 +162,7 @@ final class LDAP_Proxy {
 				'qmailUser'
 			)
 		))) {
+			Log_Control::writeLog("LDAP_Proxy.php", "addUser: " . ldap_error($res));
 			self::logout($res);
 			return false;
 		}
@@ -240,6 +252,7 @@ final class LDAP_Proxy {
 		$search = ldap_search($res, "ou=sherpaMembers,dc=gruene-jugend,dc=de", "(description=" . $key . ")", array("cn", "o", "qmailGID"));
 		
 		if(!$search || ldap_count_entries($res, $search) == 0) {
+			Log_Control::writeLog("LDAP_Proxy.php", "isSherpaKey: " . ldap_error($res));
 			self::logout($res);
 			return false;
 		}
