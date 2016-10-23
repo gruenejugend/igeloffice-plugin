@@ -185,7 +185,7 @@ final class LDAP_Proxy {
 		))
 		) {
 			self::logout($res);
-			return false);
+			return false;
 		}
 		self::logout($res);
 		return true;
