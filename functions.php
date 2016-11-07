@@ -206,3 +206,10 @@
 		
 		return str_replace($suche, $ersetzen, $input);
 	}
+
+function io_mail($old_mail)
+{
+	return "webmaster@gruene-jugend.de";
+}
+
+add_filter('wp_mail_from', 'io_mail');
