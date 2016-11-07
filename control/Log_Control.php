@@ -14,7 +14,7 @@ class Log_Control
     {
         $this->datum = getdate();
 
-        $pfad = "../../log/";
+        $pfad = "../../log/igeloffice/";
         if (is_admin()) {
             $pfad = "../" . $pfad;
         }
