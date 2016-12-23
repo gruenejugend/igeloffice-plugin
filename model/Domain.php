@@ -32,9 +32,7 @@ class Domain {
 			case 'target':
 				return Domain_Control::prepareRouting(MySQL_Proxy::getDomain($this->host)[Domain_Util::TARGET]);
 			case 'alias':
-				return MySQL_Proxy::getDomain($this->host)[Domain_Util::ALIAS];
-			case 'ssl':
-				return MySQL_Proxy::getDomain($this->host)[Domain_Util::SSL];
+				return MySQL_Proxy::readDomain($this->host)[Domain_Util::ALIAS];
 		}
 	}
 }
