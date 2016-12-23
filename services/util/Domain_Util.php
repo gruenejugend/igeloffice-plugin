@@ -6,6 +6,8 @@
  * @author KWM
  */
 class Domain_Util {
+	const DB = "manager";
+
 	const HOST = 'hostname';
 	const TARGET = 'proxyTarget';
 	const ALIAS = 'wwwAlias';
