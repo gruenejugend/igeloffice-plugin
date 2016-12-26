@@ -11,7 +11,7 @@ interface Request_Strategy {
 	function __construct($id);
 	
 	function getArt();
-	function getArtSuffix($requested_id);
+	function getArtSuffix($requested);
 	
 	function approve($id);
 	function reject($id);

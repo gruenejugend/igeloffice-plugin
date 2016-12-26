@@ -27,4 +27,9 @@ class Request_Util
 
 	const ACTION_NONCE = "io_request_action";
 	const MESSAGE_NONCE = "io_request_message";
+
+    /*
+     * Requested Details
+     */
+    const DETAIL_REQUESTED_ID = "requested_id";
 }

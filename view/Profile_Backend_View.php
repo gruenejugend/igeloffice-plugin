@@ -104,7 +104,7 @@ class Profile_Backend_View {
 			
 			if(count($to_add_permission) > 0) {
 				foreach($to_add_permission AS $permission) {
-					Request_Control::create($user_id, "Permission", $permission);
+					Request_Control::create($user_id, "Permission", array(Request_Util::DETAIL_REQUESTED_ID => $permission));
 				}
 				set_transient("permission_start", true, 3);
 			}
@@ -124,7 +124,7 @@ class Profile_Backend_View {
 			
 			if(count($to_add_group) > 0) {
 				foreach($to_add_group AS $group) {
-					Request_Control::create($user_id, "Group", $group);
+					Request_Control::create($user_id, "Group", array(Request_Util::DETAIL_REQUESTED_ID => $group));
 				}
 				set_transient("group_start", true, 3);
 			}

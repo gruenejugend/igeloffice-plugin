@@ -26,8 +26,8 @@ class Request {
 				return get_post_meta($this->id, Request_Util::ATTRIBUT_STELLER_IN, true);
 			case 'status':
 				return get_post_meta($this->id, Request_Util::ATTRIBUT_STATUS, true);
-			case 'requested_id':
-				return get_post_meta($this->id, Request_Util::ATTRIBUT_REQUESTED_ID, true);
+            default:
+				return get_post_meta($this->id, $name, true);
 		}
 	}
 }

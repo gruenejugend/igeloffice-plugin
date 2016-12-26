@@ -20,7 +20,7 @@ class Request_User implements Request_Strategy {
 		return self::art();
 	}
 
-	public function getArtSuffix($request_id) {
+	public function getArtSuffix($requested) {
 		return '';
 	}
 	

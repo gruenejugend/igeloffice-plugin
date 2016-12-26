@@ -20,12 +20,12 @@ class Request_Permission implements Request_Strategy {
 		return self::art();
 	}
 
-	public function getArtSuffix($request_id) {
-		return " zu " . get_post($request_id)->post_title;
+	public function getArtSuffix($requested) {
+		return " zu " . get_post($requested[Request_Util::DETAIL_REQUESTED_ID])->post_title;
 	}
 	
 	public function approve($id) {
-		User_Control::addPermission($this->request->steller_in, $this->request->requested_id);
+		User_Control::addPermission($this->request->steller_in, $this->request->{Request_Util::DETAIL_REQUESTED_ID});
 	}
 
 	public function reject($id) {
