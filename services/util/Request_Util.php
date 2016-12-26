@@ -32,4 +32,6 @@ class Request_Util
      * Requested Details
      */
     const DETAIL_REQUESTED_ID = "requested_id";
+    const DETAIL_DOMAIN_HOST = "host";
+    const DETAIL_DOMAIN_TARGET = "target";
 }

@@ -17,6 +17,9 @@ class Request_Factory {
 			case 'User':
 			case Request_User::art():
 				return new Request_User($id);
+            case 'Domain':
+            case Request_Domain::art():
+                return new Request_Domain($id);
 		}
 	}
 	
@@ -24,7 +27,8 @@ class Request_Factory {
 		return array(
 			'Group'				=> Request_Group::art(),
 			'Permission'		=> Request_Permission::art(),
-			'User'				=> Request_User::art()
+			'User'				=> Request_User::art(),
+            'Domain'            => Request_Domain::art()
 		);
 	}
 }
