@@ -39,8 +39,7 @@ class Domain_Backend_View {
 				!wp_verify_nonce($_POST[Domain_Util::POST_ATTRIBUT_INFO_NONCE], Domain_Util::INFO_NONCE)) {
 				return;
 			}
-			
-			$alias = !empty($_POST[Domain_Util::POST_ATTRIBUT_ALIAS]) ? 1 : 0;
+
 			Domain_Control::update(get_post($post_id)->post_title, sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_TARGET]), $alias);
 		}
 	}

@@ -1,11 +1,15 @@
 <table border="0" cellpadding="5" cellspacing="0" width="100%">
 	<tr>
-		<th width="30%">Ziel der Domain:</th>
-		<td width="70%">https://<input type="text" name="<?php echo Domain_Util::POST_ATTRIBUT_TARGET; ?>" value="<?php echo $domain->target; ?>" size="20"></td>
+		<th width="30%">Domain:</th>
+		<td width="70%"><input type="url" name="<?php echo Domain_Util::POST_ATTRIBUT_HOST; ?>" value="<?php echo $domain->host; ?>" size="20"></td>
 	</tr>
 	<tr>
-		<th width="30%">Zus&auml;tzlicher WWW-Alias:</th>
-		<td width="70%"><input type="checkbox" name="<?php echo Domain_Util::POST_ATTRIBUT_ALIAS; ?>" value="1"<?php if(str_replace(".gruene-jugend.de", "", $domain->host) != $host) { ?> readonly="true"<?php } ?>></td>
+		<th width="30%">Ziel:</th>
+		<td width="70%"><input type="url" name="<?php echo Domain_Util::POST_ATTRIBUT_TARGET; ?>" value="<?php echo $domain->target; ?>" size="20"></td>
+	</tr>
+	<tr>
+		<th width="30%">Autor*in:</th>
+		<td width="70%"><?php echo get_the_author($post->ID); ?></td>
 	</tr>
 </table>
 
