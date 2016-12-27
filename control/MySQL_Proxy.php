@@ -123,37 +123,101 @@ final class MySQL_Proxy {
 	/*
 	 * DOMAIN-OPERATIONEN (CRUD)
 	 */
-	public static final function createDomain($host, $target, $alias) {
-		self::create(Domain_Util::DB,
-			Domain_Util::DOMAINTABLE, array(
-			'id' => self::getNewID(Domain_Util::DOMAINTABLE, "id"),
-			Domain_Util::HOST => $host,
-			Domain_Util::TARGET => $target,
-			'pgpSubdomain' => 0,
-			Domain_Util::ALIAS => $alias,
-			'active' => 1
-		));
-	}
+    //Host CRUD
+    public static final function createHost($host) {
+        $id = self::getNewID(Domain_Util::TABLE_HOST, "id");
+        self::create(Domain_Util::DB,
+            Domain_Util::TABLE_HOST,
+            array(
+                'id'                            => $id,
+                Domain_Util::TABLE_HOST_C_HOST  => $host
+            ));
+        return $id;
+    }
 
-	public static final function readDomain($host) {
-		$values = self::read(Domain_Util::DB, Domain_Util::DOMAINTABLE, "*", Domain_Util::HOST . " = '" . $host . "'");
+    public static final function getIDByHost($host) {
+        return self::read(Domain_Util::DB, Domain_Util::TABLE_HOST, "id", Domain_Util::TABLE_HOST_C_HOST . " = '" . $host . "'")["id"];
+    }
 
-		return array(
-			'id' => $values['id'],
-			Domain_Util::HOST => $values[Domain_Util::HOST],
-			Domain_Util::TARGET => $values[Domain_Util::TARGET],
-			Domain_Util::ALIAS => $values[Domain_Util::ALIAS]
-		);
-	}
+    public static final function getHostByID($id) {
+        return self::read(Domain_Util::DB, Domain_Util::TABLE_HOST, Domain_Util::TABLE_HOST_C_HOST, "id = '" . $id . "'")[Domain_Util::TABLE_HOST_C_HOST];
+    }
 
-	public static final function updateDomain($host, $target) {
-		self::update(Domain_Util::DB,
-			Domain_Util::DOMAINTABLE,
-			array(Domain_Util::TARGET => $target),
-			Domain_Util::HOST . "='" . $host . "'");
-	}
+    public static final function deleteHost($host) {
+        self::delete(Domain_Util::DB,
+            Domain_Util::TABLE_HOST,
+            Domain_Util::TABLE_HOST_C_HOST."='".$host."'");
+    }
 
-	public static final function deleteDomain($host) {
-		self::delete(Domain_Util::DB, Domain_Util::DOMAINTABLE, Domain_Util::HOST . "='" . $host . "'");
-	}
+    //Proxy
+    public static final function createProxy($hostID, $target, $location = "") {
+        self::create(Domain_Util::DB,
+            Domain_Util::TABLE_PROXY,
+            array(
+                'id'                                => self::getNewID(Domain_Util::TABLE_PROXY, "id"),
+                Domain_Util::TABLE_PROXY_C_ACTIVE   => 1,
+                Domain_Util::TABLE_PROXY_C_TARGET   => $target,
+                Domain_Util::TABLE_PROXY_C_HOST     => $hostID,
+                Domain_Util::TABLE_PROXY_C_LOCATION => $location
+            ));
+    }
+
+    public static final function getProxyByIDAndLocation($hostID, $location = "/") {
+        return self::read(Domain_Util::DB,
+            Domain_Util::TABLE_PROXY,
+            "*",
+            Domain_Util::TABLE_PROXY_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'"
+        );
+    }
+
+    public static final function updateProxyTarget($hostID, $target, $location = "/") {
+        self::create(Domain_Util::DB,
+            Domain_Util::TABLE_PROXY,
+            array(
+                Domain_Util::TABLE_PROXY_C_TARGET   => $target
+            ),
+            Domain_Util::TABLE_PROXY_C_HOST." = ".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'");
+    }
+
+    public static final function deleteProxy($hostID, $location = "/") {
+        self::delete(Domain_Util::DB,
+            Domain_Util::TABLE_PROXY,
+            Domain_Util::TABLE_PROXY_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'");
+    }
+
+    //Redirect
+    public static final function createRedirect($hostID, $target, $location = "/") {
+        self::create(Domain_Util::DB,
+            Domain_Util::TABLE_REDIRECTS,
+            array(
+                "id"                                    => self::getNewID(Domain_Util::TABLE_REDIRECTS, "id"),
+                Domain_Util::TABLE_REDIRECTS_C_HOST     => $hostID,
+                Domain_Util::TABLE_REDIRECTS_C_LOCATION => $location,
+                Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target,
+                Domain_Util::TABLE_REDIRECTS_C_MODE     => Domain_Util::TABLE_REDIRECTS_C_MODE_E_PERM
+            ));
+    }
+
+    public static final function getRedirectByIDAndLocation($hostID, $location = "/") {
+        return self::read(Domain_Util::DB,
+            Domain_Util::TABLE_REDIRECTS,
+            "*",
+            Domain_Util::TABLE_REDIRECTS_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'"
+        );
+    }
+
+    public static final function updateRedirectTarget($hostID, $target, $location = "/") {
+        self::update(Domain_Util::DB,
+            Domain_Util::TABLE_REDIRECTS,
+            array(
+                Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target
+            ),
+            Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'");
+    }
+
+    public static final function deleteRedirect($hostID, $location = "/") {
+        self::delete(Domain_Util::DB,
+            Domain_Util::TABLE_REDIRECTS,
+            Domain_Util::TABLE_REDIRECTS_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'");
+    }
 }

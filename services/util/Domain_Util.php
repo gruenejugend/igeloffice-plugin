@@ -12,8 +12,26 @@ class Domain_Util {
 	const TARGET = 'proxyTarget';
 	const ALIAS = 'wwwAlias';
 	const SSL = 'active';
+
 	const DOMAINTABLE = 'sslProxy';
-	
+
+    const TABLE_HOST = "hosts";
+    const TABLE_HOST_C_HOST = "host";
+
+    const TABLE_REDIRECTS = "redirects";
+    const TABLE_REDIRECTS_C_HOST = "host_id";
+    const TABLE_REDIRECTS_C_LOCATION = "location";
+    const TABLE_REDIRECTS_C_TARGET = "target";
+    const TABLE_REDIRECTS_C_MODE = "mode";
+    const TABLE_REDIRECTS_C_MODE_E_PERM = "permanent";
+    const TABLE_REDIRECTS_C_MODE_E_TEMP = "temporary";
+
+    const TABLE_PROXY = "sslProxy";
+    const TABLE_PROXY_C_TARGET = "proxyTarget";
+    const TABLE_PROXY_C_ACTIVE = "active";
+    const TABLE_PROXY_C_HOST = "host_id";
+    const TABLE_PROXY_C_LOCATION = "location";
+
 	const POST_TYPE = 'io_domain';
 	
 	const POST_ATTRIBUT_INFO_NONCE = "io_domain_info_nonce";
