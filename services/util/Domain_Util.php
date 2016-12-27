@@ -20,4 +20,17 @@ class Domain_Util {
 	const INFO_NONCE = "io_domain_info";
 	const POST_ATTRIBUT_TARGET = "io_domain_target";
     const POST_ATTRIBUT_HOST = "io_domain_host";
+    const POST_ATTRIBUT_VERWENDUNGSZWECK = "io_verwendungszweck";
+
+    const VERWENDUNGSZWECK = "io_verwendungszweck";
+
+    const VZ_WORDPRESS = "wp";
+    const VZ_REDIRECT = "redirect";
+    const VZ_WEB = "web";
+
+    const VZ_ARRAY = array(
+        self::VZ_WORDPRESS              => "WordPress",
+        self::VZ_REDIRECT               => "Weiterleitung",
+        self::VZ_WEB                    => "Web"
+    );
 }

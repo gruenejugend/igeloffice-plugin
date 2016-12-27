@@ -31,6 +31,8 @@ class Domain {
 				return $this->host;
 			case 'target':
 				return Domain_Control::prepareRouting(MySQL_Proxy::getDomain($this->host)[Domain_Util::TARGET]);
+            case 'verwendungszweck':
+                return get_post_meta($this->id, Domain_Util::VERWENDUNGSZWECK, true);
 			case 'alias':
 				return MySQL_Proxy::readDomain($this->host)[Domain_Util::ALIAS];
 		}
