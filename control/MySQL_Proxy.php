@@ -135,10 +135,6 @@ final class MySQL_Proxy {
         return $id;
     }
 
-    public static final function getIDByHost($host) {
-        return self::read(Domain_Util::DB, Domain_Util::TABLE_HOST, "id", Domain_Util::TABLE_HOST_C_HOST . " = '" . $host . "'")["id"];
-    }
-
     public static final function getHostByID($id) {
         return self::read(Domain_Util::DB, Domain_Util::TABLE_HOST, Domain_Util::TABLE_HOST_C_HOST, "id = '" . $id . "'")[Domain_Util::TABLE_HOST_C_HOST];
     }
@@ -151,73 +147,79 @@ final class MySQL_Proxy {
 
     //Proxy
     public static final function createProxy($hostID, $target, $location = "") {
+        $id = self::getNewID(Domain_Util::TABLE_PROXY, "id");
         self::create(Domain_Util::DB,
             Domain_Util::TABLE_PROXY,
             array(
-                'id'                                => self::getNewID(Domain_Util::TABLE_PROXY, "id"),
+                'id'                                => $id,
                 Domain_Util::TABLE_PROXY_C_ACTIVE   => 1,
                 Domain_Util::TABLE_PROXY_C_TARGET   => $target,
                 Domain_Util::TABLE_PROXY_C_HOST     => $hostID,
                 Domain_Util::TABLE_PROXY_C_LOCATION => $location
             ));
+        return $id;
     }
 
-    public static final function getProxyByIDAndLocation($hostID, $location = "/") {
+    public static final function getProxyByID($settingID) {
         return self::read(Domain_Util::DB,
             Domain_Util::TABLE_PROXY,
             "*",
-            Domain_Util::TABLE_PROXY_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'"
+            Domain_Util::TABLE_PROXY_C_ID."=".$settingID
         );
     }
 
-    public static final function updateProxyTarget($hostID, $target, $location = "/") {
+    public static final function updateProxy($settingsID, $target, $location) {
         self::create(Domain_Util::DB,
             Domain_Util::TABLE_PROXY,
             array(
-                Domain_Util::TABLE_PROXY_C_TARGET   => $target
+                Domain_Util::TABLE_PROXY_C_TARGET   => $target,
+                Domain_Util::TABLE_PROXY_C_LOCATION => $location
             ),
-            Domain_Util::TABLE_PROXY_C_HOST." = ".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'");
+            Domain_Util::TABLE_PROXY_C_ID." = ".$settingsID);
     }
 
-    public static final function deleteProxy($hostID, $location = "/") {
+    public static final function deleteProxy($settingsID) {
         self::delete(Domain_Util::DB,
             Domain_Util::TABLE_PROXY,
-            Domain_Util::TABLE_PROXY_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_PROXY_C_LOCATION." = '".$location."'");
+            Domain_Util::TABLE_PROXY_C_ID."=".$settingsID);
     }
 
     //Redirect
     public static final function createRedirect($hostID, $target, $location = "/") {
+        $id = self::getNewID(Domain_Util::TABLE_REDIRECTS, "id");
         self::create(Domain_Util::DB,
             Domain_Util::TABLE_REDIRECTS,
             array(
-                "id"                                    => self::getNewID(Domain_Util::TABLE_REDIRECTS, "id"),
+                "id"                                    => $id,
                 Domain_Util::TABLE_REDIRECTS_C_HOST     => $hostID,
                 Domain_Util::TABLE_REDIRECTS_C_LOCATION => $location,
                 Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target,
                 Domain_Util::TABLE_REDIRECTS_C_MODE     => Domain_Util::TABLE_REDIRECTS_C_MODE_E_PERM
             ));
+        return $id;
     }
 
-    public static final function getRedirectByIDAndLocation($hostID, $location = "/") {
+    public static final function getRedirectByID($settingID) {
         return self::read(Domain_Util::DB,
             Domain_Util::TABLE_REDIRECTS,
             "*",
-            Domain_Util::TABLE_REDIRECTS_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'"
+            Domain_Util::TABLE_REDIRECTS_C_ID."=".$settingID
         );
     }
 
-    public static final function updateRedirectTarget($hostID, $target, $location = "/") {
+    public static final function updateRedirect($settingsID, $target, $location = "/") {
         self::update(Domain_Util::DB,
             Domain_Util::TABLE_REDIRECTS,
             array(
-                Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target
+                Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target,
+                Domain_Util::TABLE_REDIRECTS_C_LOCATION => $location
             ),
-            Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'");
+            Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$settingsID);
     }
 
-    public static final function deleteRedirect($hostID, $location = "/") {
+    public static final function deleteRedirect($settingsID) {
         self::delete(Domain_Util::DB,
             Domain_Util::TABLE_REDIRECTS,
-            Domain_Util::TABLE_REDIRECTS_C_HOST."=".$hostID." AND ".Domain_Util::TABLE_REDIRECTS_C_LOCATION." = '".$location."'");
+            Domain_Util::TABLE_REDIRECTS_C_HOST."=".$settingsID);
     }
 }
