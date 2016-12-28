@@ -28,11 +28,13 @@ class Request_WordPress implements Request_Strategy {
     }
 
     function approve() {
-        $admID = Group_Control::create("WordPress Administration " . $this->request->steller_in, "WordPress", $this->request->steller_in);
-        $redID = Group_Control::create("WordPress Redakteur " . $this->request->steller_in, "WordPress", $this->request->steller_in);
-        $autID = Group_Control::create("WordPress Autor_in " . $this->request->steller_in, "WordPress", $this->request->steller_in);
-        $mitID = Group_Control::create("WordPress Mitarbeiter_in " . $this->request->steller_in, "WordPress", $this->request->steller_in);
-        $aboID = Group_Control::create("WordPress Abonnent_in " . $this->request->steller_in, "WordPress", $this->request->steller_in);
+        $user_login = (new User($this->request->steller_in))->user_login;
+
+        $admID = Group_Control::create("WordPress Administration " . $user_login, "WordPress", $user_login);
+        $redID = Group_Control::create("WordPress Redakteur " . $user_login, "WordPress", $user_login);
+        $autID = Group_Control::create("WordPress Autor_in " . $user_login, "WordPress", $user_login);
+        $mitID = Group_Control::create("WordPress Mitarbeiter_in " . $user_login, "WordPress", $user_login);
+        $aboID = Group_Control::create("WordPress Abonnent_in " . $user_login, "WordPress", $user_login);
 
         $groups = array(
             Request_Util::DETAIL_WORDPRESS_GROUPS_ADMIN     => $admID,
@@ -44,8 +46,16 @@ class Request_WordPress implements Request_Strategy {
 
         update_post_meta($this->request->ID, Request_Util::DETAIL_WORDPRESS_GROUPS, maybe_serialize($groups));
 
-        //Gruppen erstellen + Gruppenleiter
-        //Gruppen-DNs müssen aber auch angezeigt werden, damit nach Genehmigung direkt kopiert werden kann
+        User_Control::addToGroup($this->request->steller_in, $admID);
+        Group_Control::addOwner($admID, $this->request->steller_in);
+        User_Control::addToGroup($this->request->steller_in, $redID);
+        Group_Control::addOwner($redID, $this->request->steller_in);
+        User_Control::addToGroup($this->request->steller_in, $autID);
+        Group_Control::addOwner($autID, $this->request->steller_in);
+        User_Control::addToGroup($this->request->steller_in, $mitID);
+        Group_Control::addOwner($mitID, $this->request->steller_in);
+        User_Control::addToGroup($this->request->steller_in, $aboID);
+        Group_Control::addOwner($aboID, $this->request->steller_in);
     }
 
     function reject() {
