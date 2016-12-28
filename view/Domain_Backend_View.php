@@ -56,4 +56,10 @@ class Domain_Backend_View {
             }
         }
 	}
+
+    public static function maskDelete($post_id) {
+        if(current_user_can('administrator')) {
+            Domain_Control::delete($post_id);
+        }
+    }
 }

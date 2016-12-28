@@ -158,8 +158,7 @@ add_action("admin_notices", array("Groups_Backend_View", "userSizeMsg"));
 	add_action('save_post',															array('Domain_Backend_View', 'maskSave'));
 	add_filter('manage_' .Domain_Util::POST_TYPE. '_posts_columns',					array('Domain_Backend_View', 'column'), 10, 2);
 	add_filter('manage_' .Domain_Util::POST_TYPE. '_posts_custom_column',			array('Domain_Backend_View', 'maskColumn'), 10, 2);
-	add_action('publish_post',														array('Domain_Control', 'freigabe'));
-	add_action('delete_post',														array('Domain_Control', 'delete'));
+	add_action('before_delete_post',							    				array('Domain_Backend_View', 'maskDelete'));
 	
 	if (!function_exists('wp_new_user_notification')) {
 		function wp_new_user_notification($user_id, $notify = '') {

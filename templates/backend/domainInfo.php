@@ -1,7 +1,23 @@
+<?php
+	/*ini_set("display_errors", 1);
+	error_reporting(E_ALL);
+
+	MySQL_Proxy::create("", Domain_Util::TABLE_HOST, array(
+		'id'			=> MySQL_Proxy::getNewID("", Domain_Util::TABLE_HOST, 'id'),
+		'hostname'		=> 'test.gruene-jugend.de',
+		'https'			=> 1,
+		'active'		=> 1
+	));*/
+
+
+	echo $domain->host;
+	echo '<br>';
+?>
+
 <table border="0" cellpadding="5" cellspacing="0" width="100%">
 	<tr>
 		<th width="30%">Domain:</th>
-		<td width="70%"><input type="url" name="<?php echo Domain_Util::POST_ATTRIBUT_HOST; ?>" value="<?php echo $domain->host; ?>" size="20"></td>
+		<td width="70%"><input type="text" name="<?php echo Domain_Util::POST_ATTRIBUT_HOST; ?>" value="<?php echo $domain->host; ?>" size="20"></td>
 	</tr>
 	<tr>
 		<th width="30%">Location:</th>

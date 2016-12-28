@@ -7,7 +7,6 @@
  */
 class Domain {
 	private $id;
-	private $autor_in;
     private $post;
 	
 	public function __construct($id) {
