@@ -6,11 +6,12 @@
  * @author KWM
  */
 class Domain_Control {
-	public static final function create($name, $host, $zweck, $target, $location = "/") {
+	public static final function create($name, $author, $host, $zweck, $target, $location = "/") {
         $id = wp_insert_post(array(
             'post_title'		=> $name,
             'post_type'			=> Domain_Util::POST_TYPE,
-            'post_status'		=> 'publish'
+            'post_status'		=> 'publish',
+            'post_author'       => $author
         ));
 
         self::createMeta($id, $host, $zweck, $target, $location);

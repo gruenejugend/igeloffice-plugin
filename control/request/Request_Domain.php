@@ -27,7 +27,7 @@ class Request_Domain implements Request_Strategy {
     }
 
     function approve() {
-        Domain_Control::create($this->name, $this->request->meta[Request_Util::DETAIL_DOMAIN_HOST], $this->request->meta[Request_Util::DETAIL_DOMAIN_ZWECK], $this->request->meta[Request_Util::DETAIL_DOMAIN_TARGET], $this->request->meta[Request_Util::DETAIL_DOMAIN_LOCATION]);
+        Domain_Control::create($this->name, $this->request->steller_in, $this->request->meta[Request_Util::DETAIL_DOMAIN_HOST], $this->request->meta[Request_Util::DETAIL_DOMAIN_ZWECK], $this->request->meta[Request_Util::DETAIL_DOMAIN_TARGET], $this->request->meta[Request_Util::DETAIL_DOMAIN_LOCATION]);
     }
 
     function reject() {
