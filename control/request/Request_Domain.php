@@ -12,8 +12,10 @@ class Request_Domain implements Request_Strategy {
     }
 
     private $request;
+    public $name;
     public function __construct($id) {
         $this->request = new Request($id);
+        $this->name = $this->request->meta[Request_Util::DETAIL_DOMAIN_HOST] . " zu " . $this->request->meta[Request_Util::DETAIL_DOMAIN_TARGET];
     }
 
     function getArt() {
@@ -24,15 +26,15 @@ class Request_Domain implements Request_Strategy {
         return ": " . $requested[Request_Util::DETAIL_DOMAIN_HOST] . " zu " . $requested[Request_Util::DETAIL_DOMAIN_TARGET];
     }
 
-    function approve($id) {
-        // TODO: Implement approve() method.
+    function approve() {
+        Domain_Control::create($this->name, $this->request->meta[Request_Util::DETAIL_DOMAIN_HOST], $this->request->meta[Request_Util::DETAIL_DOMAIN_ZWECK], $this->request->meta[Request_Util::DETAIL_DOMAIN_TARGET], $this->request->meta[Request_Util::DETAIL_DOMAIN_LOCATION]);
     }
 
-    function reject($id) {
-        // TODO: Implement reject() method.
+    function reject() {
+        return;
     }
 
     function getObject() {
-        // TODO: Implement getObject() method.
+        return $this;
     }
 }

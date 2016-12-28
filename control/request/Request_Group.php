@@ -24,15 +24,15 @@ class Request_Group implements Request_Strategy {
 		return " bei " . get_post($requested[Request_Util::DETAIL_REQUESTED_ID])->post_title;
 	}
 	
-	public function approve($id) {
-		User_Control::addToGroup($this->request->steller_in, $this->request->{Request_Util::DETAIL_REQUESTED_ID});
+	public function approve() {
+		User_Control::addToGroup($this->request->steller_in, $this->request->meta[Request_Util::DETAIL_REQUESTED_ID]);
 	}
 
-	public function reject($id) {
+	public function reject() {
 		return;
 	}
 	
 	public function getObject() {
-		return new Group($this->request->requested_id);
+		return new Group($this->request->meta[Request_Util::DETAIL_REQUESTED_ID]);
 	}
 }

@@ -24,15 +24,15 @@ class Request_Permission implements Request_Strategy {
 		return " zu " . get_post($requested[Request_Util::DETAIL_REQUESTED_ID])->post_title;
 	}
 	
-	public function approve($id) {
-		User_Control::addPermission($this->request->steller_in, $this->request->{Request_Util::DETAIL_REQUESTED_ID});
+	public function approve() {
+		User_Control::addPermission($this->request->steller_in, $this->request->meta[Request_Util::DETAIL_REQUESTED_ID]);
 	}
 
-	public function reject($id) {
+	public function reject() {
 		return;
 	}
 	
 	public function getObject() {
-		return new Permission($this->request->requested_id);
+		return new Permission($this->request->meta[Request_Util::DETAIL_REQUESTED_ID]);
 	}
 }

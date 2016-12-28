@@ -30,11 +30,7 @@ class Request_Control {
 	public static function createMeta($id, $request, $user_id, $requested = array()) {
 		update_post_meta($id, Request_Util::ATTRIBUT_ART,				$request->getArt());
 		update_post_meta($id, Request_Util::ATTRIBUT_STELLER_IN,		$user_id);
-        if(count($requested) > 0) {
-            foreach ($requested AS $key => $value) {
-                update_post_meta($id, sanitize_text_field($key), sanitize_text_field($value));
-            }
-        }
+        update_post_meta($id, Request_Util::ATTRIBUT_META,              maybe_serialize($requested));
 		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,			"Gestellt");
 	}
 	
@@ -95,12 +91,12 @@ class Request_Control {
 	}
 	
 	public static function approve($id) {
-		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->approve($id);
+		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->approve();
 		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Angenommen");
 	}
 	
 	public static function reject($id) {
-		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->reject($id);
+		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->reject();
 		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Abgelehnt");
 	}
 }

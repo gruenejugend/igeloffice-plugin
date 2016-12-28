@@ -8,7 +8,10 @@
 	Author URI: http://www.kay-wilhelm.de
 	Version: 1.0.0
 */
-	
+
+
+//TODO Change Serialize
+
 	ini_set('display_errors', '1');
 	
 	defined('ABSPATH') or die( "Access denied !" );
@@ -52,6 +55,8 @@ require_once 'control/Log_Control.php';
 	require_once 'control/request/Request_Group.php';
 	require_once 'control/request/Request_Permission.php';
 	require_once 'control/request/Request_User.php';
+    require_once 'control/request/Request_Domain.php';
+    require_once 'control/request/Request_WordPress.php';
 	
 	require_once 'view/Permission_Backend_View.php';
 	require_once 'view/Groups_Backend_View.php';

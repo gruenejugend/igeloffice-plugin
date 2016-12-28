@@ -20,6 +20,7 @@ class Request_Util
 	const ATTRIBUT_STATUS = "io_request_status";
 	const ATTRIBUT_REQUESTED_ID = "io_request_requested_id";
 	const ATTRIBUT_MESSAGE = "io_request_message";
+    const ATTRIBUT_META = "io_request_meta";
 
 	const POST_ATTRIBUT_ACTION_NONCE = "io_request_action_nonce";
 	const POST_ATTRIBUT_MESSAGE_NONCE = "io_request_message_nonce";
@@ -34,4 +35,6 @@ class Request_Util
     const DETAIL_REQUESTED_ID = "requested_id";
     const DETAIL_DOMAIN_HOST = "host";
     const DETAIL_DOMAIN_TARGET = "target";
+    const DETAIL_DOMAIN_ZWECK = "zweck";
+    const DETAIL_DOMAIN_LOCATION = "location";
 }

@@ -20,6 +20,9 @@ class Request_Factory {
             case 'Domain':
             case Request_Domain::art():
                 return new Request_Domain($id);
+            case 'WordPress':
+            case Request_WordPress::art():
+                return new Request_WordPress($id);
 		}
 	}
 	
@@ -28,7 +31,8 @@ class Request_Factory {
 			'Group'				=> Request_Group::art(),
 			'Permission'		=> Request_Permission::art(),
 			'User'				=> Request_User::art(),
-            'Domain'            => Request_Domain::art()
+            'Domain'            => Request_Domain::art(),
+            'WordPress'         => Request_WordPress::art()
 		);
 	}
 }

@@ -24,8 +24,8 @@ class Request_User implements Request_Strategy {
 		return '';
 	}
 	
-	public function approve($id) {
-		$request = new Request($id);
+	public function approve() {
+		$request = new Request($this->request->ID);
 		$user = new User($request->steller_in);
 		
 		if($user->aktiv == 0) {
@@ -33,8 +33,8 @@ class Request_User implements Request_Strategy {
 		}
 	}
 
-	public function reject($id) {
-		$request = new Request($id);
+	public function reject() {
+		$request = new Request($this->request->ID);
 		$user = new User($request->steller_in);
 		
 		if($user->aktiv == 0) {

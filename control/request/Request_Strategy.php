@@ -13,8 +13,8 @@ interface Request_Strategy {
 	function getArt();
 	function getArtSuffix($requested);
 	
-	function approve($id);
-	function reject($id);
+	function approve();
+	function reject();
 	
 	function getObject();
 }
