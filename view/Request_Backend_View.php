@@ -27,20 +27,50 @@ class Request_Backend_View {
 <table border="0" cellpadding="5" cellspacing="0" width="100%">
 	<tr>
 		<td width="40%">Berechtigungsart:</td>
-		<td width="60%"><b><?php echo $request->art; ?></b></td>
+		<td width="60%" colspan="2"><b><?php echo $request->art; ?></b></td>
 	</tr>
 	<tr>
 		<td width="40%">Steller*in:</td>
-		<td width="60%"><b><?php echo $user->user_login; ?></b></td>
+		<td width="60%" colspan="2"><b><?php echo $user->user_login; ?></b></td>
 	</tr>
 	<tr>
 		<td width="40%">F&uuml;r:</td>
-		<td width="60%"><b><?php echo $request_art->getObject()->name; ?></b></td>
+		<td width="60%" colspan="2"><b><?php echo $request_art->getObject()->name; ?></b></td>
 	</tr>
 	<tr>
 		<td width="40%">Status:</td>
-		<td width="60%"><b><?php echo $request->status; ?></b></td>
+		<td width="60%" colspan="2"><b><?php echo $request->status; ?></b></td>
 	</tr>
+	<?php
+
+		$vars = get_post_meta($request->ID, Request_Util::DETAIL_WORDPRESS_GROUPS, true);
+		if($vars) {
+			$vars = maybe_unserialize($vars);
+			?><tr>
+				<td width="40%" rowspan="5">Gruppen:</td>
+				<td width="20%">Admins:</td>
+				<td width="40%"><input type="text" value="cn=<?php echo (new Group($vars[Request_Util::DETAIL_WORDPRESS_GROUPS_ADMIN]))->name. ',' . LDAP_GROUP_BASE; ?>" readonly></td>
+			</tr>
+			<tr>
+				<td width="20%">Redakteur*innen:</td>
+				<td width="40%"><input type="text" value="cn=<?php echo (new Group($vars[Request_Util::DETAIL_WORDPRESS_GROUPS_REDAKTEUR]))->name. ',' . LDAP_GROUP_BASE; ?>" readonly></td>
+			</tr>
+			<tr>
+				<td width="20%">Autor*innen:</td>
+				<td width="40%"><input type="text" value="cn=<?php echo (new Group($vars[Request_Util::DETAIL_WORDPRESS_GROUPS_AUTOR]))->name. ',' . LDAP_GROUP_BASE; ?>" readonly></td>
+			</tr>
+			<tr>
+				<td width="20%">Mitarbeiter*in:</td>
+				<td width="40%"><input type="text" value="cn=<?php echo (new Group($vars[Request_Util::DETAIL_WORDPRESS_GROUPS_MITARBEIT]))->name. ',' . LDAP_GROUP_BASE; ?>" readonly></td>
+			</tr>
+			<tr>
+				<td width="20%">Abonnent:</td>
+				<td width="40%"><input type="text" value="cn=<?php echo (new Group($vars[Request_Util::DETAIL_WORDPRESS_GROUPS_ABO]))->name. ',' . LDAP_GROUP_BASE; ?>" readonly></td>
+			</tr>
+			<?php
+		}
+
+	?>
 </table>
 
 <?php

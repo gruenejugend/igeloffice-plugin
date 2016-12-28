@@ -37,4 +37,15 @@ class Request_Util
     const DETAIL_DOMAIN_TARGET = "target";
     const DETAIL_DOMAIN_ZWECK = "zweck";
     const DETAIL_DOMAIN_LOCATION = "location";
+
+    /*
+     * WordPress Details
+     */
+    const DETAIL_WORDPRESS_DOMAIN = "domain";
+    const DETAIL_WORDPRESS_GROUPS = "io_request_gruppen";
+    const DETAIL_WORDPRESS_GROUPS_ADMIN = "admin";
+    const DETAIL_WORDPRESS_GROUPS_REDAKTEUR = "redakteur";
+    const DETAIL_WORDPRESS_GROUPS_AUTOR = "autor";
+    const DETAIL_WORDPRESS_GROUPS_MITARBEIT = "mitarbeiter";
+    const DETAIL_WORDPRESS_GROUPS_ABO = "abonnent";
 }
