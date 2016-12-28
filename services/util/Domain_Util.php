@@ -21,7 +21,7 @@ class Domain_Util {
     const TABLE_REDIRECTS_C_MODE_E_PERM = "permanent";
     const TABLE_REDIRECTS_C_MODE_E_TEMP = "temporary";
 
-    const TABLE_PROXY = "sslProxy";
+    const TABLE_PROXY = "tlsProxy";
     const TABLE_PROXY_C_ID = "id";
     const TABLE_PROXY_C_TARGET = "proxyTarget";
     const TABLE_PROXY_C_ACTIVE = "active";
