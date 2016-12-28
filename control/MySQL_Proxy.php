@@ -135,14 +135,24 @@ final class MySQL_Proxy {
         return $id;
     }
 
+    public static final function updateHost($id, $host) {
+        self::update(Domain_Util::DB,
+            Domain_Util::TABLE_HOST,
+            array(
+                Domain_Util::TABLE_HOST_C_HOST  => $host
+            ),
+            Domain_Util::TABLE_HOST_C_ID."=".$id
+        );
+    }
+
     public static final function getHostByID($id) {
         return self::read(Domain_Util::DB, Domain_Util::TABLE_HOST, Domain_Util::TABLE_HOST_C_HOST, "id = '" . $id . "'")[Domain_Util::TABLE_HOST_C_HOST];
     }
 
-    public static final function deleteHost($host) {
+    public static final function deleteHost($id) {
         self::delete(Domain_Util::DB,
             Domain_Util::TABLE_HOST,
-            Domain_Util::TABLE_HOST_C_HOST."='".$host."'");
+            Domain_Util::TABLE_HOST_C_ID."=".$id);
     }
 
     //Proxy

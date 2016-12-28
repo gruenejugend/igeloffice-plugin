@@ -141,10 +141,7 @@
 			'public'				=> true,
 			'publicly_queryable'	=> false,
 			'show_in_nav_menus'		=> false,
-			'supports'				=> array("title"),
-			'capabilities'			=> array(
-				'create_posts'			=> false
-			)
+			'supports'				=> array("title")
 		);
 		
 		register_post_type(Domain_Util::POST_TYPE, $args);

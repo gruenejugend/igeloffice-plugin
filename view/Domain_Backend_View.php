@@ -14,17 +14,21 @@ class Domain_Backend_View {
 	
 	public static function metaInfo($post) {
 		wp_nonce_field(Domain_Util::INFO_NONCE, Domain_Util::POST_ATTRIBUT_INFO_NONCE);
-		$domain = new Domain($post->ID);
+        if(get_post_status($post->ID) == "publish") {
+            $domain = new Domain($post->ID);
+        } else {
+            $domain = null;
+        }
 		
 		include '../wp-content/plugins/igeloffice/templates/backend/domainInfo.php';
 	}
 	
 	public static function column($columns) {
-		return array_merge($columns, array(Domain_Util::ATTRIBUT_TARGET => 'Ziel'));
+		return array_merge($columns, array(Domain_Util::POST_ATTRIBUT_TARGET => 'Ziel'));
 	}
 	
 	public static function maskColumn($column, $post_id) {
-		if($column == Domain_Util::ATTRIBUT_TARGET) {
+		if($column == Domain_Util::POST_ATTRIBUT_TARGET) {
 			echo (new Domain($post_id))->target;
 		}
 	}
@@ -40,7 +44,16 @@ class Domain_Backend_View {
 				return;
 			}
 
-			Domain_Control::update(get_post($post_id)->post_title, sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_TARGET]), $alias);
-		}
+			$host = sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_HOST]);
+            $zweck = sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_VERWENDUNGSZWECK]);
+            $target = sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_TARGET]);
+            $location = sanitize_text_field($_POST[Domain_Util::POST_ATTRIBUT_LOCATION]);
+
+			if(get_post_meta($post_id, Domain_Util::HOST_ID, true)) {
+                Domain_Control::update($post_id, $host, $zweck, $target, $location);
+            } else {
+                Domain_Control::createMeta($post_id, $host, $zweck, $target, $location);
+            }
+        }
 	}
 }

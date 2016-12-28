@@ -8,33 +8,47 @@
 class Domain {
 	private $id;
 	private $autor_in;
-	private $host;
-	private $target; 
-	private $alias;
-	private $ssl;
+    private $post;
 	
 	public function __construct($id) {
 		$this->id = $id;
-		$post = get_post($id);
-		
-		$this->autor_in = $post->post_author;
-		$this->host = $post->post_title;
-	}
-	
+		$this->post = get_post($id);
+    }
+
+	//TODO Rewrite
+    /*
+     * - Zweck
+     * - Alias Weg
+     * - Host-ID
+     */
 	public function __get($name) {
 		switch ($name) {
 			case 'id':
 				return $this->id;
 			case 'autor_in':
-				return $this->autor_in;
-			case 'host':
-				return $this->host;
-			case 'target':
-				return Domain_Control::prepareRouting(MySQL_Proxy::getDomain($this->host)[Domain_Util::TARGET]);
-            case 'verwendungszweck':
+				return $this->post->post_author;
+            case 'title':
+                return $this->post->post_title;
+            case 'hostID':
+                return get_post_meta($this->id, Domain_Util::HOST_ID, true);
+            case 'hostSettingsID':
+                return get_post_meta($this->id, Domain_Util::HOST_SETTING_ID, true);
+            case 'zweck':
                 return get_post_meta($this->id, Domain_Util::VERWENDUNGSZWECK, true);
-			case 'alias':
-				return MySQL_Proxy::readDomain($this->host)[Domain_Util::ALIAS];
+			case 'host':
+				return MySQL_Proxy::getHostByID($this->__get("hostID"));
+			case 'target':
+			    if(Domain_Control::isNotVM($this->__get("zweck"))) {
+                    return MySQL_Proxy::getRedirectByID($this->__get("hostSettingsID"))[Domain_Util::TABLE_REDIRECTS_C_TARGET];
+                } else {
+                    return MySQL_Proxy::getProxyByID($this->__get("hostSettingsID"))[Domain_Util::TABLE_PROXY_C_TARGET];
+                }
+            case 'location':
+                if(Domain_Control::isNotVM($this->__get("zweck"))) {
+                    return MySQL_Proxy::getRedirectByID($this->__get("hostSettingsID"))[Domain_Util::TABLE_REDIRECTS_C_LOCATION];
+                } else {
+                    return MySQL_Proxy::getProxyByID($this->__get("hostSettingsID"))[Domain_Util::TABLE_PROXY_C_LOCATION];
+                }
 		}
 	}
 }
