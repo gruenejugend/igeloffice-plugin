@@ -7,7 +7,7 @@
  */
 class Request_Factory {
 	public static function getRequest($art, $id = null) {
-		switch($art) {
+	    switch($art) {
 			case 'Group':
 			case Request_Group::art():
 				return new Request_Group($id);

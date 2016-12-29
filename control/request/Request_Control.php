@@ -91,8 +91,8 @@ class Request_Control {
 	}
 	
 	public static function approve($id) {
-		Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->approve();
-		update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Angenommen");
+	    Request_Factory::getRequest(get_post_meta($id, Request_Util::ATTRIBUT_ART, true), $id)->approve();
+        update_post_meta($id, Request_Util::ATTRIBUT_STATUS,				"Angenommen");
 	}
 	
 	public static function reject($id) {

@@ -65,7 +65,7 @@ final class MySQL_Proxy {
 
         $sql = "SELECT * FROM ".$table." WHERE ".$where;
 
-        return $wpdb->get_results($sql) != null;
+        return count($wpdb->get_results($sql))>0;
     }
 
 	private static function update($table, $values, $where = "") {
