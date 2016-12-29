@@ -140,6 +140,14 @@ final class MySQL_Proxy {
         )[0][Domain_Util::TABLE_HOST_C_HOST];
     }
 
+    public static final function getIDByHost($host) {
+        return self::read(
+            Domain_Util::DB.".".Domain_Util::TABLE_HOST,
+            Domain_Util::TABLE_HOST_C_ID,
+            Domain_Util::TABLE_HOST_C_HOST." = ".$host
+        )[0][Domain_Util::TABLE_HOST_C_ID];
+    }
+
     public static final function checkHostExists($host) {
         return self::exists(Domain_Util::DB.".".Domain_Util::TABLE_HOST, Domain_Util::TABLE_HOST_C_HOST." = '".$host."'");
     }

@@ -57,7 +57,27 @@ class Request_WordPress implements Request_Strategy {
         User_Control::addToGroup($this->request->steller_in, $aboID);
         Group_Control::addOwner($aboID, $this->request->steller_in);
 
-        Domain_Control::create($this->name, $this->request->steller_in, $this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN], Domain_Util::VZ_WORDPRESS, Domain_Util::VZ_ADRESS_ARRAY[Domain_Util::VZ_WORDPRESS], "/");
+        if(MySQL_Proxy::checkHostExists($this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN])) {
+            $hostID = MySQL_Proxy::getIDByHost($this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN]);
+            $posts = get_posts(array(
+                'post_type'                 => Domain_Util::POST_TYPE,
+                'meta_query'                => array(
+                    array(
+                        'key'                       => Domain_Util::HOST_ID,
+                        'value'                     => $hostID
+                    )
+                ),
+                'author'                    => $this->request->steller_in
+            ));
+
+            if(isset($posts[0]->ID)) {
+                Domain_Control::update($posts[0]->ID, $this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN], Domain_Util::VZ_WORDPRESS, Domain_Util::VZ_ADRESS_ARRAY[Domain_Util::VZ_WORDPRESS], "/");
+            } else {
+                Domain_Control::create($this->name, $this->request->steller_in, $this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN], Domain_Util::VZ_WORDPRESS, Domain_Util::VZ_ADRESS_ARRAY[Domain_Util::VZ_WORDPRESS], "/");
+            }
+        } else {
+            Domain_Control::create($this->name, $this->request->steller_in, $this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN], Domain_Util::VZ_WORDPRESS, Domain_Util::VZ_ADRESS_ARRAY[Domain_Util::VZ_WORDPRESS], "/");
+        }
     }
 
     function reject() {
