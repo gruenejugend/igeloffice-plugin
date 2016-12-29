@@ -17,7 +17,7 @@ class Domain_Util {
     const TABLE_REDIRECTS_C_ID = "id";
     const TABLE_REDIRECTS_C_HOST = "host_id";
     const TABLE_REDIRECTS_C_LOCATION = "location";
-    const TABLE_REDIRECTS_C_TARGET = "proxyTarget";
+    const TABLE_REDIRECTS_C_TARGET = "target";
     const TABLE_REDIRECTS_C_MODE = "mode";
     const TABLE_REDIRECTS_C_MODE_E_PERM = "permanent";
     const TABLE_REDIRECTS_C_MODE_E_TEMP = "temporary";

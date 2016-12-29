@@ -8,10 +8,6 @@
 		'https'			=> 1,
 		'active'		=> 1
 	));*/
-
-
-	echo $domain->host;
-	echo '<br>';
 ?>
 
 <table border="0" cellpadding="5" cellspacing="0" width="100%">
