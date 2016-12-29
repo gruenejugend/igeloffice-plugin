@@ -23,7 +23,7 @@ class Request_Domain implements Request_Strategy {
     }
 
     function getArtSuffix($requested) {
-        return ": " . $requested[Request_Util::DETAIL_DOMAIN_HOST] . " zu " . $requested[Request_Util::DETAIL_DOMAIN_TARGET];
+        return " " . $requested[Request_Util::DETAIL_DOMAIN_HOST] . " zu " . $requested[Request_Util::DETAIL_DOMAIN_TARGET];
     }
 
     function approve() {
