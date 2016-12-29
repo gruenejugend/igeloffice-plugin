@@ -60,6 +60,14 @@ final class MySQL_Proxy {
 		return $row;
 	}
 
+	private static function exists($table, $where) {
+        global $wpdb;
+
+        $sql = "SELECT * FROM ".$table." WHERE ".$where;
+
+        return $wpdb->get_results($sql) != null;
+    }
+
 	private static function update($table, $values, $where = "") {
         global $wpdb;
 
@@ -130,6 +138,10 @@ final class MySQL_Proxy {
             Domain_Util::TABLE_HOST_C_HOST,
             "id = " . $id
         )[0][Domain_Util::TABLE_HOST_C_HOST];
+    }
+
+    public static final function checkHostExists($host) {
+        return self::exists(Domain_Util::DB.".".Domain_Util::TABLE_HOST, Domain_Util::TABLE_HOST_C_HOST." = '".$host."'");
     }
 
     public static final function deleteHost($id) {
