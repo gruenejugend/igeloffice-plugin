@@ -192,3 +192,10 @@ add_action("admin_notices", array("Groups_Backend_View", "userSizeMsg"));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'mailMenu'));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'listMenu'));
 	add_filter('if_menu_conditions',												array('menu_dependencies', 'diensteMenu'));
+    add_filter('if_menu_conditions',												array('menu_dependencies', 'domainMenu'));
+
+    require_once 'permission/domain/Domain_Front_View.php';
+    require_once 'permission/domain/Domain_Front_Control.php';
+    require_once 'permission/domain/Domain_Front_Model.php';
+
+    add_shortcode("io_domain", array("Domain_Front_View", "maskHandler"));

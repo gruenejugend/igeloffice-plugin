@@ -55,4 +55,16 @@ class menu_dependencies {
 		
 		return $conditions;
 	}
+
+    public static function domainMenu($conditions) {
+        $conditions[] = array(
+            'name'			=> 'DomainPermitted',
+            'condition'		=> function() {
+                $model = new Domain_Front_Model(get_current_user_id());
+                return get_current_user_id() != 0 && ($model->isDomainPermitted);
+            }
+        );
+
+        return $conditions;
+    }
 }
