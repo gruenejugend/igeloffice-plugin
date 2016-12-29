@@ -7,6 +7,9 @@
  */
 
 function domain_zeile($id, $host, $status, $first = false, $request = true, $ziel = "", $typ = "") {
+    if($id != 0) {
+        $domain = new Domain($id);
+    }
     ?>
     <tr>
         <td>
@@ -32,7 +35,13 @@ function domain_zeile($id, $host, $status, $first = false, $request = true, $zie
                 foreach(Domain_Front_View::POST_ZWECKE AS $key => $label) {
                     if($key != Domain_Util::VZ_WORDPRESS || (new Domain_Front_Model(get_current_user_id()))->isWordPressPermitted) {
                         ?>
-                        <option value="<?php echo $key; ?>">
+                        <option value="<?php echo $key; ?>"<?php
+
+                        if($key == $domain->zweck) {
+                            echo " selected";
+                        }
+
+                        ?>>
                             <?php echo $label; ?>
                         </option>
                         <?php
@@ -48,7 +57,13 @@ function domain_zeile($id, $host, $status, $first = false, $request = true, $zie
             <div style="display: none;" id="<?php echo Domain_Front_View::DIV_TARGET_ZIEL.$id; ?>">
                 Weiterleitung zu:<br>
                 <?php if($request) { ?>
-                <input type="url" name="<?php echo Domain_Front_View::POST_REDIRECT.$id; ?>" value="">
+                <input type="url" name="<?php echo Domain_Front_View::POST_REDIRECT.$id; ?>" value="<?php
+
+                if(isset($domain)) {
+                    echo $domain->target;
+                }
+
+                ?>">
                 <?php } else {
                     echo $ziel;
                 } ?>
@@ -159,6 +174,7 @@ Da die Installation von WordPress-Seiten technisches Know-How voraussetzt und of
         $("#<?php echo Domain_Front_View::POST_ZWECK.$domain->id; ?>").change(function () {
             viewDiv(<?php echo $domain->id; ?>);
         });
+        viewDiv(<?php echo $domain->id; ?>);
         <?php
         }
         ?>
