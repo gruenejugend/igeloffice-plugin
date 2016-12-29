@@ -24,7 +24,7 @@ class Request_WordPress implements Request_Strategy {
     }
 
     function getArtSuffix($requested) {
-        return " für ".$this->request->steller_in;
+        return " für ".$this->request->steller_in." unter ".$requested[Request_Util::DETAIL_WORDPRESS_DOMAIN];
     }
 
     function approve() {
@@ -56,6 +56,8 @@ class Request_WordPress implements Request_Strategy {
         Group_Control::addOwner($mitID, $this->request->steller_in);
         User_Control::addToGroup($this->request->steller_in, $aboID);
         Group_Control::addOwner($aboID, $this->request->steller_in);
+
+        Domain_Control::create($this->name, $this->request->steller_in, $this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN], Domain_Util::VZ_WORDPRESS, Domain_Util::VZ_ADRESS_ARRAY[Domain_Util::VZ_WORDPRESS], "/");
     }
 
     function reject() {
