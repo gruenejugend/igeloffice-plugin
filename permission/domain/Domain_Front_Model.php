@@ -32,7 +32,6 @@ class Domain_Front_Model extends User {
             }
             return $domains;
         } else if($name == "requestedDomains") {
-            //TODO: Antragsstatus beachten
             $posts = get_posts(array(
                 'post_type'                 => Request_Util::POST_TYPE,
                 'meta_query'                => array(
