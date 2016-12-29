@@ -109,7 +109,6 @@ class Request_Backend_View {
 	}
 	
 	public static function maskSave($post_id) {
-		echo $post_id."<br>";
 		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 			return;
 		}

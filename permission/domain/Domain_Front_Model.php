@@ -32,6 +32,7 @@ class Domain_Front_Model extends User {
             }
             return $domains;
         } else if($name == "requestedDomains") {
+            //TODO: Antragsstatus beachten
             $posts = get_posts(array(
                 'post_type'                 => Request_Util::POST_TYPE,
                 'meta_query'                => array(
@@ -42,6 +43,16 @@ class Domain_Front_Model extends User {
                     array(
                         'key'                       => Request_Util::ATTRIBUT_ART,
                         'value'                     => Request_Domain::art()
+                    ),
+                    array(
+                        'key'                       => Request_Util::ATTRIBUT_STATUS,
+                        'value'                     => "Angenommen",
+                        'compare'                   => "!="
+                    ),
+                    array(
+                        'key'                       => Request_Util::ATTRIBUT_STATUS,
+                        'value'                     => "Abgelehnt",
+                        'compare'                   => "!="
                     )
                 )
             ));
@@ -63,6 +74,16 @@ class Domain_Front_Model extends User {
                     array(
                         'key'                       => Request_Util::ATTRIBUT_ART,
                         'value'                     => Request_WordPress::art()
+                    ),
+                    array(
+                        'key'                       => Request_Util::ATTRIBUT_STATUS,
+                        'value'                     => "Angenommen",
+                        'compare'                   => "!="
+                    ),
+                    array(
+                        'key'                       => Request_Util::ATTRIBUT_STATUS,
+                        'value'                     => "Abgelehnt",
+                        'compare'                   => "!="
                     )
                 )
             ));
