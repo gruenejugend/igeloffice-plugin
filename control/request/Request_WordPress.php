@@ -24,7 +24,7 @@ class Request_WordPress implements Request_Strategy {
     }
 
     function getArtSuffix($requested) {
-        return " für ".$this->request->steller_in." unter ".$requested[Request_Util::DETAIL_WORDPRESS_DOMAIN];
+        return " für ".(new User($this->request->steller_in))->user_login." unter ".$requested[Request_Util::DETAIL_WORDPRESS_DOMAIN];
     }
 
     function approve() {
