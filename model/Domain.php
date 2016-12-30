@@ -14,12 +14,6 @@ class Domain {
 		$this->post = get_post($id);
     }
 
-	//TODO Rewrite
-    /*
-     * - Zweck
-     * - Alias Weg
-     * - Host-ID
-     */
 	public function __get($name) {
 		switch ($name) {
 			case 'id':
