@@ -57,6 +57,7 @@ require_once 'control/Log_Control.php';
 	require_once 'control/request/Request_User.php';
     require_once 'control/request/Request_Domain.php';
     require_once 'control/request/Request_WordPress.php';
+    require_once 'control/request/Request_Cloud.php';
 	
 	require_once 'view/Permission_Backend_View.php';
 	require_once 'view/Groups_Backend_View.php';

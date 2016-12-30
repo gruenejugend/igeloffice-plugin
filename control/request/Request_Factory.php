@@ -23,6 +23,9 @@ class Request_Factory {
             case 'WordPress':
             case Request_WordPress::art():
                 return new Request_WordPress($id);
+            case 'Cloud':
+            case Request_Cloud::art():
+                return new Request_Cloud($id);
 		}
 	}
 	
