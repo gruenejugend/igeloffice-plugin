@@ -77,5 +77,6 @@
 		$("#<?php echo Domain_Util::POST_ATTRIBUT_VERWENDUNGSZWECK; ?>").change(function() {
 			verwendungszweck();
 		});
+		verwendungszweck();
 	});
 </script>
