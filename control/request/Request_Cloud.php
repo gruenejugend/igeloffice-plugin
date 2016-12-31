@@ -23,7 +23,7 @@ class Request_Cloud implements Request_Strategy {
     }
 
     function getArtSuffix($requested) {
-        return " für ".(new User($this->request->steller_in))->user_login;
+        return "";
     }
 
     function approve() {
