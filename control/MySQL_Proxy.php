@@ -235,6 +235,6 @@ final class MySQL_Proxy {
     public static final function deleteRedirect($settingsID) {
         self::delete(
             Domain_Util::DB.".".Domain_Util::TABLE_REDIRECTS,
-            Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$settingsID);
+            Domain_Util::TABLE_REDIRECTS_C_ID." = ".$settingsID);
     }
 }
