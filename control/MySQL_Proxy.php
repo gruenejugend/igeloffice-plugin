@@ -32,7 +32,7 @@ final class MySQL_Proxy {
                     $values .= ", ";
                 }
                 $columns .= $column;
-                if (is_numeric($value)) {
+                if (is_numeric($value) || is_bool($value)) {
                     $values .= $value;
                 } else {
                     $values .= "'" . $value . "'";
@@ -79,7 +79,7 @@ final class MySQL_Proxy {
 				}
 
 				$set .= $column . "=";
-				if (is_numeric($value)) {
+				if (is_numeric($value) || is_bool($value)) {
 					$set .= $value;
 				} else {
 					$set .= "'" . $value . "'";
@@ -112,14 +112,13 @@ final class MySQL_Proxy {
     //Host CRUD
     public static final function createHost($host, $zweck) {
         $id = self::getNewID(Domain_Util::TABLE_HOST, "id");
-        $https = $zweck == Domain_Util::VZ_REDIRECT?0:1;
         self::create(
             Domain_Util::DB.".".Domain_Util::TABLE_HOST,
             array(
                 'id'                                => $id,
                 Domain_Util::TABLE_HOST_C_HOST      => $host,
-                Domain_Util::TABLE_HOST_C_ACTIVE    => 1,
-                Domain_Util::TABLE_HOST_C_TLS       => $https
+                Domain_Util::TABLE_HOST_C_TLS       => Domain_Control::isNotVM($zweck)?"0":"1",
+                Domain_Util::TABLE_HOST_C_ACTIVE    => 1
             ));
         return $id;
     }
