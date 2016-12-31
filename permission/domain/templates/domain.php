@@ -55,7 +55,7 @@ function domain_zeile($id, $host, $status, $first = false, $request = true, $zie
         </td>
         <td>
             <div style="display: none;" id="<?php echo Domain_Front_View::DIV_TARGET_ZIEL.$id; ?>">
-                Weiterleitung zu:<br>
+                Weiterleitung zu (mit http/s):<br>
                 <?php if($request) { ?>
                 <input type="url" name="<?php echo Domain_Front_View::POST_REDIRECT.$id; ?>" value="<?php
 
