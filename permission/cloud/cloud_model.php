@@ -20,7 +20,7 @@ class cloud_model extends User {
 		} elseif($name == "isSpacePermitted") {
             return User_Control::isPermitted($this->ID, cloud_control::getCloudSpacePermission()->id);
         } elseif($name == "hasSpace") {
-		    return get_page_by_title("Cloud ".$this->user_login) != null;
+		    return get_page_by_title("Cloud ".$this->user_login, OBJECT, Group_Util::POST_TYPE) != null;
         }
 	}
 }
