@@ -60,12 +60,16 @@ final class MySQL_Proxy {
 		return $row;
 	}
 
-	private static function exists($table, $where) {
+    private static function count($table, $where) {
         global $wpdb;
 
         $sql = "SELECT * FROM ".$table." WHERE ".$where;
 
-        return count($wpdb->get_results($sql))>0;
+        return count($wpdb->get_results($sql));
+    }
+
+	private static function exists($table, $where) {
+        return self::count($table, $where)>0;
     }
 
 	private static function update($table, $values, $where = "") {
@@ -111,6 +115,12 @@ final class MySQL_Proxy {
 	 */
     //Host CRUD
     public static final function createHost($host, $zweck) {
+        if(self::checkHostExists($host)) {
+            $id = self::getIDByHost($host);
+            self::updateHost($id, $host, Domain_Control::isNotVM($zweck)?"0":"1");
+            return $id;
+        }
+
         $id = self::getNewID(Domain_Util::TABLE_HOST, "id");
         self::create(
             Domain_Util::DB.".".Domain_Util::TABLE_HOST,
@@ -123,12 +133,18 @@ final class MySQL_Proxy {
         return $id;
     }
 
-    public static final function updateHost($id, $host) {
+    public static final function updateHost($id, $host, $tls = false) {
+        $args = array(
+            Domain_Util::TABLE_HOST_C_HOST  => $host
+        );
+
+        if($tls) {
+            $args[Domain_Util::TABLE_HOST_C_TLS] = $tls;
+        }
+
         self::update(
             Domain_Util::DB.".".Domain_Util::TABLE_HOST,
-            array(
-                Domain_Util::TABLE_HOST_C_HOST  => $host
-            ),
+            $args,
             Domain_Util::TABLE_HOST_C_ID."=".$id
         );
     }
@@ -154,9 +170,12 @@ final class MySQL_Proxy {
     }
 
     public static final function deleteHost($id) {
-        self::delete(
-            Domain_Util::DB.".".Domain_Util::TABLE_HOST,
-            Domain_Util::TABLE_HOST_C_ID." = ".$id);
+        $int = self::count(Domain_Util::DB.".".Domain_Util::TABLE_PROXY, Domain_Util::TABLE_PROXY_C_HOST." = ".$id) + self::count(Domain_Util::DB.".".Domain_Util::TABLE_REDIRECTS, Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$id);
+        if($int == 0) {
+            self::delete(
+                Domain_Util::DB . "." . Domain_Util::TABLE_HOST,
+                Domain_Util::TABLE_HOST_C_ID . " = " . $id);
+        }
     }
 
     //Proxy
