@@ -110,14 +110,16 @@ final class MySQL_Proxy {
 	 * DOMAIN-OPERATIONEN (CRUD)
 	 */
     //Host CRUD
-    public static final function createHost($host) {
+    public static final function createHost($host, $zweck) {
         $id = self::getNewID(Domain_Util::TABLE_HOST, "id");
+        $https = $zweck == Domain_Util::VZ_REDIRECT?0:1;
         self::create(
             Domain_Util::DB.".".Domain_Util::TABLE_HOST,
             array(
                 'id'                                => $id,
                 Domain_Util::TABLE_HOST_C_HOST      => $host,
-                Domain_Util::TABLE_HOST_C_ACTIVE    => 1
+                Domain_Util::TABLE_HOST_C_ACTIVE    => 1,
+                Domain_Util::TABLE_HOST_C_TLS       => $https
             ));
         return $id;
     }

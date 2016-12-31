@@ -12,6 +12,7 @@ class Domain_Util {
     const TABLE_HOST_C_ID = "id";
     const TABLE_HOST_C_HOST = "hostname";
     const TABLE_HOST_C_ACTIVE = "active";
+    const TABLE_HOST_C_TLS = "https";
 
     const TABLE_REDIRECTS = "redirects";
     const TABLE_REDIRECTS_C_ID = "id";

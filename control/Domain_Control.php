@@ -42,7 +42,7 @@ class Domain_Control {
 
         $location = self::parseLocation($location);
 
-        $hostID = MySQL_Proxy::createHost($host);
+        $hostID = MySQL_Proxy::createHost($host, $zweck);
         update_post_meta($id, Domain_Util::HOST_ID, $hostID);
         if(self::isNotVM($zweck)) {
             $settingID = MySQL_Proxy::createRedirect($hostID, $target, $location);
