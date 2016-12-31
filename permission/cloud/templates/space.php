@@ -13,7 +13,7 @@ Cloud-Space kann für die eigene Arbeit sehr wichtig sein. Die Cloud bildet dabe
 
 <?php
 
-    if($model->hasSpace) {
+    if(!$model->hasSpace) {
 ?>
 
         Unsere Cloud ist durchstrukturiert und geordnet. Jeder Ordner erfüllt einen eigenen Zweck. Solltest du einen Cloud-Ordner für deine Zwecke benötigen, drücke folgenden Button:
