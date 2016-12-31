@@ -145,7 +145,7 @@ final class MySQL_Proxy {
         return self::read(
             Domain_Util::DB.".".Domain_Util::TABLE_HOST,
             Domain_Util::TABLE_HOST_C_ID,
-            Domain_Util::TABLE_HOST_C_HOST." = ".$host
+            Domain_Util::TABLE_HOST_C_HOST." = '".$host."'"
         )[0][Domain_Util::TABLE_HOST_C_ID];
     }
 
@@ -228,7 +228,7 @@ final class MySQL_Proxy {
                 Domain_Util::TABLE_REDIRECTS_C_TARGET   => $target,
                 Domain_Util::TABLE_REDIRECTS_C_LOCATION => $location
             ),
-            Domain_Util::TABLE_REDIRECTS_C_HOST." = ".$settingsID);
+            Domain_Util::TABLE_REDIRECTS_C_ID." = ".$settingsID);
     }
 
     public static final function deleteRedirect($settingsID) {
