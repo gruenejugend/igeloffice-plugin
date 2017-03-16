@@ -242,6 +242,7 @@ class Groups_Backend_View {
 
 				$leadingGroups = $user->leading_groups;
 				$leadingGroupsID = array();
+				$query->query_vars['post__in'] = array();
 				if(!empty($leadingGroups)) {
 					foreach($leadingGroups AS $group) {
 						$leadingGroupsID[] = $group->id;
