@@ -153,7 +153,7 @@ class User_Control {
 			$title = sprintf( __('[%s] Aktivierung deiner Registrierung'), wp_specialchars_decode(get_option('blogname'), ENT_QUOTES));
 			$title = apply_filters( 'retrieve_password_title', $title);
 
-			wp_mail($user->user_email, wp_specialchars_decode($title), $message, 'From: webmaster@gruene-jugend.de');
+			wp_mail($user->user_email, wp_specialchars_decode($title), $message);
 		}
 	}
 	
@@ -257,7 +257,7 @@ class User_Control {
 		 */
 		$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, get_userdata($user_id) );
 
-		if ($message && !wp_mail($user_email, wp_specialchars_decode($title), $message, 'From: webmaster@gruene-jugend.de'))
+		if ($message && !wp_mail($user_email, wp_specialchars_decode($title), $message))
 			wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
 
 		return true;
