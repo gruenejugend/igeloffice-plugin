@@ -445,7 +445,7 @@ class Groups_Backend_View {
 						foreach ($new_names AS $name) {
 							$name_to_add = sanitize_text_field($name);
 
-							$user = get_user_by("user_login", $name_to_add);
+							$user = get_user_by("login", $name_to_add);
 							if ($user) {
 								User_Control::addToGroup($user->ID, $post_id);
 								$added_user[] = $user->user_login;
