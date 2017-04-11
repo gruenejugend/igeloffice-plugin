@@ -162,7 +162,7 @@ class Request_Backend_View {
 				$subject = "Eine Nachricht zu deinem Antrag im IGELoffice";
 			}
 
-			wp_mail($user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE], 'From: webmaster@gruene-jugend.de');
+			wp_mail($user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
 		}
 	}
 	
