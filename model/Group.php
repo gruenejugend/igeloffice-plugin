@@ -45,7 +45,7 @@ class Group {
 		} else if ($name == 'quota') {
 			return get_post_meta($this->id, "io_group_quota", true);
 		} else if ($name == 'size') {
-			return get_post_meta($this->id, "io_group_size", true);
+			return get_post_meta($this->id, "io_group_size", true)!=null&&get_post_meta($this->id, "io_group_size", true)!=0?get_post_meta($this->id, "io_group_size", true):9999;
 		} else {
 			$ldapConnector = ldapConnector::get();
 			if($name == 'owner') {
