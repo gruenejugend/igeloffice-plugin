@@ -35,6 +35,11 @@ class Request_WordPress implements Request_Strategy {
         $autID = Group_Control::create("WordPress Autor_in " . $user_login, "WordPress", $user_login);
         $mitID = Group_Control::create("WordPress Mitarbeiter_in " . $user_login, "WordPress", $user_login);
         $aboID = Group_Control::create("WordPress Abonnent_in " . $user_login, "WordPress", $user_login);
+	update_post_meta($admID, "io_group_aktiv", 1);
+	update_post_meta($redID, "io_group_aktiv", 1);
+	update_post_meta($autID, "io_group_aktiv", 1);
+	update_post_meta($mitID, "io_group_aktiv", 1);
+	update_post_meta($aboID, "io_group_aktiv", 1);
 
         $groups = array(
             Request_Util::DETAIL_WORDPRESS_GROUPS_ADMIN     => $admID,
