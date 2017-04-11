@@ -49,7 +49,7 @@ class User {
 			$groups = $ldapConnector->getUserGroups($this->wp_user->user_login);
 			if(count($groups) > 0) {
 				foreach($groups AS $group) {
-					array_push($this->groups, new Group(get_page_by_title($group, OBJECT, 'io_group')->ID));
+					array_push($this->groups, new Group(get_page_by_title(ldapNameUnescape($group), OBJECT, 'io_group')->ID));
 				}
 				return $this->groups;
 			}
@@ -60,7 +60,7 @@ class User {
 			$groups = $ldapConnector->getGroupsOfLeader($this->wp_user->user_login);
 			if($groups && count($groups) > 0) {
 				foreach($groups AS $group) {
-					array_push($this->leading_groups, new Group(get_page_by_title($group, OBJECT, 'io_group')->ID));
+					array_push($this->leading_groups, new Group(get_page_by_title(ldapNameUnescape($group), OBJECT, 'io_group')->ID));
 				}
 				return $this->leading_groups;
 			}
@@ -80,4 +80,8 @@ class User {
 		}
 		return null;
 	}
+
+    private function ldapNameUnescape($value) {
+        return preg_replace("/\\\([0-9A-Fa-f]{2})/e", "''.chr(hexdec('\\1')).''", $value);
+    }
 }
