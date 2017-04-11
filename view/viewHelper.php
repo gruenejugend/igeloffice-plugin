@@ -83,25 +83,33 @@ function io_add_del($new, $old, $id, $class, $method, $switch = false) {
 	if($switch) {
 		if(!empty($to_del)) {
 			foreach($to_del AS $user) {
-				call_user_func($class.'::del'.$method, $user, $id);
+				if(!empty($user)) {
+					call_user_func($class.'::del'.$method, $user, $id);
+				}
 			}
 		}
 
 		if(!empty($to_add)) {
 			foreach($to_add AS $user) {
-				call_user_func($class.'::add'.$method, $user, $id);
+				if(!empty($user)) {
+					call_user_func($class.'::add'.$method, $user, $id);
+				}
 			}
 		}
 	} else {
 		if(!empty($to_del)) {
 			foreach($to_del AS $user) {
-				call_user_func($class.'::del'.$method, $id, $user);
+				if(!empty($user)) {
+					call_user_func($class.'::del'.$method, $id, $user);
+				}
 			}
 		}
 
 		if(!empty($to_add)) {
 			foreach($to_add AS $user) {
-				call_user_func($class.'::add'.$method, $id, $user);
+				if(!empty($user)) {
+					call_user_func($class.'::add'.$method, $id, $user);
+				}
 			}
 		}
 	}
