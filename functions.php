@@ -108,10 +108,10 @@
 	
 	function requestLeaderCap() {
 		$role = get_role('subscriber');
-		$role->add_cap('read_request'); 
-		$role->add_cap('edit_request'); 
-		$role->add_cap('edit_requests'); 
-		$role->add_cap('edit_others_requests'); 
+		$role->remove_cap('read_request');
+		$role->remove_cap('edit_request');
+		$role->remove_cap('edit_requests');
+		$role->remove_cap('edit_others_requests');
 		
 		$role = get_role('administrator');
 		$role->add_cap('read_request'); 
@@ -204,9 +204,10 @@
 		return str_replace($suche, $ersetzen, $input);
 	}
 
-function io_mail($old_mail)
+/*function io_mail($old_mail)
 {
 	return "webmaster@gruene-jugend.de";
 }
 
 add_filter('wp_mail_from', 'io_mail');
+*/
