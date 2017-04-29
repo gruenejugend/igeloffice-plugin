@@ -92,7 +92,7 @@ class Group_Control {
 		$land = null;
 		$art = $user->art;
 		if($art == User_Util::USER_ART_BASISGRUPPE) {
-			$art = "Basisgruppe";
+			$art = "Basisgruppen";
 			$land = $user->landesverband;
 		} else if($art == User_Util::USER_ART_LANDESVERBAND) {
 			$art = "Landesverbände";
