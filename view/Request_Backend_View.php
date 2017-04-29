@@ -144,6 +144,16 @@ class Request_Backend_View {
 				}
 			}
 		}
+
+		$user = new User($request->steller_in);
+
+		if($request == "User-Aktivierung") {
+			$subject = "Eine Nachricht zu deiner Registration im IGELoffice";
+		} else {
+			$subject = "Eine Nachricht zu deinem Antrag im IGELoffice";
+		}
+
+		wp_mail($user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
 		
 		if($pruef) {
 			if ($_POST[Request_Util::POST_ATTRIBUT_STATUS] == "annahme") {
@@ -151,18 +161,6 @@ class Request_Backend_View {
 			} else if ($_POST[Request_Util::POST_ATTRIBUT_STATUS] == "ablehnung") {
 				Request_Control::reject($post_id);
 			}
-		}
-
-		if(current_user_can('administrator') && $request->status == "Gestellt" && $_POST[Request_Util::ATTRIBUT_MESSAGE] != null && $_POST[Request_Util::ATTRIBUT_MESSAGE] != "") {
-			$user = new User($request->steller_in);
-
-			if($request == "User-Aktivierung") {
-				$subject = "Eine Nachricht zu deiner Registration im IGELoffice";
-			} else {
-				$subject = "Eine Nachricht zu deinem Antrag im IGELoffice";
-			}
-
-			wp_mail($user->user_email, $subject, $_POST[Request_Util::ATTRIBUT_MESSAGE]);
 		}
 	}
 	
