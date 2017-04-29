@@ -2,14 +2,14 @@
 	<tr class="form-field" id="<?php echo User_Util::ATTRIBUT_ART; ?>">
 		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>">Nutzungsart</label></th>
 		<td>
-			<input type="text" id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo ucfirst($user->art); ?>">
+			<input type="text" id="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" name="<?php echo User_Util::POST_ATTRIBUT_ART; ?>" value="<?php echo ucfirst($user->art); ?>" readonly>
 		</td>
 	</tr><?php if($user->art == 'basisgruppe') {
 ?>
 	<tr class="form-field" id="io_<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>">
 		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>">Landesverband</label></th>
 		<td>
-			<input type="text" id="<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>" name="<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>" value="<?php echo ucfirst($user->landesverband); ?>">
+			<input type="text" id="<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>" name="<?php echo User_Util::POST_ATTRIBUT_LANDESVERBAND; ?>" value="<?php echo ucfirst($user->landesverband); ?>" readonly>
 		</td>
 	</tr><?php }
 ?>
