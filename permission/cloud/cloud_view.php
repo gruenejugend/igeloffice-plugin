@@ -26,6 +26,7 @@ class cloud_view {
 	}
 
 	public static function maskCloud() {
+        $owncloud_model = new cloud_model(get_current_user_id());
         include 'wp-content/plugins/igeloffice/permission/cloud/templates/cloud.php';
     }
 
