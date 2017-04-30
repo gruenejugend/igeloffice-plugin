@@ -104,7 +104,10 @@ require_once 'control/Log_Control.php';
 	add_action('edit_user_profile',													array('Profile_Backend_View', 'maskHandler'));
 	add_action('profile_update',													array('Profile_Backend_View', 'maskExecution'), 10, 2);
 	add_action('user_profile_update_errors',										'io_mailErrorMsg', 10, 3);
-	
+    add_action('show_user_profile',                                                 array('Profile_Backend_View', 'maskContact'), 9);
+    add_action('edit_user_profile',                                                 array('Profile_Backend_View', 'maskContact'), 9);
+    add_action('profile_update',													array('Profile_Backend_View', 'maskContactSave'), 10, 2);
+
 	add_filter('authenticate',														array('Auth_Backend_View', 'authentifizierung'), 10, 3);
 	remove_action('authenticate',													'wp_authenticate_username_password', 20);
 	add_filter('login_message',														function($message) {

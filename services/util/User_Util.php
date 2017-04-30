@@ -55,6 +55,11 @@ class User_Util {
 	const ATTRIBUT_ART = "io_user_art";
 	const ATTRIBUT_AKTIV = "io_user_aktiv";
 	const ATTRIBUT_LANDESVERBAND = "io_user_lv";
+    const ATTRIBUT_FACEBOOK = "io_user_facebook";
+    const ATTRIBUT_TWITTER = "io_user_twitter";
+    const ATTRIBUT_INSTAGRAM = "io_user_instagram";
+    const ATTRIBUT_GRADE = "io_user_grade";
+    const ATTRIBUT_BESCHREIBUNG = "io_user_beschreibung";
 	
 	const POST_ATTRIBUT_ART = "user_art";
 	const POST_ATTRIBUT_EMAIL = "user_email";
@@ -65,10 +70,17 @@ class User_Util {
 	const POST_ATTRIBUT_LAND = "land";
 	const POST_ATTRIBUT_LANDESVERBAND = "landesverband";
 	const POST_ATTRIBUT_USERS_NONCE = 'io_users_nonce';
+    const POST_ATTRIBUT_USERS_CONTACT_NONCE = 'io_users_contect_nonce';
 	const POST_ATTRIBUT_AKTIV = "user_aktiv";
 	const POST_ATTRIBUT_PERMISSIONS = "permissions";
 	const POST_ATTRIBUT_GROUPS = "groups";
 	const POST_ATTRIBUT_ERWEITERT = "erweitert";
+    const POST_ATTRIBUT_FACEBOOK = "facebook";
+    const POST_ATTRIBUT_TWITTER = "twitter";
+    const POST_ATTRIBUT_INSTAGRAM = "instagram";
+    const POST_ATTRIBUT_GRADE = "grade";
+    const POST_ATTRIBUT_BESCHREIBUNG = "beschreibung";
 	
 	const USERS_NONCE = 'io_users';
+    const USERS_NONCE_CONTACT = 'io_users_contact';
 }

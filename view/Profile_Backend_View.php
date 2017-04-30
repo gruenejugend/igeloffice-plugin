@@ -144,6 +144,32 @@ class Profile_Backend_View {
 			}
 		}
 	}
+
+	public static function maskContact($wp_user) {
+		wp_nonce_field(User_Util::USERS_NONCE_CONTACT, User_Util::POST_ATTRIBUT_USERS_CONTACT_NONCE);
+		$user = new User($wp_user->ID);
+		if($user->art == User_Util::USER_ART_BASISGRUPPE) {
+			include '../wp-content/plugins/igeloffice/templates/backend/profileContact.php';
+		}
+	}
+
+	public static function maskContactSave($user_id) {
+		if ( !current_user_can( 'edit_user', $user_id ) ) {
+			return;
+		}
+
+		if( !isset($_POST[User_Util::POST_ATTRIBUT_USERS_CONTACT_NONCE]) ||
+			!wp_verify_nonce($_POST[User_Util::POST_ATTRIBUT_USERS_CONTACT_NONCE], User_Util::USERS_NONCE_CONTACT) ||
+			defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
+
+		update_usermeta($user_id, User_Util::ATTRIBUT_FACEBOOK,		$_POST[User_Util::POST_ATTRIBUT_FACEBOOK]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_TWITTER,		$_POST[User_Util::POST_ATTRIBUT_TWITTER]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_INSTAGRAM,	$_POST[User_Util::POST_ATTRIBUT_INSTAGRAM]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_GRADE,		$_POST[User_Util::POST_ATTRIBUT_GRADE]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_BESCHREIBUNG,	$_POST[User_Util::POST_ATTRIBUT_BESCHREIBUNG]);
+	}
 	
 	public static function column($columns) {
 		return array_merge($columns, array(User_Util::ATTRIBUT_ART => "Art", User_Util::ATTRIBUT_AKTIV => "Aktiv"));

@@ -1,3 +1,4 @@
+<h3>Benutzerkonten-Informationen</h3>
 <table class="form-table">
 	<tr class="form-field" id="<?php echo User_Util::ATTRIBUT_ART; ?>">
 		<th scope="row"><label for="<?php echo User_Util::POST_ATTRIBUT_ART; ?>">Nutzungsart</label></th>
