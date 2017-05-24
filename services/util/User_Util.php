@@ -60,6 +60,8 @@ class User_Util {
     const ATTRIBUT_INSTAGRAM = "io_user_instagram";
     const ATTRIBUT_GRADE = "io_user_grade";
     const ATTRIBUT_BESCHREIBUNG = "io_user_beschreibung";
+    const ATTRIBUT_ADRESSE = "io_user_adresse";
+    const ATTRIBUT_IGEL = "io_user_igel";
 	
 	const POST_ATTRIBUT_ART = "user_art";
 	const POST_ATTRIBUT_EMAIL = "user_email";
@@ -80,6 +82,10 @@ class User_Util {
     const POST_ATTRIBUT_INSTAGRAM = "instagram";
     const POST_ATTRIBUT_GRADE = "grade";
     const POST_ATTRIBUT_BESCHREIBUNG = "beschreibung";
+    const POST_ATTRIBUT_ADRESSE = "adresse";
+    const POST_ATTRIBUT_IGEL = "igel";
+    const POST_ATTRIBUT_IGEL_AGGRI = "aggri";
+    const POST_ATTRIBUT_IGEL_OEKI = "oeki";
 	
 	const USERS_NONCE = 'io_users';
     const USERS_NONCE_CONTACT = 'io_users_contact';

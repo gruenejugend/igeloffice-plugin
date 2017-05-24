@@ -169,6 +169,8 @@ class Profile_Backend_View {
 		update_usermeta($user_id, User_Util::ATTRIBUT_INSTAGRAM,	$_POST[User_Util::POST_ATTRIBUT_INSTAGRAM]);
 		update_usermeta($user_id, User_Util::ATTRIBUT_GRADE,		$_POST[User_Util::POST_ATTRIBUT_GRADE]);
 		update_usermeta($user_id, User_Util::ATTRIBUT_BESCHREIBUNG,	$_POST[User_Util::POST_ATTRIBUT_BESCHREIBUNG]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_ADRESSE,		$_POST[User_Util::POST_ATTRIBUT_ADRESSE]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_IGEL,			$_POST[User_Util::POST_ATTRIBUT_IGEL]);
 	}
 	
 	public static function column($columns) {
