@@ -86,16 +86,18 @@ final class LDAP_Proxy {
 	}
 	
 	public static final function setQuota($user, $new_quota) {
-		$res = self::login();
-		
-		$dn = 'cn=' . $user->user_login . ',ou=users,dc=gruene-jugend,dc=de';
-		$quota = self::getAttribute($res, $dn, 'mailQuotaSize');
-		if(($quota != "" && $quota < $new_quota) || $quota == "") {
-			ldap_mod_add($res, $dn, array('mailQuotaSize' => $new_quota));
-			ldap_mod_del($res, $dn, array('mailQuotaSize' => $quota));
+		if($new_quota != "") {
+			$res = self::login();
+
+			$dn = 'cn=' . $user->user_login . ',ou=users,dc=gruene-jugend,dc=de';
+			$quota = self::getAttribute($res, $dn, 'mailQuotaSize');
+			if (($quota != "" && $quota < $new_quota) || $quota == "") {
+				ldap_mod_add($res, $dn, array('mailQuotaSize' => $new_quota));
+				ldap_mod_del($res, $dn, array('mailQuotaSize' => $quota));
+			}
+
+			self::logout($res);
 		}
-		
-		self::logout($res);
 	}
 	
 	public static final function changePW($user, $password) {
