@@ -53,4 +53,16 @@ class Group_Util {
 	const POST_ATTRIBUT_QUOTA_KB = 'kb';
 	const POST_ATTRIBUT_QUOTA_MB = 'mb';
 	const POST_ATTRIBUT_QUOTA_GB = 'gb';
+
+	const POST_ATTRIBUT_FRONTEND_USER_NEU = "io_groups_neu_name";
+	const POST_ATTRIBUT_FRONTEND_MAIL_NEU = "io_groups_neu_mail";
+	const POST_ATTRIBUT_FRONTEND_NEU_SUBMIT = "io_groups_neu_submit";
+	const POST_ATTRIBUT_FRONTEND_REQUEST_SUBMIT = "io_groups_request_submit";
+	const POST_ATTRIBUT_FRONTEND_REQUEST_STATUS = "io_groups_request_status_";
+	const POST_ATTRIBUT_FRONTEND_REQUEST_STATUS_A_U = "unbearbeitet";
+	const POST_ATTRIBUT_FRONTEND_REQUEST_STATUS_A_A = "annehmen";
+	const POST_ATTRIBUT_FRONTEND_REQUEST_STATUS_A_R = "ablehnen";
+	const POST_ATTRIBUT_FRONTEND_USER_SUBMIT = "io_groups_user_submit";
+	const POST_ATTRIBUT_FRONTEND_USER = "io_groups_user_";
+	const POST_ATTRIBUT_FRONTEND_GROUP = "io_groups_group";
 }

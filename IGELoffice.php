@@ -61,6 +61,7 @@ require_once 'control/Log_Control.php';
 	
 	require_once 'view/Permission_Backend_View.php';
 	require_once 'view/Groups_Backend_View.php';
+	require_once 'view/Groups_Frontend_View.php';
 	require_once 'view/Register_Backend_View.php';
 	require_once 'view/Profile_Backend_View.php';
 	require_once 'view/Auth_Backend_View.php';
@@ -131,6 +132,7 @@ add_action("admin_notices", array("Groups_Backend_View", "userSizeMsg"));
 	add_action("admin_notices",														array("Groups_Backend_View", "userAddedLeaderUserMsg"));
 	add_action("admin_notices",														array("Groups_Backend_View", "userFailedLeaderUserMsg"));
     add_action("admin_notices",                                                     array("Groups_Backend_View", "rememberUserMsg"));
+	add_shortcode('group_dialog',													array("Groups_Frontend_View", "maskHandler"));
 	
 	add_action('add_meta_boxes',													array('Permission_Backend_View', 'maskHandler'));
 	add_action('save_post',															array('Permission_Backend_View', 'maskSave'));
