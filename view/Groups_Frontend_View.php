@@ -20,6 +20,10 @@ class Groups_Frontend_View
         if(isset($_GET["gruppe"]) && self::isPermitted()) {
             $group = new Group(intval(sanitize_text_field($_GET["gruppe"])));
 
+            wp_nonce_field(Group_Util::MEMBER_NONCE, Group_Util::POST_ATTRIBUT_MEMBER_NONCE);
+            wp_nonce_field(Group_Util::INFO_NONCE, Group_Util::POST_ATTRIBUT_INFO_NONCE);
+            wp_nonce_field(Group_Util::STANDARD_NONCE, Group_Util::POST_ATTRIBUT_STANDARD_NONCE);
+
             include 'wp-content/plugins/igeloffice/templates/frontend/gruppeAnsicht.php';
         } else {
             $user = new User(get_current_user_id());
@@ -32,10 +36,22 @@ class Groups_Frontend_View
     private static function maskExec() {
         $group = new Group(intval(sanitize_text_field($_GET["gruppe"])));
         if (isset($_POST[Group_Util::POST_ATTRIBUT_FRONTEND_NEU_SUBMIT]) && self::isPermitted()) {
+            if( !isset($_POST[Group_Util::POST_ATTRIBUT_MEMBER_NONCE]) ||
+                !wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_MEMBER_NONCE], Group_Util::MEMBER_NONCE)) {
+                return;
+            }
             self::neuExec($group);
         } elseif (isset($_POST[Group_Util::POST_ATTRIBUT_FRONTEND_REQUEST_SUBMIT]) && self::isPermitted()) {
+            if( !isset($_POST[Group_Util::POST_ATTRIBUT_INFO_NONCE]) ||
+                !wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_INFO_NONCE], Group_Util::INFO_NONCE)) {
+                return;
+            }
             self::requestExec($group);
         } elseif (isset($_POST[Group_Util::POST_ATTRIBUT_FRONTEND_USER_SUBMIT]) && self::isPermitted()) {
+            if( !isset($_POST[Group_Util::POST_ATTRIBUT_STANDARD_NONCE]) ||
+                !wp_verify_nonce($_POST[Group_Util::POST_ATTRIBUT_STANDARD_NONCE], Group_Util::STANDARD_NONCE)) {
+                return;
+            }
             self::userExec($group);
         }
     }
