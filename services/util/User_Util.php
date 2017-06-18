@@ -62,6 +62,15 @@ class User_Util {
     const ATTRIBUT_BESCHREIBUNG = "io_user_beschreibung";
     const ATTRIBUT_ADRESSE = "io_user_adresse";
     const ATTRIBUT_IGEL = "io_user_igel";
+    //NEU
+    const ATTRIBUT_VERANTWORTLICHE_PERSON = "io_user_verantwortliche_r";
+    const ATTRIBUT_VERANTWORTLICHE_HANDY = "io_user_verantwortliche_r_handy";
+    const ATTRIBUT_VERANTWORTLICHE_MAIL = "io_user_verantwortliche_r_mail";
+    const ATTRIBUT_LIEFERADRESSE_ORT = "io_user_liefer_ort";
+    const ATTRIBUT_LIEFERADRESSE_ZUSATZ = "io_user_liefer_zusatz";
+    const ATTRIBUT_LIEFERADRESSE_STRASSE = "io_user_liefer_strasse";
+    const ATTRIBUT_LIEFERADRESSE_PLZ = "io_user_liefer_plz";
+    const ATTRIBUT_LIEFERADRESSE_STADT = "io_user_liefer_stadt";
 	
 	const POST_ATTRIBUT_ART = "user_art";
 	const POST_ATTRIBUT_EMAIL = "user_email";
@@ -86,6 +95,17 @@ class User_Util {
     const POST_ATTRIBUT_IGEL = "igel";
     const POST_ATTRIBUT_IGEL_AGGRI = "aggri";
     const POST_ATTRIBUT_IGEL_OEKI = "oeki";
+    //NEU
+    const POST_ATTRIBUT_VERANTWORTLICHE_PERSON = "person";
+    const POST_ATTRIBUT_VERANTWORTLICHE_HANDY = "person_handy";
+    const POST_ATTRIBUT_VERANTWORTLICHE_MAIL = "person_mail";
+    const POST_ATTRIBUT_LIEFERADRESSE_ORT = "liefer_ort";
+    const POST_ATTRIBUT_LIEFERADRESSE_ZUSATZ = "liefer_zusatz";
+    const POST_ATTRIBUT_LIEFERADRESSE_STRASSE = "liefer_strasse";
+    const POST_ATTRIBUT_LIEFERADRESSE_PLZ = "liefer_plz";
+    const POST_ATTRIBUT_LIEFERADRESSE_STADT = "liefer_stadt";
+
+    const POST_ATTRIBUT_FRONTEND_SUBMIT = "frontendSubmit";
 	
 	const USERS_NONCE = 'io_users';
     const USERS_NONCE_CONTACT = 'io_users_contact';

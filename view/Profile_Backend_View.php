@@ -164,13 +164,24 @@ class Profile_Backend_View {
 			return;
 		}
 
-		update_usermeta($user_id, User_Util::ATTRIBUT_FACEBOOK,		$_POST[User_Util::POST_ATTRIBUT_FACEBOOK]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_TWITTER,		$_POST[User_Util::POST_ATTRIBUT_TWITTER]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_INSTAGRAM,	$_POST[User_Util::POST_ATTRIBUT_INSTAGRAM]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_GRADE,		$_POST[User_Util::POST_ATTRIBUT_GRADE]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_BESCHREIBUNG,	$_POST[User_Util::POST_ATTRIBUT_BESCHREIBUNG]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_ADRESSE,		$_POST[User_Util::POST_ATTRIBUT_ADRESSE]);
-		update_usermeta($user_id, User_Util::ATTRIBUT_IGEL,			$_POST[User_Util::POST_ATTRIBUT_IGEL]);
+		update_usermeta($user_id, User_Util::ATTRIBUT_FACEBOOK,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_FACEBOOK]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_TWITTER,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_TWITTER]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_INSTAGRAM,	sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_INSTAGRAM]));
+
+		update_usermeta($user_id, User_Util::ATTRIBUT_GRADE,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_GRADE]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_BESCHREIBUNG,	sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_BESCHREIBUNG]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_ADRESSE,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_ADRESSE]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_IGEL,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_IGEL]));
+
+		update_usermeta($user_id, User_Util::ATTRIBUT_VERANTWORTLICHE_PERSON,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_VERANTWORTLICHE_PERSON]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_VERANTWORTLICHE_MAIL,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_VERANTWORTLICHE_MAIL]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_VERANTWORTLICHE_HANDY,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_VERANTWORTLICHE_HANDY]));
+
+		update_usermeta($user_id, User_Util::ATTRIBUT_LIEFERADRESSE_ORT,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LIEFERADRESSE_ORT]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_LIEFERADRESSE_ZUSATZ,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LIEFERADRESSE_ZUSATZ]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_LIEFERADRESSE_STRASSE,		sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LIEFERADRESSE_STRASSE]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_LIEFERADRESSE_PLZ,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LIEFERADRESSE_PLZ]));
+		update_usermeta($user_id, User_Util::ATTRIBUT_LIEFERADRESSE_STADT,			sanitize_text_field($_POST[User_Util::POST_ATTRIBUT_LIEFERADRESSE_STADT]));
 	}
 	
 	public static function column($columns) {
