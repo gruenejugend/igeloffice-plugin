@@ -204,4 +204,16 @@ class Groups_Frontend_View
             }
         }
     }
+
+    public static function menu() {
+        $conditions[] = array(
+            'name'			=> 'Basisgruppe',
+            'condition'		=> function() {
+                $user = new User(get_current_user_id());
+                return count($user->leading_groups) > 0;
+            }
+        );
+
+        return $conditions;
+    }
 }
