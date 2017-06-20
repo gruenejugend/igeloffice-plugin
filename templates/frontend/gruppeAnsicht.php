@@ -17,6 +17,7 @@ Hier kannst du Gruppen-Mitgliedschaften bearbeiten, in dem du zum Beispiel Mitgl
 Wenn du ein neues Mitglied hinzuf&uuml;gen m&ouml;chtest, gebe hier den Namen oder die E-Mail-Adresse der Person ein, die du hinzuf&uuml;gen m&ouml;chtest. Beachte bitte, dass die jeweilige Person im IGELoffice registriert sein muss. Bei Eingabe einer Mail-Adresse werden nicht-registrierte Benutzer*innen an eine Registration erinnert.<br><br>
 
 <form action="<?php echo io_get_current_url(); ?>" method="post">
+    <?php wp_nonce_field(Group_Util::MEMBER_NONCE, Group_Util::POST_ATTRIBUT_MEMBER_NONCE); ?>
     <input type="hidden" name="<?php echo Group_Util::POST_ATTRIBUT_FRONTEND_GROUP; ?>" value="<?php echo $group->id; ?>">
     <b>&Uuml;ber Namen hinzuf&uuml;gen (pro Zeile, ein Name):</b><br>
     <textarea name="<?php echo Group_Util::POST_ATTRIBUT_FRONTEND_USER_NEU; ?>" cols="20" rows="5"></textarea><br><br>
@@ -41,6 +42,7 @@ Wenn du ein neues Mitglied hinzuf&uuml;gen m&ouml;chtest, gebe hier den Namen od
         Folgende Antr&auml;ge zur Mitgliedschaft liegen vor:
 
     <form action="<?php echo io_get_current_url(); ?>" method="post">
+        <?php wp_nonce_field(Group_Util::INFO_NONCE, Group_Util::POST_ATTRIBUT_INFO_NONCE); ?>
         <input type="hidden" name="<?php echo Group_Util::POST_ATTRIBUT_FRONTEND_GROUP; ?>" value="<?php echo $group->id; ?>">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
@@ -82,6 +84,7 @@ Wenn du ein neues Mitglied hinzuf&uuml;gen m&ouml;chtest, gebe hier den Namen od
 Hier siehst du bestehende Mitgliedschaften zu dieser Gruppe. Mit der Auswahl der Box rechts neben dem Namen kannst du bestimmen, wer die Gruppe verlassen soll.<br><br>
 
 <form action="<?php echo io_get_current_url(); ?>" method="post">
+    <?php wp_nonce_field(Group_Util::STANDARD_NONCE, Group_Util::POST_ATTRIBUT_STANDARD_NONCE); ?>
     <input type="hidden" name="<?php echo Group_Util::POST_ATTRIBUT_FRONTEND_GROUP; ?>" value="<?php echo $group->id; ?>">
     <table cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
