@@ -320,7 +320,7 @@ class Groups_Backend_View {
 				update_post_meta($post_id, "io_group_sichtbarkeit", serialize($user_arten_save));
 			}
 
-			if (Remember_Util::REMEMBER_SCHALTER && isset($_POST[Group_Util::POST_ATTRIBUT_REMEMBER]) && $_POST[Group_Util::POST_ATTRIBUT_REMEMBER] != "") {
+			if (Remember_Util::REMEMBER_SCHALTER && (isset($_POST[Group_Util::POST_ATTRIBUT_REMEMBER]) && $_POST[Group_Util::POST_ATTRIBUT_REMEMBER] != "") || count($group->remember)>0) {
 				$remembers = explode(", ", $_POST[Group_Util::POST_ATTRIBUT_REMEMBER]);
 				$remembers_save = $remembers;
 				$failed_adress = array();
