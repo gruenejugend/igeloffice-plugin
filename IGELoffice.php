@@ -136,6 +136,7 @@ require_once 'control/Log_Control.php';
 	add_action("admin_notices",														array("Groups_Backend_View", "userFailedLeaderUserMsg"));
     add_action("admin_notices",                                                     array("Groups_Backend_View", "rememberUserMsg"));
 	add_shortcode('group_dialog',													array("Groups_Frontend_View", "maskHandler"));
+	add_filter('if_menu_conditions',												array('Groups_Frontend_View', 'menu'));
 	
 	add_action('add_meta_boxes',													array('Permission_Backend_View', 'maskHandler'));
 	add_action('save_post',															array('Permission_Backend_View', 'maskSave'));
