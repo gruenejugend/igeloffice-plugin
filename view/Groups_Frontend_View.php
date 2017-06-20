@@ -89,24 +89,28 @@ class Groups_Frontend_View
 
         foreach ($names AS $name) {
             $userPre = get_user_by("login", sanitize_text_field($name));
-            if($userPre && self::inGroup($userPre, $group)) {
+            if($userPre && !self::inGroup($userPre, $group)) {
                 $user = new User($userPre->ID);
-                User_Control::addToGroup($userPre->ID, $group->id);
+                LDAP_Proxy::addUsersToGroup($userPre->user_login, $group->name);
                 self::mailUser($userPre, $group);
                 echo $user->user_login . " erfolgreich zur Gruppe hinzugef&uuml;gt.<br>";
-            } else {
+            } elseif(!$userPre) {
                 echo $name . " ist bis jetzt noch nicht im IGELoffice registriert. Gebe unten eine E-Mail-Adresse ein und richte damit eine Erinnerung zur Registrierung ein.<br>";
+            } elseif(self::inGroup($userPre, $group)) {
+                echo $name . " ist bereits in der Gruppe.<br>";
             }
         }
 
         foreach ($mails AS $mail) {
             if(filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                 $userPre = get_user_by("email", sanitize_text_field($mail));
-                if ($userPre && self::inGroup($userPre, $group)) {
+                if ($userPre && !self::inGroup($userPre, $group)) {
                     $user = new User($userPre->ID);
-                    User_Control::addToGroup($userPre->ID, $group->id);
+                    LDAP_Proxy::addUsersToGroup($userPre->user_login, $group->name);
                     self::mailUser($userPre, $group);
                     echo $user->user_login . " erfolgreich zur Gruppe hinzugef&uuml;gt.<br>";
+                } elseif(self::inGroup($userPre, $group)) {
+                    echo $name . " ist bereits in der Gruppe.<br>";
                 } else {
                     $mails_fail[] = $mail;
                 }
