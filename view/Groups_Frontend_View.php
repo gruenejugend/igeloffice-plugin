@@ -209,8 +209,11 @@ class Groups_Frontend_View
         $conditions[] = array(
             'name'			=> 'Gruppen',
             'condition'		=> function() {
-                $user = new User(get_current_user_id());
-                return count($user->leading_groups) > 0;
+                if(get_current_user_id() != 0) {
+                    $user = new User(get_current_user_id());
+                    return count($user->leading_groups) > 0;
+                }
+                return false;
             }
         );
 
