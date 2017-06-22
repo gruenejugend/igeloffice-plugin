@@ -35,10 +35,10 @@
 	
 	function groupLeaderCap() {
 		$role = get_role('subscriber');
-		$role->add_cap('read_group'); 
-		$role->add_cap('edit_group'); 
-		$role->add_cap('edit_groups'); 
-		$role->add_cap('edit_others_groups'); 
+		$role->remove_cap('read_group');
+		$role->remove_cap('edit_group');
+		$role->remove_cap('edit_groups');
+		$role->remove_cap('edit_others_groups');
 		
 		$role = get_role('administrator');
 		$role->add_cap('read_group'); 
@@ -112,7 +112,7 @@
 		$role->remove_cap('edit_request');
 		$role->remove_cap('edit_requests');
 		$role->remove_cap('edit_others_requests');
-		
+
 		$role = get_role('administrator');
 		$role->add_cap('read_request'); 
 		$role->add_cap('edit_request'); 

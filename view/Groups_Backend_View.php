@@ -9,14 +9,6 @@ class Groups_Backend_View {
 	public static function maskHandler($post_type, $post) {
 		$user = new User(get_current_user_id());
 		
-		$pruef = false;
-		foreach($user->leading_groups AS $group) {
-			if($group->name == $post->post_title) {
-				$pruef = true;
-				break;
-			}
-		}
-		
 		if(current_user_can('administrator')) {
 			add_meta_box("io_groups_info_mb", "Informationen", array("Groups_Backend_View", "metaInfo"), Group_Util::POST_TYPE, "normal", "default");
 			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("Groups_Backend_View", "metaMember"), Group_Util::POST_TYPE, "normal", "default");
@@ -29,8 +21,6 @@ class Groups_Backend_View {
 				add_meta_box("io_groups_standard_mb", "Standard", array("Groups_Backend_View", "metaStandard"), Group_Util::POST_TYPE, "normal", "default");
 			}
 			add_meta_box("io_groups_quota_mb", "Mail-Quota", array("Groups_Backend_View", "metaQuota"), Group_Util::POST_TYPE, "normal", "default");
-		} else if($pruef) {
-			add_meta_box("io_groups_member_mb", "Mitgliedschaften", array("Groups_Backend_View", "metaLeaderMember"), Group_Util::POST_TYPE, "normal", "default");
 		}
 	}
 	
@@ -69,21 +59,6 @@ class Groups_Backend_View {
 		$post_id = $post->ID;
 		
 		include '../wp-content/plugins/igeloffice/templates/backend/groupMember.php';
-	}
-	
-	public static function metaLeaderMember($post) {
-		wp_nonce_field(Group_Util::LEADER_MEMBER_NONCE, Group_Util::POST_ATTRIBUT_LEADER_MEMBER_NONCE);
-		
-		$users = array();
-		if(get_post_meta($post->ID, "io_group_aktiv", true) == 1) {
-			$group = new Group($post->ID);
-			
-			$users = io_get_ids($group->users, true, true);
-		}
-		
-		$post_id = $post->ID;
-		
-		include '../wp-content/plugins/igeloffice/templates/backend/groupLeadingMember.php';
 	}
 	
 	public static function metaPermission($post) {
