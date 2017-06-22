@@ -60,7 +60,9 @@ class User {
 			$groups = $ldapConnector->getGroupsOfLeader($this->wp_user->user_login);
 			if($groups && count($groups) > 0) {
 				foreach($groups AS $group) {
-					array_push($this->leading_groups, new Group(get_page_by_title($this->ldapNameUnescape($group), OBJECT, 'io_group')->ID));
+				    if(get_page_by_title($this->ldapNameUnescape($group), OBJECT, 'io_group') != null) {
+                        array_push($this->leading_groups, new Group(get_page_by_title($this->ldapNameUnescape($group), OBJECT, 'io_group')->ID));
+                    }
 				}
 				return $this->leading_groups;
 			}
