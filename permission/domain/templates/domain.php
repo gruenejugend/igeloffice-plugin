@@ -138,7 +138,7 @@ Da die Installation von WordPress-Seiten technisches Know-How voraussetzt und of
 
         //WordPress, die beantragt wurden
         foreach($model->requestedWordPress AS $request) {
-            domain_zeile("r".$request->id,$request->meta[Request_Util::DETAIL_DOMAIN_HOST],"Beantragt", false, false, "WordPress","WordPress");
+            domain_zeile("r".$request->id,$request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN],"Beantragt", false, false, "WordPress","WordPress");
         }
 
     ?>
