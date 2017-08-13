@@ -53,13 +53,9 @@ class Request_WordPress implements Request_Strategy {
 
         User_Control::addToGroup($this->request->steller_in, $admID);
         Group_Control::addOwner($admID, $this->request->steller_in);
-        User_Control::addToGroup($this->request->steller_in, $redID);
         Group_Control::addOwner($redID, $this->request->steller_in);
-        User_Control::addToGroup($this->request->steller_in, $autID);
         Group_Control::addOwner($autID, $this->request->steller_in);
-        User_Control::addToGroup($this->request->steller_in, $mitID);
         Group_Control::addOwner($mitID, $this->request->steller_in);
-        User_Control::addToGroup($this->request->steller_in, $aboID);
         Group_Control::addOwner($aboID, $this->request->steller_in);
 
         if(MySQL_Proxy::checkHostExists($this->request->meta[Request_Util::DETAIL_WORDPRESS_DOMAIN])) {
