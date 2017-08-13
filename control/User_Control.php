@@ -163,9 +163,9 @@ class User_Control {
 		$ldapConnector = ldapConnector::get();
 		if($user->art == User_Util::USER_ART_USER) {
 			if(get_current_user_id() != 0) {
-				$ldapConnector->addUser($user->first_name, $user->last_name, $user->user_email);
+				$ldapConnector->addUser(io_umlaute($user->first_name), io_umlaute($user->last_name), $user->user_email);
 			} else {
-				LDAP_Proxy::addUser($user->first_name, $user->last_name, $user->user_email);
+				LDAP_Proxy::addUser(io_umlaute($user->first_name), io_umlaute($user->last_name), $user->user_email);
 			}
 		} else {
 			$ldapConnector->addOrgaUser($user->user_login, $user->user_email);
