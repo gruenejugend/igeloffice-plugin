@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Description of Permission
+ * Model-Klasse zur Objekt-Erstellung von Berechtigungen
+ *
+ * Diese Klasse arbeitet mit magischen Methoden. Entsprechend verfuegbare Variablen koennen der Klasse __get entnommen
+ * werden. Entsprechende Informationen werden in Echtzeit von WordPress abgerufen.
  *
  * @author KWM
  */

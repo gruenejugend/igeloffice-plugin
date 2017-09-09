@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Description of Domain
+ * Model-Klasse zur Objekt-Erstellung von Domains.
+ *
+ * Diese Klasse arbeitet mit magischen Methoden. Entsprechend verfuegbare Variablen koennen der Klasse __get entnommen
+ * werden. Entsprechende Informationen werden in Echtzeit von WordPress abgerufen.
  *
  * @author KWM
  */

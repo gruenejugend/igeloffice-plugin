@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Description of User
+ * Model-Klasse zur Objekt-Erstellung von User
+ *
+ * Diese Klasse arbeitet mit magischen Methoden. Entsprechend verfuegbare Variablen koennen der Klasse __get entnommen
+ * werden. Entsprechende Informationen werden in Echtzeit von WordPress abgerufen.
  *
  * @author KWM
  */
@@ -83,6 +86,9 @@ class User {
 		return null;
 	}
 
+    /*
+     * Ausgabe des jeweiligen User-Namen in den entsprechenden LDAP-Namen (Umwandlung von Umlauten z. B.)
+     */
 	private function ldapNameUnescape($value) {
 	    return preg_replace("/\\\([0-9A-Fa-f]{2})/e", "''.chr(hexdec('\\1')).''", $value);
     	}

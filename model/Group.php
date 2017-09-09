@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Description of Group
+ * Model-Klasse zur Objekt-Erstellung von Gruppen
+ *
+ * Diese Klasse arbeitet mit magischen Methoden. Entsprechend verfuegbare Variablen koennen der Klasse __get entnommen
+ * werden. Entsprechende Informationen werden in Echtzeit von WordPress abgerufen.
  *
  * @author KWM
  */
@@ -104,6 +107,9 @@ class Group {
 		}
 	}
 
+	/*
+	 * Ausgabe des jeweiligen Gruppen-Namen in den entsprechenden LDAP-Namen (Umwandlung von Umlauten z. B.)
+	 */
 	private function ldapNameFunc($name)
 	{
 		return ldap_escape($name, Group_Control::LDAP_ESCAPE_IGNORE);
