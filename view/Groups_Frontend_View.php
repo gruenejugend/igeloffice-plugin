@@ -207,6 +207,7 @@ class Groups_Frontend_View
 
     public static function menu() {
         $conditions[] = array(
+            'id'			=> 'Gruppen',
             'name'			=> 'Gruppen',
             'condition'		=> function() {
                 if(get_current_user_id() != 0) {

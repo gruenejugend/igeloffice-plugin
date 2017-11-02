@@ -8,6 +8,7 @@
 class menu_dependencies {
 	public static function cloudMenu($conditions) {
 		$conditions[] = array(
+			'id'			=> 'CloudPermitted',
 			'name'			=> 'CloudPermitted',
 			'condition'		=> function() {
 				$owncloud_model = new cloud_model(get_current_user_id());
@@ -20,6 +21,7 @@ class menu_dependencies {
 	
 	public static function mailMenu($conditions) {
 		$conditions[] = array(
+			'id'			=> 'MailPermitted',
 			'name'			=> 'MailPermitted',
 			'condition'		=> function() {
 				$mailStandard_model = new mailStandard_model(get_current_user_id());
@@ -32,6 +34,7 @@ class menu_dependencies {
 	
 	public static function listMenu($conditions) {
 		$conditions[] = array(
+			'id'			=> 'ListPermitted',
 			'name'			=> 'ListPermitted',
 			'condition'		=> function() {
 				$mailinglisten_model = new mailinglisten_model(get_current_user_id());
@@ -44,6 +47,7 @@ class menu_dependencies {
 	
 	public static function diensteMenu($conditions) {
 		$conditions[] = array(
+			'id'			=> 'DienstPermitted',
 			'name'			=> 'DienstPermitted',
 			'condition'		=> function() {
 				$mailinglisten_model = new mailinglisten_model(get_current_user_id());
@@ -58,6 +62,7 @@ class menu_dependencies {
 
     public static function domainMenu($conditions) {
         $conditions[] = array(
+			'id'			=> 'DomainPermitted',
             'name'			=> 'DomainPermitted',
             'condition'		=> function() {
                 $model = new Domain_Front_Model(get_current_user_id());
