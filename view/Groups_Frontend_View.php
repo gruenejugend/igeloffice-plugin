@@ -205,7 +205,7 @@ class Groups_Frontend_View
         }
     }
 
-    public static function menu() {
+    public static function menu($conditions) {
         $conditions[] = array(
             'id'			=> 'Gruppen',
             'name'			=> 'Gruppen',
